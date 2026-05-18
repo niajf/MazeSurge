@@ -110,8 +110,8 @@ WICTextureLoader でテクスチャ画像を読み込み、シェーダーリソ
 ## 📂 ディレクトリ構成 (Project Structure)
 
 ```
-DX11Demo/
-├── include/DX11Demo/
+MazeSurge/
+├── include/MazeSurge/
 │   ├── Common.h           # 共有インクルード・定数定義
 │   ├── Types.h            # Vertex, ConstantBuffer, LightBuffer 構造体
 │   ├── Camera.h           # フリーカメラクラス
@@ -147,7 +147,7 @@ DX11Demo/
 git clone https://github.com/niajf/DirectX11Demo.git
 
 # Visual Studio でソリューションを開く
-# DX11Demo.slnx をダブルクリック
+# MazeSurge.slnx をダブルクリック
 
 # ビルド: Ctrl + Shift + B
 # 実行:   F5

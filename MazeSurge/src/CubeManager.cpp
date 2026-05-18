@@ -1,5 +1,5 @@
-#include "DX11Demo/CubeManager.h"
-#include "DX11Demo/Raycast.h"
+#include "MazeSurge/CubeManager.h"
+#include "MazeSurge/Raycast.h"
 #include <string>
 
 CubeManager g_cubeManager;

@@ -1,5 +1,5 @@
 #pragma once
-#include "DX11Demo/Common.h"
+#include "MazeSurge/Common.h"
 
 // ============================================================
 // 頂点構造体

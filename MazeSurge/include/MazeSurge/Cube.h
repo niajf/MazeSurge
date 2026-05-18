@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DX11Demo/Common.h"
+#include "MazeSurge/Common.h"
 
 class Cube
 {

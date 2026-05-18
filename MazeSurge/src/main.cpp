@@ -1,7 +1,7 @@
-#include "DX11Demo/Common.h"
-#include "DX11Demo/Renderer.h"
-#include "DX11Demo/Camera.h"
-#include "DX11Demo/CubeManager.h"
+#include "MazeSurge/Common.h"
+#include "MazeSurge/Renderer.h"
+#include "MazeSurge/Camera.h"
+#include "MazeSurge/CubeManager.h"
 
 // ---- 前方宣言 ----
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -64,7 +64,9 @@ int WINAPI WinMain(
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd)) return -1;
 
-    g_camera.Init({ 0.0f, 1.5f, -3.0f }, 3.0f, 0.002f);
+    XMFLOAT3 playerStartPos = { 0.0f, 0.0f, 0.0f };
+    g_camera.Init(18.0f, -0.0001f);
+    g_camera.Update(playerStartPos);
 
     // ---- タイマー初期化 ----
     LARGE_INTEGER frequency, previousTime;
@@ -94,8 +96,8 @@ int WINAPI WinMain(
                 / static_cast<float>(frequency.QuadPart);
             previousTime = currentTime;
 
-            g_cubeManager.Update(deltaTime, g_camera.GetProjectionMatrix(), g_camera.GetViewMatrix());
-            g_camera.Update(deltaTime);
+            XMFLOAT3 playerPos = { 0.0f, 0.0f, 0.0f };
+            g_camera.Update(playerPos);
             g_renderer.Render(deltaTime);
 
             // FPS 表示
@@ -126,22 +128,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam)
         {
-        case VK_ESCAPE:
-            if (g_camera.mouseCaptured)
-            {
-                g_camera.mouseCaptured = false;
-                ShowCursor(TRUE);
-                ClipCursor(nullptr);
-            }
-            else
-            {
-                DestroyWindow(hwnd);
-            }
-            break;
-        case 'W': g_camera.keyW = true; break;
-        case 'A': g_camera.keyA = true; break;
-        case 'S': g_camera.keyS = true; break;
-        case 'D': g_camera.keyD = true; break;
         case VK_UP: g_cubeManager.keyUp = true; break;
         case VK_DOWN: g_cubeManager.keyDown = true; break;
         }
@@ -150,27 +136,8 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
         switch (wParam)
         {
-        case 'W': g_camera.keyW = false; break;
-        case 'A': g_camera.keyA = false; break;
-        case 'S': g_camera.keyS = false; break;
-        case 'D': g_camera.keyD = false; break;
         case VK_UP: g_cubeManager.keyUp = false; break;
         case VK_DOWN: g_cubeManager.keyDown = false; break;
-        }
-        return 0;
-
-    case WM_LBUTTONDOWN:
-        if (!g_camera.mouseCaptured)
-        {
-            g_camera.mouseCaptured = true;
-            ShowCursor(FALSE);
-
-            RECT clipRect;
-            GetClientRect(hwnd, &clipRect);
-            MapWindowPoints(hwnd, nullptr, reinterpret_cast<POINT*>(&clipRect), 2);
-            ClipCursor(&clipRect);
-
-            GetCursorPos(&g_camera.lastMousePos);
         }
         return 0;
 

@@ -1,6 +1,6 @@
-#include "DX11Demo/Renderer.h"
-#include "DX11Demo/Camera.h"
-#include "DX11Demo/CubeManager.h"
+#include "MazeSurge/Renderer.h"
+#include "MazeSurge/Camera.h"
+#include "MazeSurge/CubeManager.h"
 #include <string>
 
 // グローバルレンダラーインスタンスの定義

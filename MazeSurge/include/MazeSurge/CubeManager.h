@@ -1,6 +1,6 @@
 #pragma once
-#include "DX11Demo/Common.h"
-#include "DX11Demo/Cube.h"
+#include "MazeSurge/Common.h"
+#include "MazeSurge/Cube.h"
 #include <vector> 
 
 class CubeManager

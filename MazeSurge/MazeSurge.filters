@@ -40,25 +40,25 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\DX11Demo\Common.h">
+    <ClInclude Include="include\MazeSurge\Common.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\Types.h">
+    <ClInclude Include="include\MazeSurge\Types.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\Camera.h">
+    <ClInclude Include="include\MazeSurge\Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\Renderer.h">
+    <ClInclude Include="include\MazeSurge\Renderer.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\Cube.h">
+    <ClInclude Include="include\MazeSurge\Cube.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\CubeManager.h">
+    <ClInclude Include="include\MazeSurge\CubeManager.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="include\DX11Demo\Raycast.h">
+    <ClInclude Include="include\MazeSurge\Raycast.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

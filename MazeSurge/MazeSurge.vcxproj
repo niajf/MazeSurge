@@ -22,7 +22,7 @@
     <VCProjectVersion>18.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{2699fd08-3388-4a32-a9e4-2a2abe85897b}</ProjectGuid>
-    <RootNamespace>DX11Demo</RootNamespace>
+    <RootNamespace>MazSurge</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -150,25 +150,25 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="include\MazSurge\Camera.h" />
+    <ClInclude Include="include\MazSurge\Common.h" />
+    <ClInclude Include="include\MazSurge\Cube.h" />
+    <ClInclude Include="include\MazSurge\CubeManager.h" />
+    <ClInclude Include="include\MazSurge\Raycast.h" />
+    <ClInclude Include="include\MazSurge\Types.h" />
+    <ClInclude Include="include\MazSurge\Renderer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\DX11Demo\Camera.h" />
-    <ClInclude Include="include\DX11Demo\Common.h" />
-    <ClInclude Include="include\DX11Demo\Cube.h" />
-    <ClInclude Include="include\DX11Demo\CubeManager.h" />
-    <ClInclude Include="include\DX11Demo\Raycast.h" />
-    <ClInclude Include="include\DX11Demo\Types.h" />
-    <ClInclude Include="include\DX11Demo\Renderer.h" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\packages\directxtk_desktop_win10.2026.4.1.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2026.4.1.1\build\native\directxtk_desktop_win10.targets')" />
+    <Import Project="..\packages\directxtk_desktop_win10.2026.5.8.1\build\native\directxtk_desktop_win10.targets" Condition="Exists('..\packages\directxtk_desktop_win10.2026.5.8.1\build\native\directxtk_desktop_win10.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2026.4.1.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2026.4.1.1\build\native\directxtk_desktop_win10.targets'))" />
+    <Error Condition="!Exists('..\packages\directxtk_desktop_win10.2026.5.8.1\build\native\directxtk_desktop_win10.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\directxtk_desktop_win10.2026.5.8.1\build\native\directxtk_desktop_win10.targets'))" />
   </Target>
 </Project>

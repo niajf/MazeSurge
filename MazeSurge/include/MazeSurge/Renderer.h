@@ -1,7 +1,7 @@
 #pragma once
-#include "DX11Demo/Common.h"
-#include "DX11Demo/Types.h"
-#include "DX11Demo/Cube.h"
+#include "MazeSurge/Common.h"
+#include "MazeSurge/Types.h"
+#include "MazeSurge/Cube.h"
 
 // ============================================================
 // Renderer — Direct3D 11 の初期化・リソース管理・描画
