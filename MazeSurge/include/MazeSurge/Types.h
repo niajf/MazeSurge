@@ -24,6 +24,7 @@ struct alignas(16) ConstantBuffer
 {
     XMMATRIX wvp;   // ワールド × ビュー × プロジェクション行列
     XMMATRIX world; // ワールド行列（ライティング用）
+    XMFLOAT4 objectColor;
 };
 
 // ============================================================

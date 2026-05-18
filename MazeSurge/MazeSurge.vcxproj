@@ -150,16 +150,16 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\MazSurge\Camera.h" />
-    <ClInclude Include="include\MazSurge\Common.h" />
-    <ClInclude Include="include\MazSurge\Cube.h" />
-    <ClInclude Include="include\MazSurge\CubeManager.h" />
-    <ClInclude Include="include\MazSurge\Raycast.h" />
-    <ClInclude Include="include\MazSurge\Types.h" />
-    <ClInclude Include="include\MazSurge\Renderer.h" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ClInclude Include="include\MazeSurge\Camera.h" />
+    <ClInclude Include="include\MazeSurge\Common.h" />
+    <ClInclude Include="include\MazeSurge\Cube.h" />
+    <ClInclude Include="include\MazeSurge\CubeManager.h" />
+    <ClInclude Include="include\MazeSurge\Raycast.h" />
+    <ClInclude Include="include\MazeSurge\Renderer.h" />
+    <ClInclude Include="include\MazeSurge\Types.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

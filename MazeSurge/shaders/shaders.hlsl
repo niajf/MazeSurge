@@ -9,6 +9,7 @@ cbuffer ConstantBuffer : register(b0)
 {
     matrix wvp;		// 4x4行列(HLSLのmatrix型 = flaot4x4)
     matrix world;	// ワールド行列
+    float4 objectColor;
 };
 
 // ライト用鄭州バッファの定義
@@ -80,7 +81,7 @@ float4 ps_main(PSInput input) : SV_TARGET
 {   
     // テクスチャからピクセルの色を取得する
     // Sample() はUV座標を受け取り、テクスチャ上の対応するピクセルの色を返す
-    float3 texColor = diffuseTexture.Sample(linearSampler, input.texCoord).rgb;
+    float3 texColor = diffuseTexture.Sample(linearSampler, input.texCoord).rgb * objectColor.rgb;
     
     // 法線を正規化(ラスタライザーの補間で長さが1でなはくなるため)
     float3 N = normalize(input.worldNormal);

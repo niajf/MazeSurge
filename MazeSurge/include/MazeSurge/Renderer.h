@@ -17,6 +17,13 @@ public:
     // 毎フレームの描画処理
     void Render(float deltaTime);
 
+    // 外部から任意のキューブを1個描画する
+    // Render()の後、Present()の前に呼ぶこと
+    void DrawCube(const XMMATRIX& worldMatrix, const XMFLOAT4& color);
+
+    // バックバッファを画面に表示する（ゲームループの最後に呼ぶ）
+    void Present();
+
 private:
     // ---- 初期化のサブ関数 ----
     bool CreateDeviceAndSwapChain(HWND hwnd);

@@ -410,13 +410,7 @@ void Renderer::Render(float deltaTime)
                 cube.position.y,
                 cube.position.z 
             );
-        cb.wvp = XMMatrixTranspose(cubeWorld * view * projection);
-        cb.world = XMMatrixTranspose(cubeWorld);
-        m_deviceContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
-        m_deviceContext->PSSetShaderResources(0, 1, m_textureView.GetAddressOf());
-        m_deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
-        m_deviceContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-        m_deviceContext->DrawIndexed(36, 0, 0);
+		DrawCube(cubeWorld, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     // ---- 床の描画 ----
@@ -428,7 +422,28 @@ void Renderer::Render(float deltaTime)
     m_deviceContext->IASetVertexBuffers(0, 1, m_floorVertexBuffer.GetAddressOf(), &stride, &offset);
     m_deviceContext->IASetIndexBuffer(m_floorIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
     m_deviceContext->DrawIndexed(6, 0, 0);
+}
 
-    // ---- Present ----
-    m_swapChain->Present(1, 0);
+void Renderer::DrawCube(const XMMATRIX& worldMatrix, const XMFLOAT4& color)
+{
+    XMMATRIX view = g_camera.GetViewMatrix();
+    XMMATRIX proj = g_camera.GetProjectionMatrix();
+
+    ConstantBuffer cb;
+    cb.wvp = XMMatrixTranspose(worldMatrix * view * proj);
+    cb.world = XMMatrixTranspose(worldMatrix);
+    cb.objectColor = color;
+
+    m_deviceContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
+
+    UINT stride = sizeof(Vertex);
+    UINT offset = 0;
+    m_deviceContext->IASetVertexBuffers(0, 1, m_vertexBuffer.GetAddressOf(), &stride, &offset);
+    m_deviceContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+    m_deviceContext->DrawIndexed(36, 0, 0);
+};
+
+void Renderer::Present()
+{
+	m_swapChain->Present(1, 0);
 }

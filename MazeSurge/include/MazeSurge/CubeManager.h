@@ -22,12 +22,12 @@ private:
 	bool buttonPressed = false;
 	bool upPressed = false;
 	bool downPressed = false;
+	void setCube(XMFLOAT3 position);
 	float mouseX = 0.0f;
 	float mouseY = 0.0f;
 	std::vector<Cube> cubes;
 	XMFLOAT3 currentScale = { 1.0f, 1.0f, 1.0f }; 
 
-	void setCube(XMFLOAT3 position);
 };
 
 extern CubeManager g_cubeManager;
