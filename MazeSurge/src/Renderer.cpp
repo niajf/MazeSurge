@@ -25,8 +25,6 @@ bool Renderer::Init(HWND hwnd)
     if (!CompileAndCreateShaders())  return false;
     if (!CreateConstantBuffers())    return false;
     if (!CreateMeshBuffers())        return false;
-    if (!LoadTextures())             return false;
-    if (!CreateSamplerState())       return false;
 
     return true;
 }
@@ -314,51 +312,6 @@ bool Renderer::CreateMeshBuffers()
     return true;
 }
 
-// ============================================================
-// テクスチャの読み込み
-// ============================================================
-bool Renderer::LoadTextures()
-{
-    HRESULT hr;
-
-    hr = DirectX::CreateWICTextureFromFile(
-        m_device.Get(), m_deviceContext.Get(),
-        L"textures/crate.png", nullptr, m_textureView.GetAddressOf());
-    if (FAILED(hr))
-    {
-        MessageBox(nullptr, L"テクスチャ(crate)の読み込みに失敗", L"エラー", MB_OK);
-        return false;
-    }
-
-    hr = DirectX::CreateWICTextureFromFile(
-        m_device.Get(), m_deviceContext.Get(),
-        L"textures/floor.png", nullptr, m_floorTextureView.GetAddressOf());
-    if (FAILED(hr))
-    {
-        MessageBox(nullptr, L"テクスチャ(floor)の読み込みに失敗", L"エラー", MB_OK);
-        return false;
-    }
-
-    return true;
-}
-
-// ============================================================
-// サンプラーステートの作成
-// ============================================================
-bool Renderer::CreateSamplerState()
-{
-    D3D11_SAMPLER_DESC sampDesc = {};
-    sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-    sampDesc.MinLOD = 0;
-    sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    HRESULT hr = m_device->CreateSamplerState(&sampDesc, m_sampler.GetAddressOf());
-    return SUCCEEDED(hr);
-}
 
 // ============================================================
 // Render — 毎フレームの描画処理
@@ -382,7 +335,7 @@ void Renderer::Render(float deltaTime)
     m_deviceContext->VSSetShader(m_vertexShader.Get(), nullptr, 0);
     m_deviceContext->PSSetShader(m_pixelShader.Get(), nullptr, 0);
     m_deviceContext->VSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
-    m_deviceContext->PSSetSamplers(0, 1, m_sampler.GetAddressOf());
+    m_deviceContext->PSSetConstantBuffers(0, 1, m_constantBuffer.GetAddressOf());
 
     // ---- ライトバッファの更新 ----
     LightBuffer lb;
@@ -394,6 +347,7 @@ void Renderer::Render(float deltaTime)
     lb.shininess = 32.0f;
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
+
 
     // ---- キューブの描画 ----
     UINT stride = sizeof(Vertex);
@@ -417,8 +371,8 @@ void Renderer::Render(float deltaTime)
     XMMATRIX floorWorld = XMMatrixIdentity();
     cb.wvp = XMMatrixTranspose(floorWorld * view * projection);
     cb.world = XMMatrixTranspose(floorWorld);
+    cb.objectColor = XMFLOAT4(0.2f, 0.2f, 0.25f, 1.0f);
     m_deviceContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
-    m_deviceContext->PSSetShaderResources(0, 1, m_floorTextureView.GetAddressOf());
     m_deviceContext->IASetVertexBuffers(0, 1, m_floorVertexBuffer.GetAddressOf(), &stride, &offset);
     m_deviceContext->IASetIndexBuffer(m_floorIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
     m_deviceContext->DrawIndexed(6, 0, 0);

@@ -32,8 +32,6 @@ private:
     bool CreateInputLayout(ComPtr<ID3DBlob>& vsBlob);
     bool CreateConstantBuffers();
     bool CreateMeshBuffers();
-    bool LoadTextures();
-    bool CreateSamplerState();
 
     // ---- シェーダーコンパイルユーティリティ ----
     static bool CompileShader(const wchar_t* filePath, const char* entryPoint,
@@ -59,11 +57,6 @@ private:
     ComPtr<ID3D11Buffer> m_floorIndexBuffer;
     ComPtr<ID3D11Buffer> m_constantBuffer;
     ComPtr<ID3D11Buffer> m_lightBuffer;
-
-    // ---- テクスチャ ----
-    ComPtr<ID3D11ShaderResourceView> m_textureView;
-    ComPtr<ID3D11ShaderResourceView> m_floorTextureView;
-    ComPtr<ID3D11SamplerState>       m_sampler;
 };
 
 // グローバルレンダラーインスタンス

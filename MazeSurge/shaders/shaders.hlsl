@@ -12,7 +12,7 @@ cbuffer ConstantBuffer : register(b0)
     float4 objectColor;
 };
 
-// ライト用鄭州バッファの定義
+// ライト用バッファの定義
 cbuffer LightBuffer : register(b1)
 {
     float3 lightDirection;
@@ -21,11 +21,7 @@ cbuffer LightBuffer : register(b1)
     float padding2;
     float3 cameraPosition;
     float shininess;
-};
-
-// テクスチャとサンプラー
-Texture2D diffuseTexture : register(t0); // テクスチャスロット0番
-SamplerState linearSampler : register(s0); // サンプラースロット0番
+}
 
 // ---- 頂点シェーダーの入力構造体 ----
 // C++側の頂点構造体と対応する。
@@ -81,7 +77,7 @@ float4 ps_main(PSInput input) : SV_TARGET
 {   
     // テクスチャからピクセルの色を取得する
     // Sample() はUV座標を受け取り、テクスチャ上の対応するピクセルの色を返す
-    float3 texColor = diffuseTexture.Sample(linearSampler, input.texCoord).rgb * objectColor.rgb;
+    float3 baseColor = objectColor.rgb;
     
     // 法線を正規化(ラスタライザーの補間で長さが1でなはくなるため)
     float3 N = normalize(input.worldNormal);
@@ -90,11 +86,11 @@ float4 ps_main(PSInput input) : SV_TARGET
     float3 L = normalize(-lightDirection);
     
     // ---- アンビエント ----
-    float3 ambient = texColor * 0.15f;
+    float3 ambient = baseColor * 0.15f;
     
     // ---- ディフューズ ----
     float diff = max(dot(N, L), 0.0f); // 法線とライトの方向の内積
-    float3 diffuse = texColor * lightColor * diff;
+    float3 diffuse = baseColor * lightColor * diff;
     
     // ---- スペキュラ ----
     float3 V = normalize(cameraPosition - input.worldPos); // 視線方向

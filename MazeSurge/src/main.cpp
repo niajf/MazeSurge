@@ -2,6 +2,8 @@
 #include "MazeSurge/Renderer.h"
 #include "MazeSurge/Camera.h"
 #include "MazeSurge/CubeManager.h"
+#include "MazeSurge/Player.h"
+#include <iostream>
 
 // ---- 前方宣言 ----
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -65,7 +67,8 @@ int WINAPI WinMain(
     if (!g_renderer.Init(hwnd)) return -1;
 
     XMFLOAT3 playerStartPos = { 0.0f, 0.0f, 0.0f };
-    g_camera.Init(18.0f, -0.0001f);
+    g_player.Init(playerStartPos);
+    g_camera.Init(14.0f, -7.0f);
     g_camera.Update(playerStartPos);
 
     // ---- タイマー初期化 ----
@@ -96,9 +99,14 @@ int WINAPI WinMain(
                 / static_cast<float>(frequency.QuadPart);
             previousTime = currentTime;
 
-            XMFLOAT3 playerPos = { 0.0f, 0.0f, 0.0f };
-            g_camera.Update(playerPos);
+            // 更新
+            g_player.Update(deltaTime);
+            g_camera.Update(g_player.GetPosition());
+
+            // 描画
             g_renderer.Render(deltaTime);
+            g_player.Draw();
+            g_renderer.Present();
 
             // FPS 表示
             fpsTimer += deltaTime;
@@ -128,7 +136,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam)
         {
-        case VK_UP: g_cubeManager.keyUp = true; break;
+        case VK_ESCAPE: DestroyWindow(hwnd); break;
+        case 'W': g_player.keyW = true; break;
+        case 'A': g_player.keyA = true; break;
+        case 'S': g_player.keyS = true; break;
+        case 'D': g_player.keyD = true; break;
+        case VK_UP:   g_cubeManager.keyUp = true;   break;
         case VK_DOWN: g_cubeManager.keyDown = true; break;
         }
         return 0;
@@ -136,18 +149,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_KEYUP:
         switch (wParam)
         {
-        case VK_UP: g_cubeManager.keyUp = false; break;
+        case 'W': g_player.keyW = false; break;
+        case 'A': g_player.keyA = false; break;
+        case 'S': g_player.keyS = false; break;
+        case 'D': g_player.keyD = false; break;
+        case VK_UP:   g_cubeManager.keyUp = false;   break;
         case VK_DOWN: g_cubeManager.keyDown = false; break;
         }
-        return 0;
-
-    case WM_RBUTTONDOWN:
-        g_cubeManager.button = true;
-        g_cubeManager.setMousePosition(LOWORD(lParam), HIWORD(lParam));
-        return 0;
-
-    case WM_RBUTTONUP:
-        g_cubeManager.button = false;
         return 0;
 
     case WM_DESTROY:

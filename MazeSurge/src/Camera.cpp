@@ -18,6 +18,11 @@ void Camera::Update(const XMFLOAT3& targetPos)
     m_position.x = targetPos.x;
     m_position.y = targetPos.y + m_offsetY;
     m_position.z = targetPos.z + m_offsetZ;
+
+    wchar_t buf[128];
+    swprintf_s(buf, L"Camera pos: %.1f, %.1f, %.1f\n",
+        m_position.x, m_position.y, m_position.z);
+    OutputDebugString(buf);
 }
 
 XMMATRIX Camera::GetViewMatrix() const
