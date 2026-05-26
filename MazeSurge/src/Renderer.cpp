@@ -277,10 +277,10 @@ bool Renderer::CreateMeshBuffers()
     // ---- 床頂点データ ----
     Vertex floorVertices[] =
     {
-        { XMFLOAT3(-10, -0.5f, -10), XMFLOAT3(0,1,0), XMFLOAT2(0,  0) },
-        { XMFLOAT3(10, -0.5f, -10), XMFLOAT3(0,1,0), XMFLOAT2(10,  0) },
-        { XMFLOAT3(10, -0.5f,  10), XMFLOAT3(0,1,0), XMFLOAT2(10, 10) },
-        { XMFLOAT3(-10, -0.5f,  10), XMFLOAT3(0,1,0), XMFLOAT2(0, 10) },
+        { XMFLOAT3(-5, -0.5f, -5), XMFLOAT3(0,1,0), XMFLOAT2(0,  0) },
+        { XMFLOAT3(5, -0.5f, -5), XMFLOAT3(0,1,0), XMFLOAT2(10,  0) },
+        { XMFLOAT3(5, -0.5f,  5), XMFLOAT3(0,1,0), XMFLOAT2(10, 10) },
+        { XMFLOAT3(-5, -0.5f,  5), XMFLOAT3(0,1,0), XMFLOAT2(0, 10) },
     };
 
     UINT floorIndices[] = { 0, 2, 1, 0, 3, 2 };

@@ -3,6 +3,7 @@
 #include "MazeSurge/Camera.h"
 #include "MazeSurge/CubeManager.h"
 #include "MazeSurge/Player.h"
+#include "MazeSurge/Dungeon.h"
 #include <iostream>
 
 // ---- 前方宣言 ----
@@ -65,6 +66,7 @@ int WINAPI WinMain(
 
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd)) return -1;
+    g_dungeon.GenerateTestMap();
 
     XMFLOAT3 playerStartPos = { 0.0f, 0.0f, 0.0f };
     g_player.Init(playerStartPos);
@@ -106,6 +108,7 @@ int WINAPI WinMain(
             // 描画
             g_renderer.Render(deltaTime);
             g_player.Draw();
+            g_dungeon.Draw(g_renderer);
             g_renderer.Present();
 
             // FPS 表示

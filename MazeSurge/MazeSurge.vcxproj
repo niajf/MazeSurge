@@ -135,6 +135,7 @@
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\CubeManager.cpp" />
+    <ClCompile Include="src\Dungeon.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Player.cpp" />
     <ClCompile Include="src\Raycast.cpp" />
@@ -158,6 +159,7 @@
     <ClInclude Include="include\MazeSurge\Common.h" />
     <ClInclude Include="include\MazeSurge\Cube.h" />
     <ClInclude Include="include\MazeSurge\CubeManager.h" />
+    <ClInclude Include="include\MazeSurge\Dungeon.h" />
     <ClInclude Include="include\MazeSurge\Player.h" />
     <ClInclude Include="include\MazeSurge\Raycast.h" />
     <ClInclude Include="include\MazeSurge\Renderer.h" />

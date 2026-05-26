@@ -43,7 +43,7 @@ void Player::Update(float deltaTime)
 	OutputDebugString(buf);
 
 	// 仮の移動制限
-	constexpr float BOUNDARY = 20.0f;
+	constexpr float BOUNDARY = 5.0f;
 	newPos.x = std::clamp(newPos.x, -BOUNDARY, BOUNDARY);
 	newPos.z = std::clamp(newPos.z, -BOUNDARY, BOUNDARY);
 
