@@ -28,7 +28,7 @@ using Microsoft::WRL::ComPtr;
 using namespace DirectX;
 
 // ---- 定数 ----
-constexpr int     WINDOW_WIDTH = 1280;
-constexpr int     WINDOW_HEIGHT = 720;
+constexpr int WINDOW_WIDTH = 1280;
+constexpr int WINDOW_HEIGHT = 720;
 constexpr LPCWSTR WINDOW_CLASS = L"MazeSurgeWindowClass";
-constexpr LPCWSTR WINDOW_TITLE = L"DirectX 11 Demo";
+constexpr LPCWSTR WINDOW_TITLE = L"MazeSurge";

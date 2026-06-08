@@ -97,8 +97,8 @@ float4 ps_main(PSInput input) : SV_TARGET
     float3 H = normalize(L + V); // ハーフベクトル
     float spec = pow(max(dot(N, H), 0.0f), shininess);
     float3 specular = lightColor * spec * 0.5f;
-
-    float3 finalColor = ambient + diffuse + specular;
    
-    return float4(finalColor, 1.0f); // アルファは1.0で不透明)
+    float3 emissive = baseColor * 1.5;  // 1倍以上の発光
+    float3 finalColor = ambient + diffuse + specular + emissive;
+    return float4(saturate(finalColor), 1.0);
 }

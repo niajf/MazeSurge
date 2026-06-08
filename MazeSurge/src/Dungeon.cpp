@@ -72,7 +72,7 @@ void Dungeon::Draw(Renderer &renderer) const
 			{
 				XMFLOAT3 pos = GridToWorld(j, i);
 				XMMATRIX world = XMMatrixScaling(m_cellSize, m_cellSize, m_cellSize) * XMMatrixTranslation(pos.x, pos.y, pos.z);
-				XMFLOAT4 color = {1.0f, 1.0f, 0.0f, 1.0f};
+				XMFLOAT4 color = {0.2f, 0.50f, 0.50f, 1.0f};
 				renderer.DrawCube(world, color);
 			}
 		}

@@ -1,6 +1,5 @@
 #include "MazeSurge/Renderer.h"
 #include "MazeSurge/Camera.h"
-#include "MazeSurge/CubeManager.h"
 #include <string>
 
 // グローバルレンダラーインスタンスの定義
@@ -366,9 +365,8 @@ bool Renderer::CreateMeshBuffers()
 void Renderer::Render(float deltaTime, float floorScale)
 {
     // ---- 画面クリア ----
-    m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
-
     float clearColor[4] = {0.1f, 0.1f, 0.15f, 1.0f};
+    m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
     m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -395,19 +393,10 @@ void Renderer::Render(float deltaTime, float floorScale)
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
 
-    // ---- キューブの描画 ----
+    // ---- 床の描画 ----
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
     ConstantBuffer cb;
-
-    for (size_t i = 0; i < g_cubeManager.size(); i++)
-    {
-        Cube cube = g_cubeManager.getCube(i);
-        XMMATRIX cubeWorld = XMMatrixScaling(cube.scale.x, cube.scale.y, cube.scale.z) * XMMatrixRotationY(cube.angle) * XMMatrixTranslation(cube.position.x, cube.position.y, cube.position.z);
-        DrawCube(cubeWorld, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
-    }
-
-    // ---- 床の描画 ----
     XMMATRIX floorWorld = XMMatrixScaling(floorScale, 1.f, floorScale);
     cb.wvp = XMMatrixTranspose(floorWorld * view * projection);
     cb.world = XMMatrixTranspose(floorWorld);

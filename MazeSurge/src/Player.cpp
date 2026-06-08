@@ -1,9 +1,8 @@
 #include "MazeSurge/Player.h"
 
-
 Player g_player;
 
-void Player::Init(const XMFLOAT3& startPosition)
+void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_position = startPosition;
 	m_hp = 100;
@@ -11,12 +10,16 @@ void Player::Init(const XMFLOAT3& startPosition)
 
 XMFLOAT3 Player::CalcMoveVelocity() const
 {
-	XMFLOAT3 velocity = { 0.0f, 0.0f, 0.0f };
+	XMFLOAT3 velocity = {0.0f, 0.0f, 0.0f};
 
-	if (keyW) velocity.z += 1.0f;
-	if (keyS) velocity.z -= 1.0f;
-	if (keyD) velocity.x += 1.0f;
-	if (keyA) velocity.x -= 1.0f;
+	if (keyW)
+		velocity.z += 1.0f;
+	if (keyS)
+		velocity.z -= 1.0f;
+	if (keyD)
+		velocity.x += 1.0f;
+	if (keyA)
+		velocity.x -= 1.0f;
 
 	XMVECTOR v = XMLoadFloat3(&velocity);
 	if (XMVectorGetX(XMVector3Length(v)) > 0.0f)
@@ -26,7 +29,7 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 	return velocity;
 }
 
-void Player::Update(float deltaTime, const Dungeon& dungeon)
+void Player::Update(float deltaTime, const Dungeon &dungeon)
 {
 	constexpr float HALF_SIZE = 0.4f;
 
@@ -59,6 +62,6 @@ void Player::Update(float deltaTime, const Dungeon& dungeon)
 void Player::Draw() const
 {
 	XMMATRIX world = XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(m_position.x, m_position.y + 0.4f, m_position.z);
-	XMFLOAT4 playerColor = { 0.0f, 1.0f, 1.0f, 1.0f };
+	XMFLOAT4 playerColor = {0.0f, 0.91f, .25f, 1.0f};
 	g_renderer.DrawCube(world, playerColor);
 }

@@ -1,7 +1,6 @@
 #include "MazeSurge/Common.h"
 #include "MazeSurge/Renderer.h"
 #include "MazeSurge/Camera.h"
-#include "MazeSurge/CubeManager.h"
 #include "MazeSurge/Player.h"
 #include "MazeSurge/Dungeon.h"
 #include <iostream>
@@ -120,7 +119,7 @@ int WINAPI WinMain(
             if (fpsTimer >= 1.0f)
             {
                 wchar_t title[64];
-                swprintf_s(title, L"%s - FPS: %d, CubeScale : %d", WINDOW_TITLE, frameCount, g_cubeManager.getScale());
+                swprintf_s(title, L"%s - FPS: %d", WINDOW_TITLE, frameCount);
                 SetWindowText(hwnd, title);
                 fpsTimer = 0.0f;
                 frameCount = 0;
@@ -157,12 +156,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case 'D':
             g_player.keyD = true;
             break;
-        case VK_UP:
-            g_cubeManager.keyUp = true;
-            break;
-        case VK_DOWN:
-            g_cubeManager.keyDown = true;
-            break;
         }
         return 0;
 
@@ -180,12 +173,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             break;
         case 'D':
             g_player.keyD = false;
-            break;
-        case VK_UP:
-            g_cubeManager.keyUp = false;
-            break;
-        case VK_DOWN:
-            g_cubeManager.keyDown = false;
             break;
         }
         return 0;
