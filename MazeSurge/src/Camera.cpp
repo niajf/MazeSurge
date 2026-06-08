@@ -9,20 +9,15 @@ void Camera::Init(float offsetY, float offsetZ)
     m_offsetZ = offsetZ;
 }
 
-void Camera::Update(const XMFLOAT3& targetPos)
+void Camera::Update(const XMFLOAT3 &targetPos)
 {
     // プレイヤーの位置を保持
     m_target = targetPos;
 
-	// カメラ位置はプレイヤー位置 + オフセット
+    // カメラ位置はプレイヤー位置 + オフセット
     m_position.x = targetPos.x;
     m_position.y = targetPos.y + m_offsetY;
     m_position.z = targetPos.z + m_offsetZ;
-
-    wchar_t buf[128];
-    swprintf_s(buf, L"Camera pos: %.1f, %.1f, %.1f\n",
-        m_position.x, m_position.y, m_position.z);
-    OutputDebugString(buf);
 }
 
 XMMATRIX Camera::GetViewMatrix() const
@@ -48,17 +43,15 @@ XMFLOAT3 Camera::ScreenToWorldOnPlane(int mouseX, int mouseY, float planeY) cons
     XMVECTOR nearScreen = XMVectorSet(
         static_cast<float>(mouseX),
         static_cast<float>(mouseY),
-        0.0f, 0.0f
-    );
+        0.0f, 0.0f);
     XMVECTOR farScreen = XMVectorSet(
         static_cast<float>(mouseX),
         static_cast<float>(mouseY),
-        1.0f, 0.0f
-    );
+        1.0f, 0.0f);
 
-	XMMATRIX view = GetViewMatrix();
-	XMMATRIX proj = GetProjectionMatrix();
-	XMMATRIX world = XMMatrixIdentity();
+    XMMATRIX view = GetViewMatrix();
+    XMMATRIX proj = GetProjectionMatrix();
+    XMMATRIX world = XMMatrixIdentity();
 
     XMVECTOR nearWorld = XMVector3Unproject(
         nearScreen,
@@ -69,7 +62,7 @@ XMFLOAT3 Camera::ScreenToWorldOnPlane(int mouseX, int mouseY, float planeY) cons
         farScreen,
         0.0f, 0.0f, (float)WINDOW_WIDTH, (float)WINDOW_HEIGHT,
         0.0f, 1.0f, proj, view, world);
-    
+
     // レイの方向
     XMVECTOR dir = XMVector3Normalize(XMVectorSubtract(farWorld, nearWorld));
 
@@ -80,7 +73,7 @@ XMFLOAT3 Camera::ScreenToWorldOnPlane(int mouseX, int mouseY, float planeY) cons
 
     // dirYがほぼ0 = レイが水平（交点なし）
     if (fabsf(dirY) < 0.0001f)
-        return { 0.0f, planeY, 0.0f };
+        return {0.0f, planeY, 0.0f};
 
     float t = (planeY - originY) / dirY;
 

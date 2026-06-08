@@ -31,13 +31,16 @@ public:
     XMFLOAT3 GridToWorld(int gridX, int gridZ) const;
     void WorldToGrid(float worldX, float worldZ, int &gridX, int &gridZ) const;
 
+    bool IsCheckPoint(XMFLOAT3 playerPos);
+    bool IsGoal(XMFLOAT3 playerPos);
+
     XMFLOAT3 GetStartPosition() const;
     XMFLOAT3 GetGoalPosition() const;
     int getMazeSize() { return m_mazeSize; };
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 51;     // 奇数
+    int m_mazeSize = 5;      // 奇数
     float m_cellSize = 2.0f; // 1セル = 2ワールド単位
 };
 

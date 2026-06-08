@@ -7,7 +7,7 @@ void Dungeon::GenerateTestMap()
 	m_grid.push_back({START, WALL, WALL, FLOOR, WALL});
 	m_grid.push_back({FLOOR, FLOOR, FLOOR, FLOOR, WALL});
 	m_grid.push_back({FLOOR, FLOOR, WALL, WALL, WALL});
-	m_grid.push_back({FLOOR, FLOOR, FLOOR, FLOOR, WALL});
+	m_grid.push_back({FLOOR, CHECKPOINT, FLOOR, FLOOR, WALL});
 	m_grid.push_back({FLOOR, WALL, WALL, FLOOR, GOAL});
 }
 
@@ -75,6 +75,23 @@ void Dungeon::Draw(Renderer &renderer) const
 				XMFLOAT4 color = {0.2f, 0.50f, 0.50f, 1.0f};
 				renderer.DrawCube(world, color);
 			}
+
+			else if (m_grid[i][j] == GOAL)
+			{
+				XMFLOAT3 pos = GridToWorld(j, i);
+				XMMATRIX world = XMMatrixScaling(m_cellSize, m_cellSize, m_cellSize) * XMMatrixTranslation(pos.x, pos.y, pos.z);
+				XMFLOAT4 color = {1.0f, 0.9f, 0.3f, 1.0f};
+				renderer.DrawCube(world, color);
+			}
+
+			else if (m_grid[i][j] == CHECKPOINT)
+			{
+				float scale = 0.7f;
+				XMFLOAT3 pos = GridToWorld(j, i);
+				XMMATRIX world = XMMatrixScaling(m_cellSize * scale, m_cellSize * scale, m_cellSize * scale) * XMMatrixTranslation(pos.x, pos.y, pos.z);
+				XMFLOAT4 color = {0.9f, 0.4f, 0.3f, 1.0f};
+				renderer.DrawCube(world, color);
+			}
 		}
 	}
 }
@@ -90,6 +107,7 @@ bool Dungeon::IsWallCell(int gridX, int gridZ) const
 {
 	if (gridX < 0 || gridX >= m_mazeSize || gridZ < 0 || gridZ >= m_mazeSize)
 		return true;
+
 	return m_grid[gridZ][gridX] == WALL;
 }
 
@@ -110,6 +128,36 @@ void Dungeon::WorldToGrid(float worldX, float worldZ, int &gridX, int &gridZ) co
 	float gz = worldZ / m_cellSize + (float)(m_mazeSize - 1) / 2.0f;
 	gridX = std::clamp((int)std::round(gx), 0, m_mazeSize - 1);
 	gridZ = std::clamp((int)std::round(gz), 0, m_mazeSize - 1);
+}
+
+bool Dungeon::IsCheckPoint(XMFLOAT3 playerPos)
+{
+	int gridX = 0, gridZ = 0;
+	WorldToGrid(playerPos.x, playerPos.z, gridX, gridZ);
+
+	if (m_grid[gridZ][gridX] == CellType::CHECKPOINT)
+	{
+		// チェックポイントを取得した際の処理
+		m_grid[gridZ][gridX] = CellType::FLOOR;
+		return true;
+	}
+
+	// wchar_t buf[128];
+	// swprintf_s(buf, L"gridX:%d gridZ:%d\n", gridX, gridZ);
+	// OutputDebugString(buf);
+
+	return false;
+}
+
+bool Dungeon::IsGoal(XMFLOAT3 playerPos)
+{
+	int gridX = 0, gridZ = 0;
+	WorldToGrid(playerPos.x, playerPos.z, gridX, gridZ);
+
+	if (m_grid[gridZ][gridX] == CellType::GOAL)
+		return true;
+
+	return false;
 }
 
 XMFLOAT3 Dungeon::GetStartPosition() const

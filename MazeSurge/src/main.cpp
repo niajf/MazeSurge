@@ -66,8 +66,8 @@ int WINAPI WinMain(
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd))
         return -1;
-    // g_dungeon.GenerateTestMap();
-    g_dungeon.Generate(1);
+    g_dungeon.GenerateTestMap();
+    // g_dungeon.Generate(1);
     g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
     g_camera.Update(g_dungeon.GetStartPosition());
@@ -106,6 +106,13 @@ int WINAPI WinMain(
             // 更新
             g_player.Update(deltaTime, g_dungeon);
             g_camera.Update(g_player.GetPosition());
+            g_dungeon.IsCheckPoint(g_player.GetPosition());
+
+            if (g_dungeon.IsGoal(g_player.GetPosition()))
+            {
+                // ゴールに到達した際の処理
+                DestroyWindow(hwnd);
+            }
 
             // 描画
             g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));

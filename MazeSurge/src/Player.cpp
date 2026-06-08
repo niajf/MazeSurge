@@ -29,7 +29,7 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 	return velocity;
 }
 
-void Player::Update(float deltaTime, const Dungeon &dungeon)
+void Player::Update(float deltaTime, Dungeon &g_dungeon)
 {
 	constexpr float HALF_SIZE = 0.4f;
 
@@ -37,20 +37,20 @@ void Player::Update(float deltaTime, const Dungeon &dungeon)
 
 	// X軸の移動と壁衝突判定（4コーナーをチェック）
 	float newX = m_position.x + velocity.x * m_speed * deltaTime;
-	if (dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
-		dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
-		dungeon.IsWall(newX - HALF_SIZE, m_position.z + HALF_SIZE) ||
-		dungeon.IsWall(newX + HALF_SIZE, m_position.z + HALF_SIZE))
+	if (g_dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
+		g_dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
+		g_dungeon.IsWall(newX - HALF_SIZE, m_position.z + HALF_SIZE) ||
+		g_dungeon.IsWall(newX + HALF_SIZE, m_position.z + HALF_SIZE))
 	{
 		newX = m_position.x;
 	}
 
 	// Z軸の移動と壁衝突判定（新しいXを使って4コーナーをチェック）
 	float newZ = m_position.z + velocity.z * m_speed * deltaTime;
-	if (dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
-		dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||
-		dungeon.IsWall(newX - HALF_SIZE, newZ + HALF_SIZE) ||
-		dungeon.IsWall(newX + HALF_SIZE, newZ + HALF_SIZE))
+	if (g_dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
+		g_dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||
+		g_dungeon.IsWall(newX - HALF_SIZE, newZ + HALF_SIZE) ||
+		g_dungeon.IsWall(newX + HALF_SIZE, newZ + HALF_SIZE))
 	{
 		newZ = m_position.z;
 	}
