@@ -8,8 +8,8 @@ class Dungeon
 public:
     enum CellType { FLOOR = 0, WALL = 1, CHECKPOINT = 2, GOAL = 3, START = 4 };
 
-    void GenerateTestMap();              // Week 1ではこれだけ
-    void Generate(int width, int height, int seed); // Week 2で実装
+    void GenerateTestMap();              
+    void Generate(int width, int height, int seed);
     void Draw(Renderer& renderer) const;
 
     // 衝突判定用

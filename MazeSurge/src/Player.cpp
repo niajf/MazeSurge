@@ -1,6 +1,5 @@
 #include "MazeSurge/Player.h"
-#include "MazeSurge/Renderer.h"
-#include <algorithm>
+
 
 Player g_player;
 
@@ -27,27 +26,34 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 	return velocity;
 }
 
-void Player::Update(float deltaTime)
+void Player::Update(float deltaTime, const Dungeon& dungeon)
 {
+	constexpr float HALF_SIZE = 0.4f;
+
 	XMFLOAT3 velocity = CalcMoveVelocity();
 
-	// 仮の移動先を計算
-	XMFLOAT3 newPos;
-	newPos.x = m_position.x + velocity.x * m_speed * deltaTime;
-	newPos.y = m_position.y;
-	newPos.z = m_position.z + velocity.z * m_speed * deltaTime;
+	// X軸の移動と壁衝突判定（4コーナーをチェック）
+	float newX = m_position.x + velocity.x * m_speed * deltaTime;
+	if (dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
+		dungeon.IsWall(newX - HALF_SIZE, m_position.z + HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, m_position.z + HALF_SIZE))
+	{
+		newX = m_position.x;
+	}
 
-	wchar_t buf[128];
-	swprintf_s(buf, L"Player pos: %.1f, %.1f, %.1f\n",
-		m_position.x, m_position.y, m_position.z);
-	OutputDebugString(buf);
+	// Z軸の移動と壁衝突判定（新しいXを使って4コーナーをチェック）
+	float newZ = m_position.z + velocity.z * m_speed * deltaTime;
+	if (dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||
+		dungeon.IsWall(newX - HALF_SIZE, newZ + HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, newZ + HALF_SIZE))
+	{
+		newZ = m_position.z;
+	}
 
-	// 仮の移動制限
-	constexpr float BOUNDARY = 5.0f;
-	newPos.x = std::clamp(newPos.x, -BOUNDARY, BOUNDARY);
-	newPos.z = std::clamp(newPos.z, -BOUNDARY, BOUNDARY);
-
-	m_position = newPos;
+	m_position.x = newX;
+	m_position.z = newZ;
 }
 
 void Player::Draw() const

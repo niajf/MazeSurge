@@ -67,11 +67,9 @@ int WINAPI WinMain(
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd)) return -1;
     g_dungeon.GenerateTestMap();
-
-    XMFLOAT3 playerStartPos = { 0.0f, 0.0f, 0.0f };
-    g_player.Init(playerStartPos);
+    g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
-    g_camera.Update(playerStartPos);
+    g_camera.Update(g_dungeon.GetStartPosition());
 
     // ---- タイマー初期化 ----
     LARGE_INTEGER frequency, previousTime;
@@ -102,7 +100,7 @@ int WINAPI WinMain(
             previousTime = currentTime;
 
             // 更新
-            g_player.Update(deltaTime);
+            g_player.Update(deltaTime, g_dungeon);
             g_camera.Update(g_player.GetPosition());
 
             // 描画

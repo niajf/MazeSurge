@@ -1,12 +1,15 @@
 #pragma once
 #include "MazeSurge/Common.h"
+#include "MazeSurge/Dungeon.h"
+#include "MazeSurge/Renderer.h"
+#include <algorithm>
 
 class Player
 {
 public:
 	void Init(const XMFLOAT3& staticPosition);
 
-	void Update(float deltaTime);
+	void Update(float deltaTime, const Dungeon& g_dungeon);
 
 	// プレイヤーキューブの描画
 	void Draw() const;
