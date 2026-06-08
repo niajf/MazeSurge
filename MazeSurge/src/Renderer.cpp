@@ -11,8 +11,10 @@ Renderer g_renderer;
 // ============================================================
 bool Renderer::Init(HWND hwnd)
 {
-    if (!CreateDeviceAndSwapChain(hwnd))    return false;
-    if (!CreateRenderTargetAndDepthBuffer()) return false;
+    if (!CreateDeviceAndSwapChain(hwnd))
+        return false;
+    if (!CreateRenderTargetAndDepthBuffer())
+        return false;
 
     // ビューポートの設定
     D3D11_VIEWPORT viewport = {};
@@ -22,9 +24,12 @@ bool Renderer::Init(HWND hwnd)
     viewport.MaxDepth = 1.0f;
     m_deviceContext->RSSetViewports(1, &viewport);
 
-    if (!CompileAndCreateShaders())  return false;
-    if (!CreateConstantBuffers())    return false;
-    if (!CreateMeshBuffers())        return false;
+    if (!CompileAndCreateShaders())
+        return false;
+    if (!CreateConstantBuffers())
+        return false;
+    if (!CreateMeshBuffers())
+        return false;
 
     return true;
 }
@@ -84,12 +89,14 @@ bool Renderer::CreateRenderTargetAndDepthBuffer()
     // レンダーターゲットビュー
     ComPtr<ID3D11Texture2D> backBuffer;
     HRESULT hr = m_swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D),
-        reinterpret_cast<void**>(backBuffer.GetAddressOf()));
-    if (FAILED(hr)) return false;
+                                        reinterpret_cast<void **>(backBuffer.GetAddressOf()));
+    if (FAILED(hr))
+        return false;
 
     hr = m_device->CreateRenderTargetView(backBuffer.Get(), nullptr,
-        m_renderTargetView.GetAddressOf());
-    if (FAILED(hr)) return false;
+                                          m_renderTargetView.GetAddressOf());
+    if (FAILED(hr))
+        return false;
 
     // 深度バッファ
     D3D11_TEXTURE2D_DESC depthDesc = {};
@@ -104,11 +111,13 @@ bool Renderer::CreateRenderTargetAndDepthBuffer()
 
     ComPtr<ID3D11Texture2D> depthTexture;
     hr = m_device->CreateTexture2D(&depthDesc, nullptr, depthTexture.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     hr = m_device->CreateDepthStencilView(depthTexture.Get(), nullptr,
-        m_depthStencilView.GetAddressOf());
-    if (FAILED(hr)) return false;
+                                          m_depthStencilView.GetAddressOf());
+    if (FAILED(hr))
+        return false;
 
     return true;
 }
@@ -117,8 +126,8 @@ bool Renderer::CreateRenderTargetAndDepthBuffer()
 // シェーダーコンパイルユーティリティ
 // ============================================================
 bool Renderer::CompileShader(
-    const wchar_t* filePath, const char* entryPoint,
-    const char* profile, ComPtr<ID3DBlob>& blob)
+    const wchar_t *filePath, const char *entryPoint,
+    const char *profile, ComPtr<ID3DBlob> &blob)
 {
     UINT compileFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 #ifdef _DEBUG
@@ -134,7 +143,7 @@ bool Renderer::CompileShader(
     if (FAILED(hr))
     {
         if (errorBlob)
-            OutputDebugStringA(static_cast<const char*>(errorBlob->GetBufferPointer()));
+            OutputDebugStringA(static_cast<const char *>(errorBlob->GetBufferPointer()));
         return false;
     }
     return true;
@@ -155,7 +164,8 @@ bool Renderer::CompileAndCreateShaders()
     HRESULT hr = m_device->CreateVertexShader(
         vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(),
         nullptr, m_vertexShader.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     // ピクセルシェーダー
     ComPtr<ID3DBlob> psBlob;
@@ -167,10 +177,12 @@ bool Renderer::CompileAndCreateShaders()
     hr = m_device->CreatePixelShader(
         psBlob->GetBufferPointer(), psBlob->GetBufferSize(),
         nullptr, m_pixelShader.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     // 入力レイアウト
-    if (!CreateInputLayout(vsBlob)) return false;
+    if (!CreateInputLayout(vsBlob))
+        return false;
 
     return true;
 }
@@ -178,14 +190,14 @@ bool Renderer::CompileAndCreateShaders()
 // ============================================================
 // 入力レイアウトの作成
 // ============================================================
-bool Renderer::CreateInputLayout(ComPtr<ID3DBlob>& vsBlob)
+bool Renderer::CreateInputLayout(ComPtr<ID3DBlob> &vsBlob)
 {
     D3D11_INPUT_ELEMENT_DESC layoutDesc[] =
-    {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT,    0,  0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT,    0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT,       0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-    };
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+        };
 
     HRESULT hr = m_device->CreateInputLayout(
         layoutDesc, _countof(layoutDesc),
@@ -211,7 +223,8 @@ bool Renderer::CreateConstantBuffers()
     cbDesc.ByteWidth = sizeof(ConstantBuffer);
     cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     HRESULT hr = m_device->CreateBuffer(&cbDesc, nullptr, m_constantBuffer.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     // ライト用
     D3D11_BUFFER_DESC lbDesc = {};
@@ -219,7 +232,8 @@ bool Renderer::CreateConstantBuffers()
     lbDesc.ByteWidth = sizeof(LightBuffer);
     lbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     hr = m_device->CreateBuffer(&lbDesc, nullptr, m_lightBuffer.GetAddressOf());
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     return true;
 }
@@ -231,97 +245,130 @@ bool Renderer::CreateMeshBuffers()
 {
     // ---- キューブ頂点データ（24頂点 = 6面 × 4頂点）----
     Vertex cubeVertices[] =
-    {
-        // 前面 (0,0,-1)
-        { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0,0,-1), XMFLOAT2(0, 0) },
-        { XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT3(0,0,-1), XMFLOAT2(1, 0) },
-        { XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(0,0,-1), XMFLOAT2(1, 1) },
-        { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0,0,-1), XMFLOAT2(0, 1) },
-        // 背面 (0,0,1)
-        { XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(0,0,1), XMFLOAT2(0, 0) },
-        { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0,0,1), XMFLOAT2(1, 0) },
-        { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0,0,1), XMFLOAT2(1, 1) },
-        { XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT3(0,0,1), XMFLOAT2(0, 1) },
-        // 上面 (0,1,0)
-        { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(0,1,0), XMFLOAT2(0, 0) },
-        { XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(0,1,0), XMFLOAT2(1, 0) },
-        { XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT3(0,1,0), XMFLOAT2(1, 1) },
-        { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(0,1,0), XMFLOAT2(0, 1) },
-        // 底面 (0,-1,0)
-        { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0,-1,0), XMFLOAT2(0, 0) },
-        { XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(0,-1,0), XMFLOAT2(1, 0) },
-        { XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT3(0,-1,0), XMFLOAT2(1, 1) },
-        { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(0,-1,0), XMFLOAT2(0, 1) },
-        // 左面 (-1,0,0)
-        { XMFLOAT3(-0.5f,  0.5f,  0.5f), XMFLOAT3(-1,0,0), XMFLOAT2(0, 0) },
-        { XMFLOAT3(-0.5f,  0.5f, -0.5f), XMFLOAT3(-1,0,0), XMFLOAT2(1, 0) },
-        { XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1,0,0), XMFLOAT2(1, 1) },
-        { XMFLOAT3(-0.5f, -0.5f,  0.5f), XMFLOAT3(-1,0,0), XMFLOAT2(0, 1) },
-        // 右面 (1,0,0)
-        { XMFLOAT3(0.5f,  0.5f, -0.5f), XMFLOAT3(1,0,0), XMFLOAT2(0, 0) },
-        { XMFLOAT3(0.5f,  0.5f,  0.5f), XMFLOAT3(1,0,0), XMFLOAT2(1, 0) },
-        { XMFLOAT3(0.5f, -0.5f,  0.5f), XMFLOAT3(1,0,0), XMFLOAT2(1, 1) },
-        { XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1,0,0), XMFLOAT2(0, 1) },
-    };
+        {
+            // 前面 (0,0,-1)
+            {XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 0)},
+            {XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 0)},
+            {XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(0, 0, -1), XMFLOAT2(1, 1)},
+            {XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0, 0, -1), XMFLOAT2(0, 1)},
+            // 背面 (0,0,1)
+            {XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 1), XMFLOAT2(0, 0)},
+            {XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(0, 0, 1), XMFLOAT2(1, 0)},
+            {XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(0, 0, 1), XMFLOAT2(1, 1)},
+            {XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(0, 0, 1), XMFLOAT2(0, 1)},
+            // 上面 (0,1,0)
+            {XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(0, 1, 0), XMFLOAT2(0, 0)},
+            {XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(0, 1, 0), XMFLOAT2(1, 0)},
+            {XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(0, 1, 0), XMFLOAT2(1, 1)},
+            {XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(0, 1, 0), XMFLOAT2(0, 1)},
+            // 底面 (0,-1,0)
+            {XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(0, -1, 0), XMFLOAT2(0, 0)},
+            {XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(0, -1, 0), XMFLOAT2(1, 0)},
+            {XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(0, -1, 0), XMFLOAT2(1, 1)},
+            {XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(0, -1, 0), XMFLOAT2(0, 1)},
+            // 左面 (-1,0,0)
+            {XMFLOAT3(-0.5f, 0.5f, 0.5f), XMFLOAT3(-1, 0, 0), XMFLOAT2(0, 0)},
+            {XMFLOAT3(-0.5f, 0.5f, -0.5f), XMFLOAT3(-1, 0, 0), XMFLOAT2(1, 0)},
+            {XMFLOAT3(-0.5f, -0.5f, -0.5f), XMFLOAT3(-1, 0, 0), XMFLOAT2(1, 1)},
+            {XMFLOAT3(-0.5f, -0.5f, 0.5f), XMFLOAT3(-1, 0, 0), XMFLOAT2(0, 1)},
+            // 右面 (1,0,0)
+            {XMFLOAT3(0.5f, 0.5f, -0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(0, 0)},
+            {XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(1, 0)},
+            {XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(1, 1)},
+            {XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(0, 1)},
+        };
 
     UINT cubeIndices[] =
-    {
-         0,  1,  2,   0,  2,  3,
-         4,  5,  6,   4,  6,  7,
-         8,  9, 10,   8, 10, 11,
-        12, 13, 14,  12, 14, 15,
-        16, 17, 18,  16, 18, 19,
-        20, 21, 22,  20, 22, 23,
-    };
+        {
+            0,
+            1,
+            2,
+            0,
+            2,
+            3,
+            4,
+            5,
+            6,
+            4,
+            6,
+            7,
+            8,
+            9,
+            10,
+            8,
+            10,
+            11,
+            12,
+            13,
+            14,
+            12,
+            14,
+            15,
+            16,
+            17,
+            18,
+            16,
+            18,
+            19,
+            20,
+            21,
+            22,
+            20,
+            22,
+            23,
+        };
 
     // ---- 床頂点データ ----
     Vertex floorVertices[] =
-    {
-        { XMFLOAT3(-5, -0.5f, -5), XMFLOAT3(0,1,0), XMFLOAT2(0,  0) },
-        { XMFLOAT3(5, -0.5f, -5), XMFLOAT3(0,1,0), XMFLOAT2(10,  0) },
-        { XMFLOAT3(5, -0.5f,  5), XMFLOAT3(0,1,0), XMFLOAT2(10, 10) },
-        { XMFLOAT3(-5, -0.5f,  5), XMFLOAT3(0,1,0), XMFLOAT2(0, 10) },
-    };
+        {
+            {XMFLOAT3(-1.f, -0.5f, -1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(0, 0)},
+            {XMFLOAT3(1.f, -0.5f, -1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(10, 0)},
+            {XMFLOAT3(1.f, -0.5f, 1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(10, 10)},
+            {XMFLOAT3(-1.f, -0.5f, 1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(0, 10)},
+        };
 
-    UINT floorIndices[] = { 0, 2, 1, 0, 3, 2 };
+    UINT floorIndices[] = {0, 2, 1, 0, 3, 2};
 
     // ---- バッファ作成ヘルパー ----
-    auto createBuffer = [&](auto* data, UINT byteWidth, UINT bindFlags, ComPtr<ID3D11Buffer>& buffer)
-        {
-            D3D11_BUFFER_DESC desc = {};
-            desc.Usage = D3D11_USAGE_DEFAULT;
-            desc.ByteWidth = byteWidth;
-            desc.BindFlags = bindFlags;
+    auto createBuffer = [&](auto *data, UINT byteWidth, UINT bindFlags, ComPtr<ID3D11Buffer> &buffer)
+    {
+        D3D11_BUFFER_DESC desc = {};
+        desc.Usage = D3D11_USAGE_DEFAULT;
+        desc.ByteWidth = byteWidth;
+        desc.BindFlags = bindFlags;
 
-            D3D11_SUBRESOURCE_DATA initData = {};
-            initData.pSysMem = data;
+        D3D11_SUBRESOURCE_DATA initData = {};
+        initData.pSysMem = data;
 
-            return m_device->CreateBuffer(&desc, &initData, buffer.GetAddressOf());
-        };
+        return m_device->CreateBuffer(&desc, &initData, buffer.GetAddressOf());
+    };
 
     HRESULT hr;
     hr = createBuffer(cubeVertices, sizeof(cubeVertices), D3D11_BIND_VERTEX_BUFFER, m_vertexBuffer);
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
     hr = createBuffer(cubeIndices, sizeof(cubeIndices), D3D11_BIND_INDEX_BUFFER, m_indexBuffer);
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
     hr = createBuffer(floorVertices, sizeof(floorVertices), D3D11_BIND_VERTEX_BUFFER, m_floorVertexBuffer);
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
     hr = createBuffer(floorIndices, sizeof(floorIndices), D3D11_BIND_INDEX_BUFFER, m_floorIndexBuffer);
-    if (FAILED(hr)) return false;
+    if (FAILED(hr))
+        return false;
 
     return true;
 }
 
-
 // ============================================================
 // Render — 毎フレームの描画処理
 // ============================================================
-void Renderer::Render(float deltaTime)
+void Renderer::Render(float deltaTime, float floorScale)
 {
     // ---- 画面クリア ----
     m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
-    float clearColor[4] = { 0.1f, 0.1f, 0.15f, 1.0f };
+    float clearColor[4] = {0.1f, 0.1f, 0.15f, 1.0f};
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
     m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -348,7 +395,6 @@ void Renderer::Render(float deltaTime)
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
 
-
     // ---- キューブの描画 ----
     UINT stride = sizeof(Vertex);
     UINT offset = 0;
@@ -357,18 +403,12 @@ void Renderer::Render(float deltaTime)
     for (size_t i = 0; i < g_cubeManager.size(); i++)
     {
         Cube cube = g_cubeManager.getCube(i);
-        XMMATRIX cubeWorld = XMMatrixScaling(cube.scale.x, cube.scale.y, cube.scale.z)
-            * XMMatrixRotationY(cube.angle)
-            * XMMatrixTranslation(
-                cube.position.x,
-                cube.position.y,
-                cube.position.z 
-            );
-		DrawCube(cubeWorld, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
+        XMMATRIX cubeWorld = XMMatrixScaling(cube.scale.x, cube.scale.y, cube.scale.z) * XMMatrixRotationY(cube.angle) * XMMatrixTranslation(cube.position.x, cube.position.y, cube.position.z);
+        DrawCube(cubeWorld, XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f));
     }
 
     // ---- 床の描画 ----
-    XMMATRIX floorWorld = XMMatrixIdentity();
+    XMMATRIX floorWorld = XMMatrixScaling(floorScale, 1.f, floorScale);
     cb.wvp = XMMatrixTranspose(floorWorld * view * projection);
     cb.world = XMMatrixTranspose(floorWorld);
     cb.objectColor = XMFLOAT4(0.2f, 0.2f, 0.25f, 1.0f);
@@ -378,7 +418,7 @@ void Renderer::Render(float deltaTime)
     m_deviceContext->DrawIndexed(6, 0, 0);
 }
 
-void Renderer::DrawCube(const XMMATRIX& worldMatrix, const XMFLOAT4& color)
+void Renderer::DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color)
 {
     XMMATRIX view = g_camera.GetViewMatrix();
     XMMATRIX proj = g_camera.GetProjectionMatrix();
@@ -399,5 +439,5 @@ void Renderer::DrawCube(const XMMATRIX& worldMatrix, const XMFLOAT4& color)
 
 void Renderer::Present()
 {
-	m_swapChain->Present(1, 0);
+    m_swapChain->Present(1, 0);
 }

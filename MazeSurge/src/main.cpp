@@ -46,7 +46,7 @@ int WINAPI WinMain(
     }
 
     // ---- ウィンドウ作成 ----
-    RECT rc = { 0, 0, WINDOW_WIDTH, WINDOW_HEIGHT };
+    RECT rc = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
     HWND hwnd = CreateWindowEx(
@@ -65,8 +65,10 @@ int WINAPI WinMain(
     UpdateWindow(hwnd);
 
     // ---- 初期化 ----
-    if (!g_renderer.Init(hwnd)) return -1;
-    g_dungeon.GenerateTestMap();
+    if (!g_renderer.Init(hwnd))
+        return -1;
+    // g_dungeon.GenerateTestMap();
+    g_dungeon.Generate(1);
     g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
     g_camera.Update(g_dungeon.GetStartPosition());
@@ -80,13 +82,17 @@ int WINAPI WinMain(
     MSG msg = {};
     bool isRunning = true;
     float fpsTimer = 0.0f;
-    int   frameCount = 0; 
+    int frameCount = 0;
 
     while (isRunning)
     {
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            if (msg.message == WM_QUIT) { isRunning = false; break; }
+            if (msg.message == WM_QUIT)
+            {
+                isRunning = false;
+                break;
+            }
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
@@ -95,8 +101,7 @@ int WINAPI WinMain(
         {
             LARGE_INTEGER currentTime;
             QueryPerformanceCounter(&currentTime);
-            float deltaTime = static_cast<float>(currentTime.QuadPart - previousTime.QuadPart)
-                / static_cast<float>(frequency.QuadPart);
+            float deltaTime = static_cast<float>(currentTime.QuadPart - previousTime.QuadPart) / static_cast<float>(frequency.QuadPart);
             previousTime = currentTime;
 
             // 更新
@@ -104,7 +109,7 @@ int WINAPI WinMain(
             g_camera.Update(g_player.GetPosition());
 
             // 描画
-            g_renderer.Render(deltaTime);
+            g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
             g_player.Draw();
             g_dungeon.Draw(g_renderer);
             g_renderer.Present();
@@ -137,25 +142,51 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_KEYDOWN:
         switch (wParam)
         {
-        case VK_ESCAPE: DestroyWindow(hwnd); break;
-        case 'W': g_player.keyW = true; break;
-        case 'A': g_player.keyA = true; break;
-        case 'S': g_player.keyS = true; break;
-        case 'D': g_player.keyD = true; break;
-        case VK_UP:   g_cubeManager.keyUp = true;   break;
-        case VK_DOWN: g_cubeManager.keyDown = true; break;
+        case VK_ESCAPE:
+            DestroyWindow(hwnd);
+            break;
+        case 'W':
+            g_player.keyW = true;
+            break;
+        case 'A':
+            g_player.keyA = true;
+            break;
+        case 'S':
+            g_player.keyS = true;
+            break;
+        case 'D':
+            g_player.keyD = true;
+            break;
+        case VK_UP:
+            g_cubeManager.keyUp = true;
+            break;
+        case VK_DOWN:
+            g_cubeManager.keyDown = true;
+            break;
         }
         return 0;
 
     case WM_KEYUP:
         switch (wParam)
         {
-        case 'W': g_player.keyW = false; break;
-        case 'A': g_player.keyA = false; break;
-        case 'S': g_player.keyS = false; break;
-        case 'D': g_player.keyD = false; break;
-        case VK_UP:   g_cubeManager.keyUp = false;   break;
-        case VK_DOWN: g_cubeManager.keyDown = false; break;
+        case 'W':
+            g_player.keyW = false;
+            break;
+        case 'A':
+            g_player.keyA = false;
+            break;
+        case 'S':
+            g_player.keyS = false;
+            break;
+        case 'D':
+            g_player.keyD = false;
+            break;
+        case VK_UP:
+            g_cubeManager.keyUp = false;
+            break;
+        case VK_DOWN:
+            g_cubeManager.keyDown = false;
+            break;
         }
         return 0;
 
