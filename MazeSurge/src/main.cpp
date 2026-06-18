@@ -1,9 +1,9 @@
-#include "MazeSurge/Common.h"
-#include "MazeSurge/Renderer.h"
-#include "MazeSurge/Camera.h"
-#include "MazeSurge/Player.h"
-#include "MazeSurge/Dungeon.h"
-#include "MazeSurge/ProjectilePool.h"
+#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Graphics/Renderer.h"
+#include "MazeSurge/Graphics/Camera.h"
+#include "MazeSurge/Game/Player.h"
+#include "MazeSurge/Game/Dungeon.h"
+#include "MazeSurge/Game/ProjectilePool.h"
 #include <iostream>
 #include <ctime>
 

@@ -1,4 +1,4 @@
-#include "MazeSurge/Raycast.h"
+#include "MazeSurge/Utility/Raycast.h"
 
 void Raycast::getRayVector(
 	float mouseX,

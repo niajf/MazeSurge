@@ -1,5 +1,5 @@
 #pragma once
-#include "MazeSurge/Common.h"
+#include "MazeSurge/Core/Common.h"
 
 class Raycast
 {

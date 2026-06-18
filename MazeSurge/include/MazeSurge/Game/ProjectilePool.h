@@ -1,7 +1,7 @@
 #pragma once
-#include "MazeSurge/Common.h"
-#include "MazeSurge/Projectile.h"
-#include "MazeSurge/Dungeon.h"
+#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Game/Projectile.h"
+#include "MazeSurge/Game/Dungeon.h"
 
 class ProjectilePool
 {

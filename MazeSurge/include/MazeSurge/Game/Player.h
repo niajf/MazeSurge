@@ -1,7 +1,7 @@
 #pragma once
-#include "MazeSurge/Common.h"
-#include "MazeSurge/Dungeon.h"
-#include "MazeSurge/Renderer.h"
+#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Game/Dungeon.h"
+#include "MazeSurge/Graphics/Renderer.h"
 #include <algorithm>
 
 class Player

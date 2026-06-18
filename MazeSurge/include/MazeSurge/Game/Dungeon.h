@@ -1,6 +1,6 @@
 #pragma once
-#include "MazeSurge/Common.h"
-#include "MazeSurge/Renderer.h"
+#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Graphics/Renderer.h"
 #include <vector>
 #include <cmath>
 #include <algorithm>

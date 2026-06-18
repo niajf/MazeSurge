@@ -1,5 +1,5 @@
-#include "MazeSurge/Renderer.h"
-#include "MazeSurge/Camera.h"
+#include "MazeSurge/Graphics/Renderer.h"
+#include "MazeSurge/Graphics/Camera.h"
 #include <string>
 
 // グローバルレンダラーインスタンスの定義

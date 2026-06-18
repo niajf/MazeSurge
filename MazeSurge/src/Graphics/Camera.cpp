@@ -1,4 +1,4 @@
-#include "MazeSurge/Camera.h"
+#include "MazeSurge/Graphics/Camera.h"
 
 // グローバルカメラインスタンスの定義
 Camera g_camera;

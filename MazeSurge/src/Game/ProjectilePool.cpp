@@ -1,4 +1,4 @@
-#include "MazeSurge/ProjectilePool.h"
+#include "MazeSurge/Game/ProjectilePool.h"
 
 ProjectilePool g_projectilePool;
 

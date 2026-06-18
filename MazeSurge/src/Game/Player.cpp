@@ -1,4 +1,4 @@
-#include "MazeSurge/Player.h"
+#include "MazeSurge/Game/Player.h"
 
 Player g_player;
 

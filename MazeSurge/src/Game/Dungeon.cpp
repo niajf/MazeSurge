@@ -1,4 +1,4 @@
-#include "MazeSurge/Dungeon.h"
+#include "MazeSurge/Game/Dungeon.h"
 
 Dungeon g_dungeon;
 
