@@ -18,6 +18,7 @@ Projectile *ProjectilePool::Get(XMFLOAT3 playerPos, XMFLOAT3 dir)
         {
             m_pool[i].active = true;
             m_pool[i].position = playerPos;
+            m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
             m_pool[i].direction = dir;
             m_pool[i].lifetime = 0.f;
             return &m_pool[i];
@@ -44,6 +45,7 @@ void ProjectilePool::Update(float deltaTime, const Dungeon &dungeon)
         m_pool[i].position.x += deltaTime * m_pool[i].velocity * m_pool[i].direction.x;
         m_pool[i].position.y += deltaTime * m_pool[i].velocity * m_pool[i].direction.y;
         m_pool[i].position.z += deltaTime * m_pool[i].velocity * m_pool[i].direction.z;
+        m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
     }
 };
 
@@ -54,8 +56,25 @@ void ProjectilePool::Draw(Renderer &renderer) const
         if (!m_pool[i].active)
             continue;
 
-        XMMATRIX world = XMMatrixScaling(0.2f, 0.2f, 0.2f) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.5f, m_pool[i].position.z);
+        XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.5f, m_pool[i].position.z);
         XMFLOAT4 projectileColor = {(float)220 / 255, (float)20 / 255, (float)60 / 255, 1.0f};
         renderer.DrawCube(world, projectileColor);
     }
 };
+
+bool ProjectilePool::DeactiveOnCollision(const BBOX &targetBbox)
+{
+    for (size_t i = 0; i < m_pool.size(); i++)
+    {
+        if (!m_pool[i].active)
+            continue;
+
+        if (Collision::checkAABB(m_pool[i].bbox, targetBbox))
+        {
+            m_pool[i].active = false;
+            return true;
+        }
+    }
+
+    return false;
+}

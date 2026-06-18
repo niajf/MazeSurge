@@ -6,6 +6,7 @@ void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_position = startPosition;
 	m_hp = 100;
+	m_bbox.setBBOX(m_position, m_scale);
 }
 
 XMFLOAT3 Player::CalcMoveVelocity() const
@@ -57,11 +58,13 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon)
 
 	m_position.x = newX;
 	m_position.z = newZ;
+
+	m_bbox.setBBOX(m_position, m_scale);
 }
 
 void Player::Draw() const
 {
-	XMMATRIX world = XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(m_position.x, m_position.y + 0.4f, m_position.z);
+	XMMATRIX world = XMMatrixScaling(m_scale, m_scale, m_scale) * XMMatrixTranslation(m_position.x, m_position.y + 0.4f, m_position.z);
 	XMFLOAT4 playerColor = {0.0f, 0.91f, .25f, 1.0f};
 	g_renderer.DrawCube(world, playerColor);
 }

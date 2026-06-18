@@ -12,9 +12,9 @@
 //   合計: 32バイト/頂点
 struct Vertex
 {
-    XMFLOAT3 position;  // 位置 (x, y, z)
-    XMFLOAT3 normal;    // 法線ベクトル
-    XMFLOAT2 texCoord;  // UV座標
+    XMFLOAT3 position; // 位置 (x, y, z)
+    XMFLOAT3 normal;   // 法線ベクトル
+    XMFLOAT2 texCoord; // UV座標
 };
 
 // ============================================================
@@ -33,9 +33,28 @@ struct alignas(16) ConstantBuffer
 struct alignas(16) LightBuffer
 {
     XMFLOAT3 lightDirection;
-    float    padding1;
+    float padding1;
     XMFLOAT3 lightColor;
-    float    padding2;
+    float padding2;
     XMFLOAT3 cameraPosition;
-    float    shininess;
+    float shininess;
+};
+
+// ============================================================
+// BoundinBox構造体(AABB衝突判定に使用)
+// ============================================================
+struct BBOX
+{
+    float minX;
+    float maxX;
+    float minZ;
+    float maxZ;
+
+    void setBBOX(const XMFLOAT3 &pos, float scale)
+    {
+        minX = pos.x - scale * 0.5f;
+        maxX = pos.x + scale * 0.5f;
+        minZ = pos.z - scale * 0.5f;
+        maxZ = pos.z + scale * 0.5f;
+    }
 };

@@ -111,7 +111,7 @@ int WINAPI WinMain(
             g_player.Update(deltaTime, g_dungeon);
             g_camera.Update(g_player.GetPosition());
             g_projectilePool.Update(deltaTime, g_dungeon);
-            g_enemyManager.Update(deltaTime, g_player, g_dungeon);
+            g_enemyManager.Update(deltaTime, g_player, g_dungeon, g_projectilePool);
             g_dungeon.IsCheckPoint(g_player.GetPosition());
 
             if (g_dungeon.IsGoal(g_player.GetPosition()))

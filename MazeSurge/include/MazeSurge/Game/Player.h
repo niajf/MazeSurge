@@ -1,5 +1,6 @@
 #pragma once
 #include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Types.h"
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Graphics/Renderer.h"
 #include <algorithm>
@@ -15,6 +16,7 @@ public:
 	void Draw() const;
 
 	XMFLOAT3 GetPosition() const { return m_position; };
+	BBOX getBBOX() const { return m_bbox; };
 	int GetHP() const { return m_hp; };
 
 	bool keyW = false;
@@ -24,6 +26,8 @@ public:
 
 private:
 	XMFLOAT3 m_position = {0.0f, 0.0f, 0.0f};
+	BBOX m_bbox;
+	float m_scale = 0.8f;
 	float m_speed = 6.0f;
 	int m_hp = 100;
 

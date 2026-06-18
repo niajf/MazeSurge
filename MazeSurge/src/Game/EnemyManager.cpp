@@ -25,13 +25,14 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon)
             m_pool[i].position.x = norm * std::cos(radian);
             m_pool[i].position.y = 0.f;
             m_pool[i].position.z = norm * std::sin(radian);
+            m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
 
             return;
         }
     }
 }
 
-void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeon)
+void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeon, ProjectilePool &projectilePool)
 {
     m_elapsedTime += deltaTime;
 
@@ -51,6 +52,7 @@ void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeo
         if (!m_pool[i].active)
             continue;
 
+        // 移動方向の変換
         XMFLOAT3 playerPosFloat = player.GetPosition();
         XMVECTOR playerPosVec = XMLoadFloat3(&playerPosFloat);
         XMVECTOR enemyPosVec = XMLoadFloat3(&m_pool[i].position);
@@ -59,9 +61,19 @@ void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeo
         XMFLOAT3 dirFloatNorm;
         XMStoreFloat3(&dirFloatNorm, dirVecNorm);
 
+        // 移動先の計算
         m_pool[i].position.x += deltaTime * m_pool[i].speed * dirFloatNorm.x;
         m_pool[i].position.y += deltaTime * m_pool[i].speed * dirFloatNorm.y;
         m_pool[i].position.z += deltaTime * m_pool[i].speed * dirFloatNorm.z;
+        m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
+
+        // プレイヤーと衝突したら、非活性化
+        if (Collision::checkAABB(player.getBBOX(), m_pool[i].bbox))
+            m_pool[i].active = false;
+
+        // 球と衝突したら、非活性化
+        if (projectilePool.DeactiveOnCollision(m_pool[i].bbox))
+            m_pool[i].active = false;
     }
 }
 
@@ -72,7 +84,7 @@ void EnemyManager::Draw(Renderer &renderer) const
         if (!m_pool[i].active)
             continue;
 
-        XMMATRIX world = XMMatrixScaling(0.8f, 0.8f, 0.8f) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.4f, m_pool[i].position.z);
+        XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.4f, m_pool[i].position.z);
         XMFLOAT4 projectileColor = {(float)128 / 255, (float)0 / 255, (float)0 / 255, 1.0f};
         renderer.DrawCube(world, projectileColor);
     }

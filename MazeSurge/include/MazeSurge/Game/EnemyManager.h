@@ -1,8 +1,11 @@
 #pragma once
 #include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Types.h"
+#include "MazeSurge/Utility/Collision.h"
 #include "MazeSurge/Game/Enemy.h"
 #include "MazeSurge/Game/Player.h"
 #include "MazeSurge/Game/Dungeon.h"
+#include "MazeSurge/Game/ProjectilePool.h"
 #include <cstdlib>
 #include <cmath>
 
@@ -11,7 +14,7 @@ class EnemyManager
 public:
     void Init(size_t poolSize = 50);
     void SpawnEnemy(Dungeon &dungeon);
-    void Update(float deltaTime, const Player &player, Dungeon &dungeon);
+    void Update(float deltaTime, const Player &player, Dungeon &dungeon, ProjectilePool &projectilePool);
     void Draw(Renderer &rederer) const;
 
 private:
