@@ -5,6 +5,7 @@
 #include "MazeSurge/Dungeon.h"
 #include "MazeSurge/ProjectilePool.h"
 #include <iostream>
+#include <ctime>
 
 // ---- 前方宣言 ----
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -68,7 +69,7 @@ int WINAPI WinMain(
     if (!g_renderer.Init(hwnd))
         return -1;
     // g_dungeon.GenerateTestMap();
-    g_dungeon.Generate(1);
+    g_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
     g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
     g_camera.Update(g_dungeon.GetStartPosition());

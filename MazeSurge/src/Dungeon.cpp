@@ -28,11 +28,13 @@ void Dungeon::Generate(unsigned seed)
 	m_grid[startPos.first][startPos.second] = CellType::START;
 
 	// 遷移先の座標の差分を配列で定義
-	std::vector<int> di = {-2, 0, 2, 0};
-	std::vector<int> dj = {0, 2, 0, -2};
+	std::vector<int> di = {-1, 0, 1, 0};
+	std::vector<int> dj = {0, 1, 0, -1};
 
+	// 迷路が単純にならないように、穴を掘る方向をランダムに決定するための配列
 	std::vector<int> order = {0, 1, 2, 3, 0, 1, 2, 3};
 
+	// 穴掘り法で迷路を生成
 	while (!stk.empty())
 	{
 		auto [nowI, nowJ] = stk.top();
@@ -41,16 +43,16 @@ void Dungeon::Generate(unsigned seed)
 		bool all = true;
 		for (int k = 0; k < 4; k++)
 		{
-			int newI = nowI + di[order[startIndex + k]];
-			int newJ = nowJ + dj[order[startIndex + k]];
+			int newI = nowI + di[order[startIndex + k]] * 2;
+			int newJ = nowJ + dj[order[startIndex + k]] * 2;
 
 			if (!(0 <= newI && newI < m_mazeSize && 0 <= newJ && newJ < m_mazeSize))
 				continue;
 
 			if (m_grid[newI][newJ] == CellType::WALL)
 			{
-				m_grid[newI][newJ] = CellType::FLOOR;
-				m_grid[nowI + di[order[startIndex + k]] / 2][nowJ + dj[order[startIndex + k]] / 2] = CellType::FLOOR;
+				m_grid[nowI + di[order[startIndex + k]]][nowJ + dj[order[startIndex + k]]] = CellType::FLOOR;
+				m_grid[nowI + di[order[startIndex + k]] * 2][nowJ + dj[order[startIndex + k]] * 2] = CellType::FLOOR;
 				stk.push({newI, newJ});
 				all = false;
 				break;
@@ -60,6 +62,73 @@ void Dungeon::Generate(unsigned seed)
 		if (all)
 			stk.pop();
 	}
+
+	// スタートからのマンハッタン距離を保存する配列
+	std::vector<std::vector<int>> distL1(m_mazeSize, std::vector<int>(m_mazeSize, -1));
+
+	// 行き止まりのセルを保存する配列
+	std::vector<std::pair<int, int>> deadEnds;
+
+	// BFS用のキュー(col, row, dist)
+	std::queue<std::tuple<int, int, int>> que;
+
+	// スタートから最も遠いセルを記録し、ゴールにする。
+	std::pair<int, int> goalGrid = startPos;
+	int maxDist = -1;
+
+	que.push({startPos.first, startPos.second, 0});
+
+	// BFS開始
+	while (!que.empty())
+	{
+		auto [nowI, nowJ, nowDist] = que.front();
+		que.pop();
+
+		if (distL1[nowI][nowJ] == -1)
+		{
+			distL1[nowI][nowJ] = nowDist;
+			if (maxDist < nowDist)
+			{
+				maxDist = nowDist;
+				goalGrid = {nowI, nowJ};
+			}
+		}
+		else
+			continue;
+
+		int freeDirCount = 0;
+		for (int k = 0; k < 4; k++)
+		{
+			int newI = nowI + di[k];
+			int newJ = nowJ + dj[k];
+
+			if (!(0 <= newI && newI < m_mazeSize && 0 <= newJ && newJ < m_mazeSize))
+				continue;
+
+			if (m_grid[newI][newJ] == CellType::FLOOR)
+			{
+				freeDirCount++;
+				que.push({newI, newJ, nowDist + 1});
+			}
+		}
+
+		if (freeDirCount == 1)
+			deadEnds.push_back({nowI, nowJ});
+	}
+
+	// 行き止まりの中から、ランダムでチェックポイントを設定
+	// ２番目までの要素はスタートとそれに隣接するセルであるため、候補から除外する
+	deadEnds.erase(deadEnds.begin(), deadEnds.begin() + 2);
+	m_numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
+	for (size_t i = 0; i < m_numCheckPoint; i++)
+	{
+		size_t idx = rand() % deadEnds.size();
+		m_grid[deadEnds[i].first][deadEnds[i].second] = CellType::CHECKPOINT;
+		deadEnds.erase(deadEnds.begin() + idx);
+	}
+
+	// 最も遠いセルをゴールに設定
+	m_grid[goalGrid.first][goalGrid.second] = CellType::GOAL;
 }
 
 void Dungeon::Draw(Renderer &renderer) const

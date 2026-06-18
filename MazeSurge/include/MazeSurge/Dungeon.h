@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <stack>
+#include <queue>
 
 class Dungeon
 {
@@ -40,8 +41,9 @@ public:
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 21;     // 奇数
-    float m_cellSize = 2.0f; // 1セル = 2ワールド単位
+    int m_mazeSize = 21;        // 奇数
+    size_t m_numCheckPoint = 5; // チェックポイントの数
+    float m_cellSize = 2.0f;    // 1セル = 2ワールド単位
 };
 
 extern Dungeon g_dungeon;
