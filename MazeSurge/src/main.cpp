@@ -3,6 +3,7 @@
 #include "MazeSurge/Camera.h"
 #include "MazeSurge/Player.h"
 #include "MazeSurge/Dungeon.h"
+#include "MazeSurge/ProjectilePool.h"
 #include <iostream>
 
 // ---- 前方宣言 ----
@@ -66,11 +67,12 @@ int WINAPI WinMain(
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd))
         return -1;
-    g_dungeon.GenerateTestMap();
-    // g_dungeon.Generate(1);
+    // g_dungeon.GenerateTestMap();
+    g_dungeon.Generate(1);
     g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
     g_camera.Update(g_dungeon.GetStartPosition());
+    g_projectilePool.Init(50);
 
     // ---- タイマー初期化 ----
     LARGE_INTEGER frequency, previousTime;
@@ -106,6 +108,7 @@ int WINAPI WinMain(
             // 更新
             g_player.Update(deltaTime, g_dungeon);
             g_camera.Update(g_player.GetPosition());
+            g_projectilePool.Update(deltaTime, g_dungeon);
             g_dungeon.IsCheckPoint(g_player.GetPosition());
 
             if (g_dungeon.IsGoal(g_player.GetPosition()))
@@ -118,6 +121,7 @@ int WINAPI WinMain(
             g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
             g_player.Draw();
             g_dungeon.Draw(g_renderer);
+            g_projectilePool.Draw(g_renderer);
             g_renderer.Present();
 
             // FPS 表示
@@ -181,6 +185,31 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         case 'D':
             g_player.keyD = false;
             break;
+        }
+        return 0;
+
+    case WM_LBUTTONDOWN:
+
+        RECT clipRect;
+        GetClientRect(hwnd, &clipRect);
+        MapWindowPoints(hwnd, nullptr, reinterpret_cast<POINT *>(&clipRect), 2);
+        ClipCursor(&clipRect);
+
+        {
+            XMFLOAT3 hitPos = g_camera.ScreenToWorldOnPlane(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), -0.5f);
+            XMFLOAT3 playerPos = g_player.GetPosition();
+
+            XMVECTOR dir_norm = XMVector3Normalize(
+                XMVectorSubtract(XMLoadFloat3(&hitPos), XMLoadFloat3(&playerPos)));
+            XMFLOAT3 dir_float3_norm;
+            XMStoreFloat3(&dir_float3_norm, dir_norm);
+
+            g_projectilePool.Get(playerPos, dir_float3_norm);
+
+            // POINT mousePos = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
+            // char buf[64];
+            // sprintf_s(buf, "Mouse: (%d, %d)\n", mousePos.x, mousePos.y);
+            // OutputDebugStringA(buf);
         }
         return 0;
 

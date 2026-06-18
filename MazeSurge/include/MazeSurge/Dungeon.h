@@ -40,7 +40,7 @@ public:
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 5;      // 奇数
+    int m_mazeSize = 21;     // 奇数
     float m_cellSize = 2.0f; // 1セル = 2ワールド単位
 };
 
