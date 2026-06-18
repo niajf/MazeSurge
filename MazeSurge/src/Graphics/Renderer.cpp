@@ -29,6 +29,8 @@ bool Renderer::Init(HWND hwnd)
         return false;
     if (!CreateMeshBuffers())
         return false;
+    if (!InitSpriteBatch())
+        return false;
 
     return true;
 }
@@ -364,6 +366,11 @@ bool Renderer::CreateMeshBuffers()
 // ============================================================
 void Renderer::Render(float deltaTime, float floorScale)
 {
+    // SpriteBatch が変更したOMステートを D3D11 デフォルトに戻す
+    m_deviceContext->OMSetDepthStencilState(nullptr, 0);
+    m_deviceContext->OMSetBlendState(nullptr, nullptr, 0xFFFFFFFF);
+    m_deviceContext->RSSetState(nullptr);
+
     // ---- 画面クリア ----
     float clearColor[4] = {0.1f, 0.1f, 0.15f, 1.0f};
     m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
@@ -425,6 +432,136 @@ void Renderer::DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color)
     m_deviceContext->IASetIndexBuffer(m_indexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
     m_deviceContext->DrawIndexed(36, 0, 0);
 };
+
+bool Renderer::InitSpriteBatch()
+{
+    m_spriteBatch = std::make_unique<SpriteBatch>(m_deviceContext.Get());
+    try
+    {
+        m_spriteFont = std::make_unique<SpriteFont>(m_device.Get(), L"fonts/gameover.spritefont");
+    }
+    catch (...)
+    {
+        MessageBox(nullptr, L"フォントファイルの読み込みに失敗: fonts/gameover.spritefont", L"エラー", MB_OK);
+        return false;
+    }
+
+    // ボタン背景描画用の 1x1 白テクスチャを作成
+    D3D11_TEXTURE2D_DESC texDesc = {};
+    texDesc.Width = 1;
+    texDesc.Height = 1;
+    texDesc.MipLevels = 1;
+    texDesc.ArraySize = 1;
+    texDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    texDesc.SampleDesc.Count = 1;
+    texDesc.Usage = D3D11_USAGE_DEFAULT;
+    texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+    uint32_t white = 0xFFFFFFFF;
+    D3D11_SUBRESOURCE_DATA initData = {};
+    initData.pSysMem = &white;
+    initData.SysMemPitch = sizeof(uint32_t);
+
+    ComPtr<ID3D11Texture2D> tex;
+    HRESULT hr = m_device->CreateTexture2D(&texDesc, &initData, tex.GetAddressOf());
+    if (FAILED(hr))
+        return false;
+
+    hr = m_device->CreateShaderResourceView(tex.Get(), nullptr, m_whiteTexture.GetAddressOf());
+    if (FAILED(hr))
+        return false;
+
+    return true;
+}
+
+void Renderer::DrawHP(int hp)
+{
+    wchar_t buf[32];
+    swprintf_s(buf, L"HP: %d", hp);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), buf,
+                             XMFLOAT2(20.0f, 20.0f),
+                             Colors::White, 0.0f,
+                             XMFLOAT2(0, 0), 0.4f);
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawGameOver()
+{
+    const wchar_t *title = L"GAME OVER";
+    const wchar_t *btnText = L"EXIT";
+    const float btnScale = 0.5f;
+
+    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
+    XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
+
+    // "GAME OVER" を画面中央より少し上に配置
+    XMFLOAT2 titlePos(
+        (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 60.0f);
+
+    // ボタンを "GAME OVER" の下に配置
+    const int btnW = 200, btnH = 60;
+    int btnX = (WINDOW_WIDTH - btnW) / 2;
+    int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
+    m_gameOverButtonRect = {btnX, btnY, btnX + btnW, btnY + btnH};
+
+    // ボタン内テキストを中央揃え
+    float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
+    float textScaledH = XMVectorGetY(btnTextSize) * btnScale;
+    XMFLOAT2 btnTextPos(
+        btnX + (btnW - textScaledW) * 0.5f,
+        btnY + (btnH - textScaledH) * 0.5f);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Red);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), m_gameOverButtonRect, Colors::DarkRed);
+    m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawGameClear()
+{
+    const wchar_t *title = L"GAME CLEAR";
+    const wchar_t *btnText = L"EXIT";
+    const float btnScale = 0.5f;
+
+    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
+    XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
+
+    // "GAME CLEAR" を画面中央より少し上に配置
+    XMFLOAT2 titlePos(
+        (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 60.0f);
+
+    // ボタンを "GAME CLEAR" の下に配置
+    const int btnW = 200, btnH = 60;
+    int btnX = (WINDOW_WIDTH - btnW) / 2;
+    int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
+    m_gameOverButtonRect = {btnX, btnY, btnX + btnW, btnY + btnH};
+
+    // ボタン内テキストを中央揃え
+    float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
+    float textScaledH = XMVectorGetY(btnTextSize) * btnScale;
+    XMFLOAT2 btnTextPos(
+        btnX + (btnW - textScaledW) * 0.5f,
+        btnY + (btnH - textScaledH) * 0.5f);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Blue);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), m_gameOverButtonRect, Colors::DarkBlue);
+    m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+    m_spriteBatch->End();
+}
+
+bool Renderer::IsGameOverButtonClicked(int x, int y) const
+{
+    return x >= m_gameOverButtonRect.left && x <= m_gameOverButtonRect.right &&
+           y >= m_gameOverButtonRect.top && y <= m_gameOverButtonRect.bottom;
+}
 
 void Renderer::Present()
 {

@@ -116,19 +116,97 @@ int WINAPI WinMain(
 
             // ゴールに到達した際の処理
             if (g_dungeon.IsGoal(g_player.GetPosition()))
+            {
+                // 何かキーまたはマウスが押されるまでゲームオーバー画面を表示し続ける
+                bool waiting = true;
+                while (waiting)
+                {
+                    MSG waitMsg = {};
+                    while (PeekMessage(&waitMsg, nullptr, 0, 0, PM_REMOVE))
+                    {
+                        if (waitMsg.message == WM_QUIT)
+                        {
+                            isRunning = false;
+                            waiting = false;
+                            break;
+                        }
+                        if (waitMsg.message == WM_LBUTTONDOWN)
+                        {
+                            int mx = GET_X_LPARAM(waitMsg.lParam);
+                            int my = GET_Y_LPARAM(waitMsg.lParam);
+                            if (g_renderer.IsGameOverButtonClicked(mx, my))
+                            {
+                                waiting = false;
+                                break;
+                            }
+                        }
+                        TranslateMessage(&waitMsg);
+                        DispatchMessage(&waitMsg);
+                    }
+
+                    g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
+                    g_player.Draw();
+                    g_dungeon.Draw(g_renderer);
+                    g_projectilePool.Draw(g_renderer);
+                    g_enemyManager.Draw(g_renderer);
+                    g_renderer.DrawGameClear();
+                    g_renderer.Present();
+                }
                 DestroyWindow(hwnd);
+            }
 
             // プレイヤーのHPが0になればゲームを修了
-            if (g_player.GetHP() <= 0)
-                DestroyWindow(hwnd);
+            else if (g_player.GetHP() <= 0)
+            {
+                // 何かキーまたはマウスが押されるまでゲームオーバー画面を表示し続ける
+                bool waiting = true;
+                while (waiting)
+                {
+                    MSG waitMsg = {};
+                    while (PeekMessage(&waitMsg, nullptr, 0, 0, PM_REMOVE))
+                    {
+                        if (waitMsg.message == WM_QUIT)
+                        {
+                            isRunning = false;
+                            waiting = false;
+                            break;
+                        }
+                        if (waitMsg.message == WM_LBUTTONDOWN)
+                        {
+                            int mx = GET_X_LPARAM(waitMsg.lParam);
+                            int my = GET_Y_LPARAM(waitMsg.lParam);
+                            if (g_renderer.IsGameOverButtonClicked(mx, my))
+                            {
+                                waiting = false;
+                                break;
+                            }
+                        }
+                        TranslateMessage(&waitMsg);
+                        DispatchMessage(&waitMsg);
+                    }
 
-            // 描画
-            g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-            g_player.Draw();
-            g_dungeon.Draw(g_renderer);
-            g_projectilePool.Draw(g_renderer);
-            g_enemyManager.Draw(g_renderer);
-            g_renderer.Present();
+                    g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
+                    g_player.Draw();
+                    g_dungeon.Draw(g_renderer);
+                    g_projectilePool.Draw(g_renderer);
+                    g_enemyManager.Draw(g_renderer);
+                    g_renderer.DrawGameOver();
+                    g_renderer.Present();
+                }
+                DestroyWindow(hwnd);
+            }
+
+            else
+            {
+                // 描画
+                g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
+                g_player.Draw();
+                g_dungeon.Draw(g_renderer);
+                g_projectilePool.Draw(g_renderer);
+                g_enemyManager.Draw(g_renderer);
+                g_renderer.DrawHP(g_player.GetHP());
+                g_renderer.Present();
+            }
 
             // FPS 表示
             fpsTimer += deltaTime;
