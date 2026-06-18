@@ -145,7 +145,7 @@ int WINAPI WinMain(
                     }
 
                     g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                    g_player.Draw();
+                    g_player.Draw(g_renderer);
                     g_dungeon.Draw(g_renderer);
                     g_projectilePool.Draw(g_renderer);
                     g_enemyManager.Draw(g_renderer);
@@ -186,7 +186,7 @@ int WINAPI WinMain(
                     }
 
                     g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                    g_player.Draw();
+                    g_player.Draw(g_renderer);
                     g_dungeon.Draw(g_renderer);
                     g_projectilePool.Draw(g_renderer);
                     g_enemyManager.Draw(g_renderer);
@@ -200,7 +200,7 @@ int WINAPI WinMain(
             {
                 // 描画
                 g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                g_player.Draw();
+                g_player.Draw(g_renderer);
                 g_dungeon.Draw(g_renderer);
                 g_projectilePool.Draw(g_renderer);
                 g_enemyManager.Draw(g_renderer);

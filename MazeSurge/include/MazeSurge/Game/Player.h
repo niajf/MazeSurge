@@ -10,7 +10,7 @@ class Player
 public:
 	void Init(const XMFLOAT3 &staticPosition);
 	void Update(float deltaTime, Dungeon &g_dungeon);
-	void Draw() const;
+	void Draw(Renderer &renderer) const;
 	void hitEnemy();
 
 	XMFLOAT3 GetPosition() const { return m_position; };
