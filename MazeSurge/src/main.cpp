@@ -4,6 +4,7 @@
 #include "MazeSurge/Game/Player.h"
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Game/ProjectilePool.h"
+#include "MazeSurge/Game/EnemyManager.h"
 #include <iostream>
 #include <ctime>
 
@@ -68,12 +69,12 @@ int WINAPI WinMain(
     // ---- 初期化 ----
     if (!g_renderer.Init(hwnd))
         return -1;
-    // g_dungeon.GenerateTestMap();
     g_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
     g_player.Init(g_dungeon.GetStartPosition());
     g_camera.Init(14.0f, -7.0f);
     g_camera.Update(g_dungeon.GetStartPosition());
     g_projectilePool.Init(50);
+    g_enemyManager.Init(50);
 
     // ---- タイマー初期化 ----
     LARGE_INTEGER frequency, previousTime;
@@ -110,6 +111,7 @@ int WINAPI WinMain(
             g_player.Update(deltaTime, g_dungeon);
             g_camera.Update(g_player.GetPosition());
             g_projectilePool.Update(deltaTime, g_dungeon);
+            g_enemyManager.Update(deltaTime, g_player, g_dungeon);
             g_dungeon.IsCheckPoint(g_player.GetPosition());
 
             if (g_dungeon.IsGoal(g_player.GetPosition()))
@@ -123,6 +125,7 @@ int WINAPI WinMain(
             g_player.Draw();
             g_dungeon.Draw(g_renderer);
             g_projectilePool.Draw(g_renderer);
+            g_enemyManager.Draw(g_renderer);
             g_renderer.Present();
 
             // FPS 表示

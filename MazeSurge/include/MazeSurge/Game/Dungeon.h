@@ -37,7 +37,9 @@ public:
 
     XMFLOAT3 GetStartPosition() const;
     XMFLOAT3 GetGoalPosition() const;
+
     int getMazeSize() { return m_mazeSize; };
+    float getCellSize() { return m_cellSize; };
 
 private:
     std::vector<std::vector<CellType>> m_grid;
