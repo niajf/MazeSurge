@@ -9,14 +9,12 @@ class Player
 {
 public:
 	void Init(const XMFLOAT3 &staticPosition);
-
 	void Update(float deltaTime, Dungeon &g_dungeon);
-
-	// プレイヤーキューブの描画
 	void Draw() const;
+	void hitEnemy();
 
 	XMFLOAT3 GetPosition() const { return m_position; };
-	BBOX getBBOX() const { return m_bbox; };
+	BBOX GetBBOX() const { return m_bbox; };
 	int GetHP() const { return m_hp; };
 
 	bool keyW = false;
@@ -29,7 +27,7 @@ private:
 	BBOX m_bbox;
 	float m_scale = 0.8f;
 	float m_speed = 6.0f;
-	int m_hp = 100;
+	int m_hp = 10;
 
 	// プレイヤーの移動方向を計算
 	XMFLOAT3 CalcMoveVelocity() const;

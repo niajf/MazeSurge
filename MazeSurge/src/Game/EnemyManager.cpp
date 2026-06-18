@@ -32,7 +32,7 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon)
     }
 }
 
-void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeon, ProjectilePool &projectilePool)
+void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, ProjectilePool &projectilePool)
 {
     m_elapsedTime += deltaTime;
 
@@ -68,8 +68,11 @@ void EnemyManager::Update(float deltaTime, const Player &player, Dungeon &dungeo
         m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
 
         // プレイヤーと衝突したら、非活性化
-        if (Collision::checkAABB(player.getBBOX(), m_pool[i].bbox))
+        if (Collision::checkAABB(player.GetBBOX(), m_pool[i].bbox))
+        {
             m_pool[i].active = false;
+            player.hitEnemy();
+        }
 
         // 球と衝突したら、非活性化
         if (projectilePool.DeactiveOnCollision(m_pool[i].bbox))

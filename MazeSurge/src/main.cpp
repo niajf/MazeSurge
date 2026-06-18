@@ -114,11 +114,13 @@ int WINAPI WinMain(
             g_enemyManager.Update(deltaTime, g_player, g_dungeon, g_projectilePool);
             g_dungeon.IsCheckPoint(g_player.GetPosition());
 
+            // ゴールに到達した際の処理
             if (g_dungeon.IsGoal(g_player.GetPosition()))
-            {
-                // ゴールに到達した際の処理
                 DestroyWindow(hwnd);
-            }
+
+            // プレイヤーのHPが0になればゲームを修了
+            if (g_player.GetHP() <= 0)
+                DestroyWindow(hwnd);
 
             // 描画
             g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
@@ -209,11 +211,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             XMStoreFloat3(&dir_float3_norm, dir_norm);
 
             g_projectilePool.Get(playerPos, dir_float3_norm);
-
-            // POINT mousePos = {GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)};
-            // char buf[64];
-            // sprintf_s(buf, "Mouse: (%d, %d)\n", mousePos.x, mousePos.y);
-            // OutputDebugStringA(buf);
         }
         return 0;
 

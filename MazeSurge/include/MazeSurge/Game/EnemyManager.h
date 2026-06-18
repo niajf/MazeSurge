@@ -14,7 +14,7 @@ class EnemyManager
 public:
     void Init(size_t poolSize = 50);
     void SpawnEnemy(Dungeon &dungeon);
-    void Update(float deltaTime, const Player &player, Dungeon &dungeon, ProjectilePool &projectilePool);
+    void Update(float deltaTime, Player &player, Dungeon &dungeon, ProjectilePool &projectilePool);
     void Draw(Renderer &rederer) const;
 
 private:

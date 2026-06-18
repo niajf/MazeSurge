@@ -5,7 +5,6 @@ Player g_player;
 void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_position = startPosition;
-	m_hp = 100;
 	m_bbox.setBBOX(m_position, m_scale);
 }
 
@@ -67,4 +66,12 @@ void Player::Draw() const
 	XMMATRIX world = XMMatrixScaling(m_scale, m_scale, m_scale) * XMMatrixTranslation(m_position.x, m_position.y + 0.4f, m_position.z);
 	XMFLOAT4 playerColor = {0.0f, 0.91f, .25f, 1.0f};
 	g_renderer.DrawCube(world, playerColor);
+}
+
+void Player::hitEnemy()
+{
+	m_hp--;
+	// char buf[64];
+	// sprintf_s(buf, "[Player] HP: %d\n", m_hp);
+	// OutputDebugStringA(buf);
 }
