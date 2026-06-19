@@ -119,12 +119,19 @@ void Dungeon::Generate(unsigned seed)
 	// 行き止まりの中から、ランダムでチェックポイントを設定
 	// ２番目までの要素はスタートとそれに隣接するセルであるため、候補から除外する
 	deadEnds.erase(deadEnds.begin(), deadEnds.begin() + 2);
-	m_numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
-	for (size_t i = 0; i < m_numCheckPoint; i++)
+
+	// 指定したチェックポイント数が、生成可能なチェックポイント数よりも大きくならないようにする
+	size_t numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
+
+	// チェックポイントにするセルをランダムに決定
+	std::vector<size_t> idxVector(m_numCheckPoint);
+	std::iota(idxVector.begin(), idxVector.end(), 0);
+	for (size_t i = 0; i < numCheckPoint; i++)
 	{
-		size_t idx = rand() % deadEnds.size();
-		m_grid[deadEnds[i].first][deadEnds[i].second] = CellType::CHECKPOINT;
-		deadEnds.erase(deadEnds.begin() + idx);
+		size_t idx = rand() % idxVector.size();
+		size_t idxDeadEnd = idxVector[idx];
+		m_grid[deadEnds[idxDeadEnd].first][deadEnds[idxDeadEnd].second] = CellType::CHECKPOINT;
+		idxVector.erase(idxVector.begin() + idx);
 	}
 
 	// 最も遠いセルをゴールに設定

@@ -7,17 +7,18 @@
 #include <cstdlib>
 #include <stack>
 #include <queue>
+#include <numeric>
 
 class Dungeon
 {
 public:
     enum CellType
     {
-        FLOOR = 0,
-        WALL = 1,
-        CHECKPOINT = 2,
-        GOAL = 3,
-        START = 4
+        FLOOR,
+        WALL,
+        CHECKPOINT,
+        GOAL,
+        START
     };
 
     void GenerateTestMap();
@@ -43,7 +44,7 @@ public:
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 21;        // 奇数
+    int m_mazeSize = 51;        // 奇数
     size_t m_numCheckPoint = 5; // チェックポイントの数
     float m_cellSize = 2.0f;    // 1セル = 2ワールド単位
 };
