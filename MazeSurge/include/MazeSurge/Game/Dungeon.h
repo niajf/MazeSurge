@@ -41,7 +41,7 @@ public:
 
     int getMazeSize() { return m_mazeSize; };
     float getCellSize() { return m_cellSize; };
-    size_t GetRemainCheckPoint() { return m_numCheckPoint; };
+    size_t GetCheckPointNum() { return m_numCheckPoint; };
 
 private:
     std::vector<std::vector<CellType>> m_grid;

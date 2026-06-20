@@ -10,6 +10,7 @@ void GameScene::Init()
     m_enemyManager.Init();
 
     m_getCheckPoint = 0;
+    m_elapsedTime = 0.f;
     m_timeLimit = TIME_LIMIT;
 }
 
@@ -17,9 +18,9 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 {
     if (m_state == GameState::Playing)
     {
-        m_timeLimit -= deltaTime;
+        m_elapsedTime += deltaTime;
 
-        if (m_timeLimit <= 0.f)
+        if (m_elapsedTime > m_timeLimit)
         {
             m_state = GameState::GameOver;
         }
@@ -66,8 +67,8 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
-        renderer.DrawTime(m_timeLimit);
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
+        renderer.DrawTime(m_timeLimit - m_elapsedTime);
         renderer.Present();
     }
 
@@ -79,9 +80,9 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
-        renderer.DrawTime(m_timeLimit);
-        renderer.DrawGameClear();
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
+        renderer.DrawTime(m_timeLimit - m_elapsedTime);
+        renderer.DrawGameClear(GetRankChar());
         renderer.Present();
     }
 
@@ -93,8 +94,8 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
-        renderer.DrawTime(m_timeLimit);
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
+        renderer.DrawTime(m_timeLimit - m_elapsedTime);
         renderer.DrawGameOver();
         renderer.Present();
     }
@@ -109,4 +110,22 @@ bool GameScene::IsButtonClicked(int x, int y) const
 {
     return x >= GAME_OVER_BUTTON_RECT.left && x <= GAME_OVER_BUTTON_RECT.right &&
            y >= GAME_OVER_BUTTON_RECT.top && y <= GAME_OVER_BUTTON_RECT.bottom;
+}
+
+char GameScene::GetRankChar()
+{
+    float timeScore = (m_timeLimit - m_elapsedTime) / m_timeLimit;
+    float checkPointScore = m_getCheckPoint / m_dungeon.GetCheckPointNum();
+    float totalScore = timeScore + checkPointScore;
+
+    if (totalScore >= 0.9f)
+        return 'S';
+    else if (totalScore >= 0.8f)
+        return 'A';
+    else if (totalScore >= 0.7f)
+        return 'B';
+    else if (totalScore >= 0.6f)
+        return 'C';
+
+    return 'D';
 }

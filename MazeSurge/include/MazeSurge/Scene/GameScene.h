@@ -19,6 +19,7 @@ public:
 
 private:
     bool IsButtonClicked(int x, int y) const;
+    char GetRankChar();
 
     Camera m_camera;
     Player m_player;
@@ -29,4 +30,5 @@ private:
 
     int m_getCheckPoint;
     float m_timeLimit;
+    float m_elapsedTime;
 };

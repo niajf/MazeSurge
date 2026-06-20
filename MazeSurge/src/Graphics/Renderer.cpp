@@ -593,19 +593,27 @@ void Renderer::DrawGameOver()
     m_spriteBatch->End();
 }
 
-void Renderer::DrawGameClear()
+void Renderer::DrawGameClear(char rankChar)
 {
     const wchar_t *title = L"GAME CLEAR";
     const wchar_t *btnText = L"EXIT";
+    wchar_t rankStr[32];
+    swprintf_s(rankStr, L"SYNCHRO RANK : %c", rankChar);
     const float btnScale = 0.5f;
 
     XMVECTOR titleSize = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
+    XMVECTOR rankSize = m_spriteFont->MeasureString(rankStr);
 
     // "GAME CLEAR" を画面中央より少し上に配置
     XMFLOAT2 titlePos(
         (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 60.0f);
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 90.0f);
+
+    // ランクをタイトルとボタンの間に中央揃えで配置
+    XMFLOAT2 rankPos(
+        (WINDOW_WIDTH - XMVectorGetX(rankSize)) * 0.5f,
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(rankSize) * 0.5f - 20.0f);
 
     // ボタンを "GAME CLEAR" の下に配置
     const int btnW = 200, btnH = 60;
@@ -621,6 +629,7 @@ void Renderer::DrawGameClear()
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Blue);
+    m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, Colors::Gold);
     m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, Colors::DarkBlue);
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);

@@ -44,7 +44,7 @@ public:
     void DrawGameOver();
 
     // 画面中央に "GAME CLEAR" とボタンを描画する（Present()の前に呼ぶ）
-    void DrawGameClear();
+    void DrawGameClear(char rankChar);
 
     // バックバッファを画面に表示する（ゲームループの最後に呼ぶ）
     void Present();

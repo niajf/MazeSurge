@@ -13,7 +13,7 @@ constexpr LPCWSTR WINDOW_TITLE = L"MazeSurge";
 constexpr float TIME_LIMIT = 7.f * 60.f;
 
 // ---- Dungeon ----
-constexpr int DUNGEON_GRID_SIZE = 51;      // 迷路のサイズ
+constexpr int DUNGEON_GRID_SIZE = 11;      // 迷路のサイズ
 constexpr int DUNGEON_CHECKPOINT_NUM = 5;  // チェックポイントの数
 constexpr float DUNGEON_CELL_SCALE = 2.0f; // 壁ブロックのスケール
 
