@@ -1,7 +1,5 @@
 #include "MazeSurge/Game/Player.h"
 
-Player g_player;
-
 void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_position = startPosition;
@@ -12,13 +10,13 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 {
 	XMFLOAT3 velocity = {0.0f, 0.0f, 0.0f};
 
-	if (keyW)
+	if (m_keyW)
 		velocity.z += 1.0f;
-	if (keyS)
+	if (m_keyS)
 		velocity.z -= 1.0f;
-	if (keyD)
+	if (m_keyD)
 		velocity.x += 1.0f;
-	if (keyA)
+	if (m_keyA)
 		velocity.x -= 1.0f;
 
 	XMVECTOR v = XMLoadFloat3(&velocity);
@@ -29,9 +27,14 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 	return velocity;
 }
 
-void Player::Update(float deltaTime, Dungeon &g_dungeon)
+void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &inputState)
 {
 	constexpr float HALF_SIZE = 0.4f;
+
+	m_keyW = inputState.keyW;
+	m_keyS = inputState.keyS;
+	m_keyD = inputState.keyD;
+	m_keyA = inputState.keyA;
 
 	XMFLOAT3 velocity = CalcMoveVelocity();
 

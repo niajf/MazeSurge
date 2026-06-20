@@ -1,7 +1,5 @@
 #include "MazeSurge/Game/Dungeon.h"
 
-Dungeon g_dungeon;
-
 void Dungeon::GenerateTestMap()
 {
 	m_grid.push_back({START, WALL, WALL, FLOOR, WALL});
@@ -121,12 +119,12 @@ void Dungeon::Generate(unsigned seed)
 	deadEnds.erase(deadEnds.begin(), deadEnds.begin() + 2);
 
 	// 指定したチェックポイント数が、生成可能なチェックポイント数よりも大きくならないようにする
-	size_t numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
+	m_numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
 
 	// チェックポイントにするセルをランダムに決定
 	std::vector<size_t> idxVector(m_numCheckPoint);
 	std::iota(idxVector.begin(), idxVector.end(), 0);
-	for (size_t i = 0; i < numCheckPoint; i++)
+	for (size_t i = 0; i < m_numCheckPoint; i++)
 	{
 		size_t idx = rand() % idxVector.size();
 		size_t idxDeadEnd = idxVector[idx];
@@ -214,6 +212,7 @@ bool Dungeon::IsCheckPoint(XMFLOAT3 playerPos)
 	if (m_grid[gridZ][gridX] == CellType::CHECKPOINT)
 	{
 		// チェックポイントを取得した際の処理
+		m_numCheckPoint--;
 		m_grid[gridZ][gridX] = CellType::FLOOR;
 		return true;
 	}

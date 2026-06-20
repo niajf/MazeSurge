@@ -2,8 +2,6 @@
 
 static const float pi = 3.1415;
 
-EnemyManager g_enemyManager;
-
 void EnemyManager::Init(size_t poolSize)
 {
     for (size_t i = 0; i < poolSize; i++)

@@ -30,5 +30,3 @@ private:
     float m_offsetY = 14.0f;         // プレイヤーからの垂直オフセット
     float m_offsetZ = -7.0f;         // プレイヤーからの奥行きオフセット
 };
-
-extern Camera g_camera;

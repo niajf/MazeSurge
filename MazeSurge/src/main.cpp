@@ -5,11 +5,15 @@
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Game/ProjectilePool.h"
 #include "MazeSurge/Game/EnemyManager.h"
+#include "MazeSurge/Scene/GameScene.h"
 #include <iostream>
 #include <ctime>
 
 // ---- 前方宣言 ----
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+// ---- 入力構造体 ----
+InputState inputState = {};
 
 // ============================================================
 // WinMain — エントリポイント
@@ -67,14 +71,14 @@ int WINAPI WinMain(
     UpdateWindow(hwnd);
 
     // ---- 初期化 ----
+    std::unique_ptr<Scene> currentScene = std::make_unique<GameScene>();
+
+    // ---- Rederer初期化 ----
     if (!g_renderer.Init(hwnd))
         return -1;
-    g_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
-    g_player.Init(g_dungeon.GetStartPosition());
-    g_camera.Init(14.0f, -7.0f);
-    g_camera.Update(g_dungeon.GetStartPosition());
-    g_projectilePool.Init(50);
-    g_enemyManager.Init(50);
+
+    // ---- シーン初期化 ----
+    currentScene->Init();
 
     // ---- タイマー初期化 ----
     LARGE_INTEGER frequency, previousTime;
@@ -108,105 +112,13 @@ int WINAPI WinMain(
             previousTime = currentTime;
 
             // 更新
-            g_player.Update(deltaTime, g_dungeon);
-            g_camera.Update(g_player.GetPosition());
-            g_projectilePool.Update(deltaTime, g_dungeon);
-            g_enemyManager.Update(deltaTime, g_player, g_dungeon, g_projectilePool);
-            g_dungeon.IsCheckPoint(g_player.GetPosition());
+            currentScene->Update(deltaTime, inputState);
 
-            // ゴールに到達した際の処理
-            if (g_dungeon.IsGoal(g_player.GetPosition()))
-            {
-                // 何かキーまたはマウスが押されるまでゲームオーバー画面を表示し続ける
-                bool waiting = true;
-                while (waiting)
-                {
-                    MSG waitMsg = {};
-                    while (PeekMessage(&waitMsg, nullptr, 0, 0, PM_REMOVE))
-                    {
-                        if (waitMsg.message == WM_QUIT)
-                        {
-                            isRunning = false;
-                            waiting = false;
-                            break;
-                        }
-                        if (waitMsg.message == WM_LBUTTONDOWN)
-                        {
-                            int mx = GET_X_LPARAM(waitMsg.lParam);
-                            int my = GET_Y_LPARAM(waitMsg.lParam);
-                            if (g_renderer.IsGameOverButtonClicked(mx, my))
-                            {
-                                waiting = false;
-                                break;
-                            }
-                        }
-                        TranslateMessage(&waitMsg);
-                        DispatchMessage(&waitMsg);
-                    }
+            // 描画
+            currentScene->Draw(g_renderer, inputState);
 
-                    g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                    g_player.Draw(g_renderer);
-                    g_dungeon.Draw(g_renderer);
-                    g_projectilePool.Draw(g_renderer);
-                    g_enemyManager.Draw(g_renderer);
-                    g_renderer.DrawGameClear();
-                    g_renderer.Present();
-                }
+            if (currentScene->GetState() == GameState::Finished)
                 DestroyWindow(hwnd);
-            }
-
-            // プレイヤーのHPが0になればゲームを修了
-            else if (g_player.GetHP() <= 0)
-            {
-                // 何かキーまたはマウスが押されるまでゲームオーバー画面を表示し続ける
-                bool waiting = true;
-                while (waiting)
-                {
-                    MSG waitMsg = {};
-                    while (PeekMessage(&waitMsg, nullptr, 0, 0, PM_REMOVE))
-                    {
-                        if (waitMsg.message == WM_QUIT)
-                        {
-                            isRunning = false;
-                            waiting = false;
-                            break;
-                        }
-                        if (waitMsg.message == WM_LBUTTONDOWN)
-                        {
-                            int mx = GET_X_LPARAM(waitMsg.lParam);
-                            int my = GET_Y_LPARAM(waitMsg.lParam);
-                            if (g_renderer.IsGameOverButtonClicked(mx, my))
-                            {
-                                waiting = false;
-                                break;
-                            }
-                        }
-                        TranslateMessage(&waitMsg);
-                        DispatchMessage(&waitMsg);
-                    }
-
-                    g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                    g_player.Draw(g_renderer);
-                    g_dungeon.Draw(g_renderer);
-                    g_projectilePool.Draw(g_renderer);
-                    g_enemyManager.Draw(g_renderer);
-                    g_renderer.DrawGameOver();
-                    g_renderer.Present();
-                }
-                DestroyWindow(hwnd);
-            }
-
-            else
-            {
-                // 描画
-                g_renderer.Render(deltaTime, static_cast<float>(g_dungeon.getMazeSize()));
-                g_player.Draw(g_renderer);
-                g_dungeon.Draw(g_renderer);
-                g_projectilePool.Draw(g_renderer);
-                g_enemyManager.Draw(g_renderer);
-                g_renderer.DrawHP(g_player.GetHP());
-                g_renderer.Present();
-            }
 
             // FPS 表示
             fpsTimer += deltaTime;
@@ -240,16 +152,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
             DestroyWindow(hwnd);
             break;
         case 'W':
-            g_player.keyW = true;
+            inputState.keyW = true;
             break;
         case 'A':
-            g_player.keyA = true;
+            inputState.keyA = true;
             break;
         case 'S':
-            g_player.keyS = true;
+            inputState.keyS = true;
             break;
         case 'D':
-            g_player.keyD = true;
+            inputState.keyD = true;
             break;
         }
         return 0;
@@ -258,38 +170,36 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
         switch (wParam)
         {
         case 'W':
-            g_player.keyW = false;
+            inputState.keyW = false;
             break;
         case 'A':
-            g_player.keyA = false;
+            inputState.keyA = false;
             break;
         case 'S':
-            g_player.keyS = false;
+            inputState.keyS = false;
             break;
         case 'D':
-            g_player.keyD = false;
+            inputState.keyD = false;
             break;
         }
         return 0;
 
+    case WM_MOUSEMOVE:
+        inputState.mouseX = GET_X_LPARAM(lParam);
+        inputState.mouseY = GET_Y_LPARAM(lParam);
+        // {
+        //     wchar_t buf[64];
+        //     swprintf_s(buf, L"Mouse: (%d, %d)\n", inputState.mouseX, inputState.mouseY);
+        //     OutputDebugStringW(buf);
+        // }
+        return 0;
+
     case WM_LBUTTONDOWN:
+        inputState.lMouseDown = true;
+        return 0;
 
-        RECT clipRect;
-        GetClientRect(hwnd, &clipRect);
-        MapWindowPoints(hwnd, nullptr, reinterpret_cast<POINT *>(&clipRect), 2);
-        ClipCursor(&clipRect);
-
-        {
-            XMFLOAT3 hitPos = g_camera.ScreenToWorldOnPlane(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), -0.5f);
-            XMFLOAT3 playerPos = g_player.GetPosition();
-
-            XMVECTOR dir_norm = XMVector3Normalize(
-                XMVectorSubtract(XMLoadFloat3(&hitPos), XMLoadFloat3(&playerPos)));
-            XMFLOAT3 dir_float3_norm;
-            XMStoreFloat3(&dir_float3_norm, dir_norm);
-
-            g_projectilePool.Get(playerPos, dir_float3_norm);
-        }
+    case WM_LBUTTONUP:
+        inputState.lMouseDown = false;
         return 0;
 
     case WM_DESTROY:

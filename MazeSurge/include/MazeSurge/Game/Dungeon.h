@@ -41,12 +41,11 @@ public:
 
     int getMazeSize() { return m_mazeSize; };
     float getCellSize() { return m_cellSize; };
+    size_t GetRemainCheckPoint() { return m_numCheckPoint; };
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 51;        // 奇数
+    int m_mazeSize = 21;        // 奇数
     size_t m_numCheckPoint = 5; // チェックポイントの数
     float m_cellSize = 2.0f;    // 1セル = 2ワールド単位
 };
-
-extern Dungeon g_dungeon;

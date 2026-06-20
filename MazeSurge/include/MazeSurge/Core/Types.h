@@ -58,3 +58,17 @@ struct BBOX
         maxZ = pos.z + scale * 0.5f;
     }
 };
+
+// ============================================================
+// 入力構造体(mainから各シーンに入力を伝えるために使用)
+// ============================================================
+struct InputState
+{
+    bool keyW = false;
+    bool keyA = false;
+    bool keyS = false;
+    bool keyD = false;
+    bool lMouseDown = false;
+    int mouseX = 0;
+    int mouseY = 0;
+};

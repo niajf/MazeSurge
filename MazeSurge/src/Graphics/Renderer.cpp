@@ -364,7 +364,7 @@ bool Renderer::CreateMeshBuffers()
 // ============================================================
 // Render — 毎フレームの描画処理
 // ============================================================
-void Renderer::Render(float deltaTime, float floorScale)
+void Renderer::Render(float floorScale, Camera &camera)
 {
     // SpriteBatch が変更したOMステートを D3D11 デフォルトに戻す
     m_deviceContext->OMSetDepthStencilState(nullptr, 0);
@@ -377,9 +377,9 @@ void Renderer::Render(float deltaTime, float floorScale)
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
     m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
-    // ---- ビュー・プロジェクション行列の取得 ----
-    XMMATRIX view = g_camera.GetViewMatrix();
-    XMMATRIX projection = g_camera.GetProjectionMatrix();
+    // ---- ビュー・プロジェクション行列をメンバにキャッシュ ----
+    m_view = camera.GetViewMatrix();
+    m_projection = camera.GetProjectionMatrix();
 
     // ---- パイプライン共通設定 ----
     m_deviceContext->IASetInputLayout(m_inputLayout.Get());
@@ -395,7 +395,7 @@ void Renderer::Render(float deltaTime, float floorScale)
     lb.padding1 = 0;
     lb.lightColor = XMFLOAT3(1.0f, 1.0f, 0.95f);
     lb.padding2 = 0;
-    lb.cameraPosition = g_camera.GetPosition();
+    lb.cameraPosition = camera.GetPosition();
     lb.shininess = 32.0f;
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
@@ -405,7 +405,7 @@ void Renderer::Render(float deltaTime, float floorScale)
     UINT offset = 0;
     ConstantBuffer cb;
     XMMATRIX floorWorld = XMMatrixScaling(floorScale, 1.f, floorScale);
-    cb.wvp = XMMatrixTranspose(floorWorld * view * projection);
+    cb.wvp = XMMatrixTranspose(floorWorld * m_view * m_projection);
     cb.world = XMMatrixTranspose(floorWorld);
     cb.objectColor = XMFLOAT4(0.2f, 0.2f, 0.25f, 1.0f);
     m_deviceContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
@@ -416,11 +416,8 @@ void Renderer::Render(float deltaTime, float floorScale)
 
 void Renderer::DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color)
 {
-    XMMATRIX view = g_camera.GetViewMatrix();
-    XMMATRIX proj = g_camera.GetProjectionMatrix();
-
     ConstantBuffer cb;
-    cb.wvp = XMMatrixTranspose(worldMatrix * view * proj);
+    cb.wvp = XMMatrixTranspose(worldMatrix * m_view * m_projection);
     cb.world = XMMatrixTranspose(worldMatrix);
     cb.objectColor = color;
 
@@ -487,6 +484,19 @@ void Renderer::DrawHP(int hp)
     m_spriteBatch->End();
 }
 
+void Renderer::DrawCheckPoint(int checkPoint)
+{
+    wchar_t buf[32];
+    swprintf_s(buf, L"Remain CheckPonints: %d", checkPoint);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), buf,
+                             XMFLOAT2(20.0f, 40.0f),
+                             Colors::White, 0.0f,
+                             XMFLOAT2(0, 0), 0.4f);
+    m_spriteBatch->End();
+}
+
 void Renderer::DrawGameOver()
 {
     const wchar_t *title = L"GAME OVER";
@@ -505,7 +515,6 @@ void Renderer::DrawGameOver()
     const int btnW = 200, btnH = 60;
     int btnX = (WINDOW_WIDTH - btnW) / 2;
     int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
-    m_gameOverButtonRect = {btnX, btnY, btnX + btnW, btnY + btnH};
 
     // ボタン内テキストを中央揃え
     float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
@@ -516,7 +525,7 @@ void Renderer::DrawGameOver()
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Red);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), m_gameOverButtonRect, Colors::DarkRed);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, Colors::DarkRed);
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
     m_spriteBatch->End();
@@ -540,7 +549,6 @@ void Renderer::DrawGameClear()
     const int btnW = 200, btnH = 60;
     int btnX = (WINDOW_WIDTH - btnW) / 2;
     int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
-    m_gameOverButtonRect = {btnX, btnY, btnX + btnW, btnY + btnH};
 
     // ボタン内テキストを中央揃え
     float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
@@ -551,16 +559,10 @@ void Renderer::DrawGameClear()
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Blue);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), m_gameOverButtonRect, Colors::DarkBlue);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, Colors::DarkBlue);
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
     m_spriteBatch->End();
-}
-
-bool Renderer::IsGameOverButtonClicked(int x, int y) const
-{
-    return x >= m_gameOverButtonRect.left && x <= m_gameOverButtonRect.right &&
-           y >= m_gameOverButtonRect.top && y <= m_gameOverButtonRect.bottom;
 }
 
 void Renderer::Present()

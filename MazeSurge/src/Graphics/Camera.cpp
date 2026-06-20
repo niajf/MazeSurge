@@ -1,8 +1,5 @@
 #include "MazeSurge/Graphics/Camera.h"
 
-// グローバルカメラインスタンスの定義
-Camera g_camera;
-
 void Camera::Init(float offsetY, float offsetZ)
 {
     m_offsetY = offsetY;

@@ -23,5 +23,3 @@ private:
     float m_elapsedTime = 0.0f;
     std::vector<Enemy> m_pool;
 };
-
-extern EnemyManager g_enemyManager;
