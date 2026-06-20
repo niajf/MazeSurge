@@ -124,7 +124,7 @@ void Dungeon::Generate(unsigned seed)
 	deadEnds.erase(deadEnds.begin(), deadEnds.begin() + 2);
 
 	// 指定したチェックポイント数が、生成可能なチェックポイント数よりも大きくならないようにする
-	m_numCheckPoint = std::min(m_numCheckPoint, deadEnds.size());
+	m_numCheckPoint = std::min(m_numCheckPoint, deadEnds.size() - 1);
 
 	// チェックポイントにするセルをランダムに決定
 	std::vector<size_t> idxVector(m_numCheckPoint);
