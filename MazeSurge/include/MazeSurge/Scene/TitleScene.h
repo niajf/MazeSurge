@@ -1,6 +1,7 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Scene/Scene.h"
+#include "MazeSurge/Graphics/Renderer.h"
 
 class TitleScene : public Scene
 {

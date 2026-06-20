@@ -4,6 +4,9 @@ void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_position = startPosition;
 	m_bbox.setBBOX(m_position, m_scale);
+	m_scale = PLAYER_CELL_SCALE;
+	m_speed = PLAYER_MOVE_SPEED;
+	m_hp = PLAYER_HP;
 }
 
 XMFLOAT3 Player::CalcMoveVelocity() const

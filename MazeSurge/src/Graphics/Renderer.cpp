@@ -474,7 +474,7 @@ bool Renderer::InitSpriteBatch()
 void Renderer::DrawHP(int hp)
 {
     wchar_t buf[32];
-    swprintf_s(buf, L"HP: %d", hp);
+    swprintf_s(buf, L"HP   : %d", hp);
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
@@ -487,11 +487,27 @@ void Renderer::DrawHP(int hp)
 void Renderer::DrawCheckPoint(int getNum, int wholeNum)
 {
     wchar_t buf[32];
-    swprintf_s(buf, L"CP: %d/%d", getNum, wholeNum);
+    swprintf_s(buf, L"CP   : %d/%d", getNum, wholeNum);
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
                              XMFLOAT2(20.0f, 40.0f),
+                             Colors::White, 0.0f,
+                             XMFLOAT2(0, 0), 0.4f);
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawTime(float time)
+{
+    int minute = (int)time / 60;
+    int second = (int)time % 60;
+
+    wchar_t buf[32];
+    swprintf_s(buf, L"TIME : %02d:%02d", minute, second);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), buf,
+                             XMFLOAT2(20.0f, 60.0f),
                              Colors::White, 0.0f,
                              XMFLOAT2(0, 0), 0.4f);
     m_spriteBatch->End();

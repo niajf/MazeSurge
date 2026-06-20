@@ -1,6 +1,5 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
-#include "MazeSurge/Core/Types.h"
+#include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Graphics/Renderer.h"
 #include <algorithm>
@@ -18,17 +17,18 @@ public:
 	int GetHP() const { return m_hp; };
 
 private:
-	XMFLOAT3 m_position = {0.0f, 0.0f, 0.0f};
-	BBOX m_bbox;
-	float m_scale = 0.8f;
-	float m_speed = 6.0f;
-	int m_hp = 1;
+	// プレイヤーの移動方向を計算
+	XMFLOAT3 CalcMoveVelocity() const;
 
+	// キーの入力状況を保持する変数
 	bool m_keyW = false;
 	bool m_keyA = false;
 	bool m_keyS = false;
 	bool m_keyD = false;
 
-	// プレイヤーの移動方向を計算
-	XMFLOAT3 CalcMoveVelocity() const;
+	XMFLOAT3 m_position;	// プレイヤーの座標
+	BBOX m_bbox;			// プレイヤーのBoundingBox
+	float m_scale;			// プレイヤーブロックのスケール
+	float m_speed;			// プレイヤーの移動速度
+	int m_hp;				// プレイヤーのHP
 };

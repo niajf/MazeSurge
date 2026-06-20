@@ -120,9 +120,9 @@ int WINAPI WinMain(
             currentScene->Draw(g_renderer, inputState);
 
             if (currentScene->GetState() == GameState::Finished)
-                DestroyWindow(hwnd);
+                isRunning = false;
 
-            else if(currentScene->GetState()==GameState::Start)
+            else if (currentScene->GetState() == GameState::Start)
             {
                 currentScene = std::make_unique<GameScene>();
                 currentScene->Init();

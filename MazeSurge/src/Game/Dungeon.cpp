@@ -11,6 +11,11 @@ void Dungeon::GenerateTestMap()
 
 void Dungeon::Generate(unsigned seed)
 {
+	// メンバ変数の初期化
+	m_mazeSize = DUNGEON_GRID_SIZE;
+	m_numCheckPoint = DUNGEON_CHECKPOINT_NUM;
+	m_cellSize = DUNGEON_CELL_SCALE;
+
 	// シードを設定
 	std::srand(seed);
 
@@ -215,10 +220,6 @@ bool Dungeon::IsCheckPoint(XMFLOAT3 playerPos)
 		m_grid[gridZ][gridX] = CellType::FLOOR;
 		return true;
 	}
-
-	// wchar_t buf[128];
-	// swprintf_s(buf, L"gridX:%d gridZ:%d\n", gridX, gridZ);
-	// OutputDebugString(buf);
 
 	return false;
 }

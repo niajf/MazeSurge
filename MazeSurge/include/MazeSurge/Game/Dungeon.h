@@ -1,5 +1,5 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Graphics/Renderer.h"
 #include <vector>
 #include <cmath>
@@ -45,7 +45,7 @@ public:
 
 private:
     std::vector<std::vector<CellType>> m_grid;
-    int m_mazeSize = 21;        // 奇数
-    size_t m_numCheckPoint = 5; // チェックポイントの数
-    float m_cellSize = 2.0f;    // 1セル = 2ワールド単位
+    int m_mazeSize;         // 迷路のサイズ
+    size_t m_numCheckPoint; // チェックポイントの数
+    float m_cellSize;       // 壁ブロックのスケール
 };

@@ -1,6 +1,5 @@
 #pragma once
-
-#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Core.h"
 
 class Cube
 {

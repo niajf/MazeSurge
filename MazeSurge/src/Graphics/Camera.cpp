@@ -1,9 +1,10 @@
 #include "MazeSurge/Graphics/Camera.h"
 
-void Camera::Init(float offsetY, float offsetZ)
+void Camera::Init()
 {
-    m_offsetY = offsetY;
-    m_offsetZ = offsetZ;
+    m_offsetY = CAMERA_OFFSET_Y;
+    m_offsetZ = CAMERA_OFFSET_Z;
+    m_fovDegree = CAMERA_FOV_DEG;
 }
 
 void Camera::Update(const XMFLOAT3 &targetPos)
@@ -28,7 +29,7 @@ XMMATRIX Camera::GetViewMatrix() const
 
 XMMATRIX Camera::GetProjectionMatrix() const
 {
-    constexpr float fov = XMConvertToRadians(60.0f);
+    float fov = XMConvertToRadians(m_fovDegree);
     float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
     return XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 100.0f);
 }

@@ -1,6 +1,6 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
-#include "MazeSurge/Core/Types.h"
+#include "MazeSurge/Core/Core.h"
+#include "MazeSurge/Core/GameConstant.h"
 #include "MazeSurge/Scene/Scene.h"
 #include "MazeSurge/Graphics/Camera.h"
 #include "MazeSurge/Game/Dungeon.h"
@@ -27,6 +27,6 @@ private:
     ProjectilePool m_projectilePool;
     GameState m_state;
 
-    int m_getCheckPoint = 0;
-    float m_timeLimit = 3.f * 60.f;
+    int m_getCheckPoint;
+    float m_timeLimit;
 };

@@ -5,10 +5,12 @@ void GameScene::Init()
     m_state = GameState::Playing;
     m_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
     m_player.Init(m_dungeon.GetStartPosition());
-    m_camera.Init(14.0f, -7.0f);
-    m_projectilePool.Init(50);
-    m_enemyManager.Init(50);
-    m_state = GameState::Playing;
+    m_camera.Init();
+    m_projectilePool.Init();
+    m_enemyManager.Init();
+
+    m_getCheckPoint = 0;
+    m_timeLimit = TIME_LIMIT;
 }
 
 void GameScene::Update(float deltaTime, const InputState &inputState)
@@ -16,6 +18,11 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
     if (m_state == GameState::Playing)
     {
         m_timeLimit -= deltaTime;
+
+        if (m_timeLimit <= 0.f)
+        {
+            m_state = GameState::GameOver;
+        }
 
         m_player.Update(deltaTime, m_dungeon, inputState);
         m_camera.Update(m_player.GetPosition());
@@ -60,6 +67,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
         renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
+        renderer.DrawTime(m_timeLimit);
         renderer.Present();
     }
 
@@ -72,6 +80,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
         renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
+        renderer.DrawTime(m_timeLimit);
         renderer.DrawGameClear();
         renderer.Present();
     }
@@ -85,6 +94,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
         renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
+        renderer.DrawTime(m_timeLimit);
         renderer.DrawGameOver();
         renderer.Present();
     }

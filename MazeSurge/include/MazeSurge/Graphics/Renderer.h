@@ -1,6 +1,5 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
-#include "MazeSurge/Core/Types.h"
+#include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Graphics/Cube.h"
 #include "MazeSurge/Graphics/Camera.h"
 #include "MazeSurge/UI/UIConstant.h"
@@ -26,11 +25,14 @@ public:
     // Render()の後、Present()の前に呼ぶこと
     void DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color);
 
-    // 画面左上にプレイヤーの HP を描画する（Present()の前に呼ぶ）
+    // 画面にプレイヤーの HP を描画する（Present()の前に呼ぶ）
     void DrawHP(int hp);
 
-    // 画面左上に残りチェックポイント数を描画する（Present()の前に呼ぶ）
+    // 画面にチェックポイント数を描画する（Present()の前に呼ぶ）
     void DrawCheckPoint(int getNum, int wholeNum);
+
+    // 画面に残り時間を描画する（Preset()の前に呼ぶ）
+    void DrawTime(float time);
 
     // バックバッファを単色でクリアする（3Dシーンを使わない画面の先頭で呼ぶ）
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);

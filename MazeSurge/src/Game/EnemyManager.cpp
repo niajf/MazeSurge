@@ -2,11 +2,16 @@
 
 static const float pi = 3.1415;
 
-void EnemyManager::Init(size_t poolSize)
+void EnemyManager::Init()
 {
-    for (size_t i = 0; i < poolSize; i++)
+    m_poolSize = ENEMYMANAGER_POOL_SIZE;
+    m_spawnTimer = 0.f;
+    m_elapsedTime = 0.f;
+    m_spawnInterval = ENEMYMANAGER_SWAWN_INTERVAL;
+
+    for (size_t i = 0; i < m_poolSize; i++)
     {
-        m_pool.emplace_back(Enemy{});
+        m_pool.emplace_back(Enemy());
     }
 }
 

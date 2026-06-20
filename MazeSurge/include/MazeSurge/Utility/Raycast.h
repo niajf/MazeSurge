@@ -1,5 +1,5 @@
 #pragma once
-#include "MazeSurge/Core/Common.h"
+#include "MazeSurge/Core/Core.h"
 
 class Raycast
 {
@@ -16,7 +16,6 @@ public:
 		XMMATRIX projection,
 		XMMATRIX view,
 		XMMATRIX world,
-		XMVECTOR& origin,
-		XMVECTOR& direction
-	);
+		XMVECTOR &origin,
+		XMVECTOR &direction);
 };

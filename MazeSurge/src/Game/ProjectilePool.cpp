@@ -1,10 +1,14 @@
 #include "MazeSurge/Game/ProjectilePool.h"
 
-void ProjectilePool::Init(size_t poolSize)
+void ProjectilePool::Init()
 {
-    for (size_t i = 0; i < poolSize; i++)
+    m_poolSize = PROJECTILEPOOL_POOL_SIZE;
+    m_elapsedTime = 0.f;
+    m_fireInterval = PROJECTILEPOOL_FIRE_INTERVAL_TIME;
+
+    for (size_t i = 0; i < m_poolSize; i++)
     {
-        m_pool.emplace_back(Projectile{});
+        m_pool.emplace_back(Projectile());
     }
 }
 
@@ -57,9 +61,9 @@ void ProjectilePool::Update(float deltaTime, const Camera &camera, const Dungeon
             continue;
         }
 
-        m_pool[i].position.x += deltaTime * m_pool[i].velocity * m_pool[i].direction.x;
-        m_pool[i].position.y += deltaTime * m_pool[i].velocity * m_pool[i].direction.y;
-        m_pool[i].position.z += deltaTime * m_pool[i].velocity * m_pool[i].direction.z;
+        m_pool[i].position.x += deltaTime * m_pool[i].speed * m_pool[i].direction.x;
+        m_pool[i].position.y += deltaTime * m_pool[i].speed * m_pool[i].direction.y;
+        m_pool[i].position.z += deltaTime * m_pool[i].speed * m_pool[i].direction.z;
         m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
     }
 };
