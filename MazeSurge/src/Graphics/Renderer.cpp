@@ -484,16 +484,62 @@ void Renderer::DrawHP(int hp)
     m_spriteBatch->End();
 }
 
-void Renderer::DrawCheckPoint(int checkPoint)
+void Renderer::DrawCheckPoint(int getNum, int wholeNum)
 {
     wchar_t buf[32];
-    swprintf_s(buf, L"Remain CheckPonints: %d", checkPoint);
+    swprintf_s(buf, L"CP: %d/%d", getNum, wholeNum);
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
                              XMFLOAT2(20.0f, 40.0f),
                              Colors::White, 0.0f,
                              XMFLOAT2(0, 0), 0.4f);
+    m_spriteBatch->End();
+}
+
+void Renderer::Clear(float r, float g, float b)
+{
+    float clearColor[4] = {r, g, b, 1.0f};
+    m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+    m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
+    m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+}
+
+void Renderer::DrawTitle()
+{
+    const wchar_t *title = L"MazeSurge";
+    const wchar_t *startText = L"START";
+    const wchar_t *exitText = L"EXIT";
+    const float btnScale = 0.5f;
+
+    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
+    XMVECTOR startTextSize = m_spriteFont->MeasureString(startText);
+    XMVECTOR exitTextSize = m_spriteFont->MeasureString(exitText);
+
+    XMFLOAT2 titlePos(
+        (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 120.0f);
+
+    auto centeredTextPos = [&](XMVECTOR textSize, const RECT &rect) -> XMFLOAT2
+    {
+        float w = XMVectorGetX(textSize) * btnScale;
+        float h = XMVectorGetY(textSize) * btnScale;
+        return XMFLOAT2(
+            rect.left + (rect.right - rect.left - w) * 0.5f,
+            rect.top + (rect.bottom - rect.top - h) * 0.5f);
+    };
+
+    XMFLOAT2 startTextPos = centeredTextPos(startTextSize, TITLE_START_BUTTON_RECT);
+    XMFLOAT2 exitTextPos = centeredTextPos(exitTextSize, TITLE_EXIT_BUTTON_RECT);
+
+    m_spriteBatch->Begin();
+    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Gold);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_START_BUTTON_RECT, Colors::DarkGreen);
+    m_spriteFont->DrawString(m_spriteBatch.get(), startText, startTextPos,
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_EXIT_BUTTON_RECT, Colors::DarkRed);
+    m_spriteFont->DrawString(m_spriteBatch.get(), exitText, exitTextPos,
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
     m_spriteBatch->End();
 }
 

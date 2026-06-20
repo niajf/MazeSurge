@@ -74,7 +74,4 @@ void Player::Draw(Renderer &renderer) const
 void Player::hitEnemy()
 {
 	m_hp--;
-	// char buf[64];
-	// sprintf_s(buf, "[Player] HP: %d\n", m_hp);
-	// OutputDebugStringA(buf);
 }

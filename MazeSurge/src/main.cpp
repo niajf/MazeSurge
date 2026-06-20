@@ -6,6 +6,7 @@
 #include "MazeSurge/Game/ProjectilePool.h"
 #include "MazeSurge/Game/EnemyManager.h"
 #include "MazeSurge/Scene/GameScene.h"
+#include "MazeSurge/Scene/TitleScene.h"
 #include <iostream>
 #include <ctime>
 
@@ -71,7 +72,8 @@ int WINAPI WinMain(
     UpdateWindow(hwnd);
 
     // ---- 初期化 ----
-    std::unique_ptr<Scene> currentScene = std::make_unique<GameScene>();
+    // std::unique_ptr<Scene> currentScene = std::make_unique<GameScene>();
+    std::unique_ptr<Scene> currentScene = std::make_unique<TitleScene>();
 
     // ---- Rederer初期化 ----
     if (!g_renderer.Init(hwnd))
@@ -119,6 +121,12 @@ int WINAPI WinMain(
 
             if (currentScene->GetState() == GameState::Finished)
                 DestroyWindow(hwnd);
+
+            else if(currentScene->GetState()==GameState::Start)
+            {
+                currentScene = std::make_unique<GameScene>();
+                currentScene->Init();
+            }
 
             // FPS 表示
             fpsTimer += deltaTime;

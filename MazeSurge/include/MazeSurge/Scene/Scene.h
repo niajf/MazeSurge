@@ -8,6 +8,8 @@
 // シーンの基底クラス（インターフェース）
 enum class GameState
 {
+    Title,
+    Start,
     Playing,
     GameOver,
     GameClear,

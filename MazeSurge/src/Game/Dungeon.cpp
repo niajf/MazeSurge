@@ -212,7 +212,6 @@ bool Dungeon::IsCheckPoint(XMFLOAT3 playerPos)
 	if (m_grid[gridZ][gridX] == CellType::CHECKPOINT)
 	{
 		// チェックポイントを取得した際の処理
-		m_numCheckPoint--;
 		m_grid[gridZ][gridX] = CellType::FLOOR;
 		return true;
 	}

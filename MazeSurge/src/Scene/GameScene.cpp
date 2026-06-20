@@ -2,6 +2,7 @@
 
 void GameScene::Init()
 {
+    m_state = GameState::Playing;
     m_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
     m_player.Init(m_dungeon.GetStartPosition());
     m_camera.Init(14.0f, -7.0f);
@@ -14,11 +15,16 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 {
     if (m_state == GameState::Playing)
     {
+        m_timeLimit -= deltaTime;
+
         m_player.Update(deltaTime, m_dungeon, inputState);
         m_camera.Update(m_player.GetPosition());
         m_projectilePool.Update(deltaTime, m_camera, m_dungeon, m_player, inputState);
         m_enemyManager.Update(deltaTime, m_player, m_dungeon, m_projectilePool);
-        m_dungeon.IsCheckPoint(m_player.GetPosition());
+
+        if (m_dungeon.IsCheckPoint(m_player.GetPosition()))
+            m_getCheckPoint++;
+
         if (m_dungeon.IsGoal(m_player.GetPosition()))
         {
             m_state = GameState::GameClear;
@@ -53,7 +59,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_dungeon.GetRemainCheckPoint());
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
         renderer.Present();
     }
 
@@ -65,7 +71,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_dungeon.GetRemainCheckPoint());
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
         renderer.DrawGameClear();
         renderer.Present();
     }
@@ -78,7 +84,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         m_enemyManager.Draw(renderer);
         m_player.Draw(renderer);
         renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_dungeon.GetRemainCheckPoint());
+        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetRemainCheckPoint());
         renderer.DrawGameOver();
         renderer.Present();
     }

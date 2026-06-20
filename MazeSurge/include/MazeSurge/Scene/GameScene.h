@@ -26,4 +26,7 @@ private:
     EnemyManager m_enemyManager;
     ProjectilePool m_projectilePool;
     GameState m_state;
+
+    int m_getCheckPoint = 0;
+    float m_timeLimit = 3.f * 60.f;
 };

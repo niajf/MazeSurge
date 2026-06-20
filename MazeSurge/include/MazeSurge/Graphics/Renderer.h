@@ -30,7 +30,13 @@ public:
     void DrawHP(int hp);
 
     // 画面左上に残りチェックポイント数を描画する（Present()の前に呼ぶ）
-    void DrawCheckPoint(int checkpoint);
+    void DrawCheckPoint(int getNum, int wholeNum);
+
+    // バックバッファを単色でクリアする（3Dシーンを使わない画面の先頭で呼ぶ）
+    void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
+
+    // タイトル画面を描画する（Clear()の後、Present()の前に呼ぶ）
+    void DrawTitle();
 
     // 画面中央に "GAME OVER" とボタンを描画する（Present()の前に呼ぶ）
     void DrawGameOver();
