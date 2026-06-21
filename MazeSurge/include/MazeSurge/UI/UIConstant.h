@@ -12,10 +12,12 @@ constexpr const wchar_t *UI_TITLE_IMAGE_PATH = L"figures/title_logo.png";
 constexpr const wchar_t *UI_TITLE_BG_IMAGE_PATH = L"figures/title_background.png";
 
 // ---- HUD ----
-constexpr XMFLOAT2 UI_HUD_HP_POS = {20.0f, 20.0f};
-constexpr XMFLOAT2 UI_HUD_CP_POS = {20.0f, 40.0f};
-constexpr XMFLOAT2 UI_HUD_TIME_POS = {20.0f, 60.0f};
-constexpr float UI_HUD_TEXT_SCALE = 0.4f;
+constexpr float UI_HUD_BAR_HEIGHT = 60.0f;
+constexpr XMFLOAT2 UI_HUD_HP_POS = {50.0f, 10.0f};
+constexpr XMFLOAT2 UI_HUD_CP_POS = {590.0f, 10.0f};
+constexpr XMFLOAT2 UI_HUD_TIME_POS = {1020.0f, 10.0f};
+constexpr float UI_HUD_TEXT_SCALE = 0.5f;
+constexpr XMFLOAT4 UI_HUD_BAR_COLOR = {0.08f, 0.08f, 0.12f, 0.78f};
 
 // ---- ボタン ----
 constexpr float UI_BUTTON_TEXT_SCALE = 0.5f;

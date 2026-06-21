@@ -511,10 +511,18 @@ bool Renderer::InitSpriteBatch()
 
 void Renderer::DrawHP(int hp)
 {
-    wchar_t buf[32];
-    swprintf_s(buf, L"HP   : %d", hp);
+    wchar_t hpBar[PLAYER_HP + 1];
+    for (int i = 0; i < PLAYER_HP; i++)
+        hpBar[i] = (i < hp) ? L'#' : L'-';
+    hpBar[PLAYER_HP] = L'\0';
 
-    m_spriteBatch->Begin();
+    wchar_t buf[32];
+    swprintf_s(buf, L"HP [%s]", hpBar);
+
+    const RECT hudBar = {0, 0, WINDOW_WIDTH, static_cast<LONG>(UI_HUD_BAR_HEIGHT)};
+
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    m_spriteBatch->Draw(m_whiteTexture.Get(), hudBar, XMLoadFloat4(&UI_HUD_BAR_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
                              UI_HUD_HP_POS,
                              Colors::White, 0.0f,
@@ -525,7 +533,7 @@ void Renderer::DrawHP(int hp)
 void Renderer::DrawCheckPoint(int getNum, int wholeNum)
 {
     wchar_t buf[32];
-    swprintf_s(buf, L"CP   : %d/%d", getNum, wholeNum);
+    swprintf_s(buf, L"CP : %d/%d", getNum, wholeNum);
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
