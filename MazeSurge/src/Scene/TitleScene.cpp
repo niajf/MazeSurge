@@ -2,7 +2,7 @@
 
 void TitleScene::Update(float deltaTime, const InputState &inputState)
 {
-    if (inputState.lMouseDown)
+    if (!inputState.lMouseDown && inputState.lMousePrevDown)
     {
         if (IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_START_BUTTON_RECT))
         {

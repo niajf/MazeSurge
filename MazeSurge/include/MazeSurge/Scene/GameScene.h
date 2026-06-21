@@ -18,7 +18,7 @@ public:
     GameState GetState() override;
 
 private:
-    bool IsButtonClicked(int x, int y) const;
+    bool IsButtonClicked(int x, int y, const RECT &button) const;
     char GetRankChar();
 
     Camera m_camera;

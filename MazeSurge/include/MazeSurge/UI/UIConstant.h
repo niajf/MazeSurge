@@ -2,9 +2,9 @@
 #include "MazeSurge/Core/Core.h"
 
 // ---- ボタン矩形 ----
-constexpr RECT GAME_OVER_BUTTON_RECT = {1180 - 640, 360 + 20, 1380 - 640, 360 + 60 + 20};
-constexpr RECT TITLE_START_BUTTON_RECT = {540, 340, 740, 400};
-constexpr RECT TITLE_EXIT_BUTTON_RECT = {540, 420, 740, 480};
+constexpr RECT GAME_EXIT_BUTTON_RECT = {540, 480, 740, 540};
+constexpr RECT TITLE_START_BUTTON_RECT = {540, 540 - 50, 740, 600 - 50};
+constexpr RECT TITLE_EXIT_BUTTON_RECT = {540, 620 - 50, 740, 680 - 50};
 
 // ---- リソースパス ----
 constexpr const wchar_t *UI_FONT_PATH = L"fonts/gameover.spritefont";
@@ -23,8 +23,8 @@ constexpr XMFLOAT4 UI_HUD_BAR_COLOR = {0.08f, 0.08f, 0.12f, 0.78f};
 constexpr float UI_BUTTON_TEXT_SCALE = 0.5f;
 
 // ---- 結果画面（GAME OVER / GAME CLEAR）----
-constexpr float UI_RESULT_TITLE_OFFSET_Y = -90.0f;
-constexpr float UI_RESULT_RANK_OFFSET_Y = -20.0f;
+constexpr float UI_RESULT_TITLE_OFFSET_Y = -120.0f;
+constexpr float UI_RESULT_RANK_OFFSET_Y = -40.0f;
 
 // ---- タイトルシーン配色（ゲームシーンの配色と統一）----
 constexpr XMFLOAT4 UI_TITLE_BG_COLOR = {0.84f, 0.84f, 0.84f, 1.0f};

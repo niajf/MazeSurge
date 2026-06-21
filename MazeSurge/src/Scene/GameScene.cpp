@@ -46,13 +46,13 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
     else if (m_state == GameState::GameClear)
     {
-        if (inputState.lMouseDown && IsButtonClicked(inputState.mouseX, inputState.mouseY))
+        if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
             m_state = GameState::Finished;
     }
 
     else if (m_state == GameState::GameOver)
     {
-        if (inputState.lMouseDown && IsButtonClicked(inputState.mouseX, inputState.mouseY))
+        if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
             m_state = GameState::Finished;
     }
 }
@@ -109,10 +109,10 @@ GameState GameScene::GetState()
     return m_state;
 }
 
-bool GameScene::IsButtonClicked(int x, int y) const
+bool GameScene::IsButtonClicked(int x, int y, const RECT &button) const
 {
-    return x >= GAME_OVER_BUTTON_RECT.left && x <= GAME_OVER_BUTTON_RECT.right &&
-           y >= GAME_OVER_BUTTON_RECT.top && y <= GAME_OVER_BUTTON_RECT.bottom;
+    return x >= button.left && x <= button.right &&
+           y >= button.top && y <= button.bottom;
 }
 
 char GameScene::GetRankChar()

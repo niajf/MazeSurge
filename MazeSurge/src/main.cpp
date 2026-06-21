@@ -53,11 +53,12 @@ int WINAPI WinMain(
     }
 
     // ---- ウィンドウ作成 ----
+    constexpr DWORD WINDOW_STYLE = WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
     RECT rc = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+    AdjustWindowRect(&rc, WINDOW_STYLE, FALSE);
 
     HWND hwnd = CreateWindowEx(
-        0, WINDOW_CLASS, WINDOW_TITLE, WS_OVERLAPPEDWINDOW,
+        0, WINDOW_CLASS, WINDOW_TITLE, WINDOW_STYLE,
         CW_USEDEFAULT, CW_USEDEFAULT,
         rc.right - rc.left, rc.bottom - rc.top,
         nullptr, nullptr, hInstance, nullptr);
@@ -151,6 +152,8 @@ int WINAPI WinMain(
 // ============================================================
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+    inputState.lMousePrevDown = inputState.lMouseDown;
+
     switch (msg)
     {
     case WM_KEYDOWN:

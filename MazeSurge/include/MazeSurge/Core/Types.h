@@ -68,6 +68,7 @@ struct InputState
     bool keyA = false;
     bool keyS = false;
     bool keyD = false;
+    bool lMousePrevDown = false;
     bool lMouseDown = false;
     int mouseX = 0;
     int mouseY = 0;

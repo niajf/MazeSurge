@@ -394,12 +394,12 @@ void Renderer::Render(float floorScale, Camera &camera)
 
     // ---- ライトバッファの更新 ----
     LightBuffer lb;
-    lb.lightDirection      = RENDERER_LIGHT_DIR;
-    lb.emissiveIntensity   = RENDERER_EMISSIVE_INTENSITY;
-    lb.lightColor          = RENDERER_LIGHT_COLOR;
-    lb.specularIntensity   = RENDERER_SPECULAR_INTENSITY;
-    lb.cameraPosition      = camera.GetPosition();
-    lb.shininess           = RENDERER_SHININESS;
+    lb.lightDirection = RENDERER_LIGHT_DIR;
+    lb.emissiveIntensity = RENDERER_EMISSIVE_INTENSITY;
+    lb.lightColor = RENDERER_LIGHT_COLOR;
+    lb.specularIntensity = RENDERER_SPECULAR_INTENSITY;
+    lb.cameraPosition = camera.GetPosition();
+    lb.shininess = RENDERER_SHININESS;
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
 
@@ -503,7 +503,7 @@ bool Renderer::InitSpriteBatch()
     titleResource.As(&titleTex2D);
     D3D11_TEXTURE2D_DESC titleTexDesc = {};
     titleTex2D->GetDesc(&titleTexDesc);
-    m_titleTexWidth  = titleTexDesc.Width;
+    m_titleTexWidth = titleTexDesc.Width;
     m_titleTexHeight = titleTexDesc.Height;
 
     return true;
@@ -591,7 +591,7 @@ void Renderer::DrawTitle()
     const float logoAreaH = static_cast<float>(TITLE_START_BUTTON_RECT.top);
     float scale = (m_titleTexHeight > 0)
                       ? std::min(logoAreaH * 0.8f / m_titleTexHeight,
-                            static_cast<float>(WINDOW_WIDTH) * 0.75f / m_titleTexWidth)
+                                 static_cast<float>(WINDOW_WIDTH) * 0.75f / m_titleTexWidth)
                       : 1.0f;
     float logoW = m_titleTexWidth * scale;
     float logoH = m_titleTexHeight * scale;
@@ -623,9 +623,9 @@ void Renderer::DrawGameOver(char rankChar)
     wchar_t rankStr[32];
     swprintf_s(rankStr, L"SYNCHRO RANK : %c", rankChar);
 
-    XMVECTOR titleSize   = m_spriteFont->MeasureString(title);
+    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
-    XMVECTOR rankSize    = m_spriteFont->MeasureString(rankStr);
+    XMVECTOR rankSize = m_spriteFont->MeasureString(rankStr);
 
     XMFLOAT2 titlePos(
         (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
@@ -638,8 +638,8 @@ void Renderer::DrawGameOver(char rankChar)
     float textScaledW = XMVectorGetX(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     float textScaledH = XMVectorGetY(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     XMFLOAT2 btnTextPos(
-        GAME_OVER_BUTTON_RECT.left + (GAME_OVER_BUTTON_RECT.right  - GAME_OVER_BUTTON_RECT.left - textScaledW) * 0.5f,
-        GAME_OVER_BUTTON_RECT.top  + (GAME_OVER_BUTTON_RECT.bottom - GAME_OVER_BUTTON_RECT.top  - textScaledH) * 0.5f);
+        GAME_EXIT_BUTTON_RECT.left + (GAME_EXIT_BUTTON_RECT.right - GAME_EXIT_BUTTON_RECT.left - textScaledW) * 0.5f,
+        GAME_EXIT_BUTTON_RECT.top + (GAME_EXIT_BUTTON_RECT.bottom - GAME_EXIT_BUTTON_RECT.top - textScaledH) * 0.5f);
 
     const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
@@ -647,7 +647,7 @@ void Renderer::DrawGameOver(char rankChar)
     m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&UI_RESULT_OVERLAY_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&UI_GAME_OVER_TITLE_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, XMLoadFloat4(&UI_GAME_OVER_BTN_COLOR));
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&UI_GAME_OVER_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
@@ -660,9 +660,9 @@ void Renderer::DrawGameClear(char rankChar)
     wchar_t rankStr[32];
     swprintf_s(rankStr, L"SYNCHRO RANK : %c", rankChar);
 
-    XMVECTOR titleSize   = m_spriteFont->MeasureString(title);
+    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
-    XMVECTOR rankSize    = m_spriteFont->MeasureString(rankStr);
+    XMVECTOR rankSize = m_spriteFont->MeasureString(rankStr);
 
     XMFLOAT2 titlePos(
         (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
@@ -675,8 +675,8 @@ void Renderer::DrawGameClear(char rankChar)
     float textScaledW = XMVectorGetX(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     float textScaledH = XMVectorGetY(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     XMFLOAT2 btnTextPos(
-        GAME_OVER_BUTTON_RECT.left + (GAME_OVER_BUTTON_RECT.right  - GAME_OVER_BUTTON_RECT.left - textScaledW) * 0.5f,
-        GAME_OVER_BUTTON_RECT.top  + (GAME_OVER_BUTTON_RECT.bottom - GAME_OVER_BUTTON_RECT.top  - textScaledH) * 0.5f);
+        GAME_EXIT_BUTTON_RECT.left + (GAME_EXIT_BUTTON_RECT.right - GAME_EXIT_BUTTON_RECT.left - textScaledW) * 0.5f,
+        GAME_EXIT_BUTTON_RECT.top + (GAME_EXIT_BUTTON_RECT.bottom - GAME_EXIT_BUTTON_RECT.top - textScaledH) * 0.5f);
 
     const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
@@ -684,7 +684,7 @@ void Renderer::DrawGameClear(char rankChar)
     m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&UI_RESULT_OVERLAY_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&UI_GAME_CLEAR_TITLE_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, XMLoadFloat4(&UI_GAME_CLEAR_BTN_COLOR));
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&UI_GAME_CLEAR_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
