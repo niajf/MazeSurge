@@ -16,9 +16,9 @@ cbuffer ConstantBuffer : register(b0)
 cbuffer LightBuffer : register(b1)
 {
     float3 lightDirection;
-    float padding1;
+    float emissiveIntensity;
     float3 lightColor;
-    float padding2;
+    float specularIntensity;
     float3 cameraPosition;
     float shininess;
 }
@@ -96,9 +96,9 @@ float4 ps_main(PSInput input) : SV_TARGET
     float3 V = normalize(cameraPosition - input.worldPos); // 視線方向
     float3 H = normalize(L + V); // ハーフベクトル
     float spec = pow(max(dot(N, H), 0.0f), shininess);
-    float3 specular = lightColor * spec * 0.5f;
-   
-    float3 emissive = baseColor * 1.5;  // 1倍以上の発光
+    float3 specular = lightColor * spec * specularIntensity;
+
+    float3 emissive = baseColor * emissiveIntensity;
     float3 finalColor = ambient + diffuse + specular + emissive;
     return float4(saturate(finalColor), 1.0);
 }

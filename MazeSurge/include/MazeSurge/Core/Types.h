@@ -33,9 +33,9 @@ struct alignas(16) ConstantBuffer
 struct alignas(16) LightBuffer
 {
     XMFLOAT3 lightDirection;
-    float padding1;
+    float emissiveIntensity;
     XMFLOAT3 lightColor;
-    float padding2;
+    float specularIntensity;
     XMFLOAT3 cameraPosition;
     float shininess;
 };

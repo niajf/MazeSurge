@@ -375,10 +375,10 @@ void Renderer::Render(float floorScale, Camera &camera)
     m_deviceContext->RSSetState(nullptr);
 
     // ---- 画面クリア ----
-    float clearColor[4] = {m_playBackGroundColor.x, m_playBackGroundColor.y, m_playBackGroundColor.z, m_playBackGroundColor.w};
-    m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
-    m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
-    m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+    // float clearColor[4] = {m_playBackGroundColor.x, m_playBackGroundColor.y, m_playBackGroundColor.z, m_playBackGroundColor.w};
+    // m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
+    // m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
+    // m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
     // ---- ビュー・プロジェクション行列をメンバにキャッシュ ----
     m_view = camera.GetViewMatrix();
@@ -394,12 +394,12 @@ void Renderer::Render(float floorScale, Camera &camera)
 
     // ---- ライトバッファの更新 ----
     LightBuffer lb;
-    lb.lightDirection = XMFLOAT3(0.5f, -1.0f, 0.3f);
-    lb.padding1 = 0;
-    lb.lightColor = XMFLOAT3(1.0f, 1.0f, 0.95f);
-    lb.padding2 = 0;
-    lb.cameraPosition = camera.GetPosition();
-    lb.shininess = 32.0f;
+    lb.lightDirection      = RENDERER_LIGHT_DIR;
+    lb.emissiveIntensity   = RENDERER_EMISSIVE_INTENSITY;
+    lb.lightColor          = RENDERER_LIGHT_COLOR;
+    lb.specularIntensity   = RENDERER_SPECULAR_INTENSITY;
+    lb.cameraPosition      = camera.GetPosition();
+    lb.shininess           = RENDERER_SHININESS;
     m_deviceContext->UpdateSubresource(m_lightBuffer.Get(), 0, nullptr, &lb, 0, 0);
     m_deviceContext->PSSetConstantBuffers(1, 1, m_lightBuffer.GetAddressOf());
 
@@ -436,13 +436,14 @@ void Renderer::DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color)
 bool Renderer::InitSpriteBatch()
 {
     m_spriteBatch = std::make_unique<SpriteBatch>(m_deviceContext.Get());
+    m_states = std::make_unique<CommonStates>(m_device.Get());
     try
     {
-        m_spriteFont = std::make_unique<SpriteFont>(m_device.Get(), L"fonts/gameover.spritefont");
+        m_spriteFont = std::make_unique<SpriteFont>(m_device.Get(), UI_FONT_PATH);
     }
     catch (...)
     {
-        MessageBox(nullptr, L"フォントファイルの読み込みに失敗: fonts/gameover.spritefont", L"エラー", MB_OK);
+        MessageBox(nullptr, L"フォントファイルの読み込みに失敗", L"エラー", MB_OK);
         return false;
     }
 
@@ -471,6 +472,40 @@ bool Renderer::InitSpriteBatch()
     if (FAILED(hr))
         return false;
 
+    // タイトル背景画像の読み込み
+    ComPtr<ID3D11Resource> titleBgResource;
+    hr = DirectX::CreateWICTextureFromFile(
+        m_device.Get(),
+        UI_TITLE_BG_IMAGE_PATH,
+        titleBgResource.GetAddressOf(),
+        m_titleBgTexture.GetAddressOf());
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr, L"タイトル背景画像の読み込みに失敗", L"エラー", MB_OK);
+        return false;
+    }
+
+    // タイトルロゴ画像の読み込み
+    ComPtr<ID3D11Resource> titleResource;
+    hr = DirectX::CreateWICTextureFromFile(
+        m_device.Get(),
+        UI_TITLE_IMAGE_PATH,
+        titleResource.GetAddressOf(),
+        m_titleTexture.GetAddressOf());
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr, L"タイトル画像の読み込みに失敗", L"エラー", MB_OK);
+        return false;
+    }
+
+    // 画像サイズを取得（中央揃え計算用）
+    ComPtr<ID3D11Texture2D> titleTex2D;
+    titleResource.As(&titleTex2D);
+    D3D11_TEXTURE2D_DESC titleTexDesc = {};
+    titleTex2D->GetDesc(&titleTexDesc);
+    m_titleTexWidth  = titleTexDesc.Width;
+    m_titleTexHeight = titleTexDesc.Height;
+
     return true;
 }
 
@@ -481,9 +516,9 @@ void Renderer::DrawHP(int hp)
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
-                             XMFLOAT2(20.0f, 20.0f),
+                             UI_HUD_HP_POS,
                              Colors::White, 0.0f,
-                             XMFLOAT2(0, 0), 0.4f);
+                             XMFLOAT2(0, 0), UI_HUD_TEXT_SCALE);
     m_spriteBatch->End();
 }
 
@@ -494,9 +529,9 @@ void Renderer::DrawCheckPoint(int getNum, int wholeNum)
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
-                             XMFLOAT2(20.0f, 40.0f),
+                             UI_HUD_CP_POS,
                              Colors::White, 0.0f,
-                             XMFLOAT2(0, 0), 0.4f);
+                             XMFLOAT2(0, 0), UI_HUD_TEXT_SCALE);
     m_spriteBatch->End();
 }
 
@@ -510,9 +545,9 @@ void Renderer::DrawTime(float time)
 
     m_spriteBatch->Begin();
     m_spriteFont->DrawString(m_spriteBatch.get(), buf,
-                             XMFLOAT2(20.0f, 60.0f),
+                             UI_HUD_TIME_POS,
                              Colors::White, 0.0f,
-                             XMFLOAT2(0, 0), 0.4f);
+                             XMFLOAT2(0, 0), UI_HUD_TEXT_SCALE);
     m_spriteBatch->End();
 }
 
@@ -526,23 +561,16 @@ void Renderer::Clear(float r, float g, float b)
 
 void Renderer::DrawTitle()
 {
-    const wchar_t *title = L"MazeSurge";
     const wchar_t *startText = L"START";
     const wchar_t *exitText = L"EXIT";
-    const float btnScale = 0.5f;
 
-    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
     XMVECTOR startTextSize = m_spriteFont->MeasureString(startText);
     XMVECTOR exitTextSize = m_spriteFont->MeasureString(exitText);
 
-    XMFLOAT2 titlePos(
-        (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 120.0f);
-
     auto centeredTextPos = [&](XMVECTOR textSize, const RECT &rect) -> XMFLOAT2
     {
-        float w = XMVectorGetX(textSize) * btnScale;
-        float h = XMVectorGetY(textSize) * btnScale;
+        float w = XMVectorGetX(textSize) * UI_BUTTON_TEXT_SCALE;
+        float h = XMVectorGetY(textSize) * UI_BUTTON_TEXT_SCALE;
         return XMFLOAT2(
             rect.left + (rect.right - rect.left - w) * 0.5f,
             rect.top + (rect.bottom - rect.top - h) * 0.5f);
@@ -551,48 +579,69 @@ void Renderer::DrawTitle()
     XMFLOAT2 startTextPos = centeredTextPos(startTextSize, TITLE_START_BUTTON_RECT);
     XMFLOAT2 exitTextPos = centeredTextPos(exitTextSize, TITLE_EXIT_BUTTON_RECT);
 
+    // ボタン上のスペース（Y=0〜340）にロゴを収める
+    const float logoAreaH = static_cast<float>(TITLE_START_BUTTON_RECT.top);
+    float scale = (m_titleTexHeight > 0)
+                      ? std::min(logoAreaH * 0.8f / m_titleTexHeight,
+                            static_cast<float>(WINDOW_WIDTH) * 0.75f / m_titleTexWidth)
+                      : 1.0f;
+    float logoW = m_titleTexWidth * scale;
+    float logoH = m_titleTexHeight * scale;
+    XMFLOAT2 logoPos(
+        (WINDOW_WIDTH - logoW) * 0.5f,
+        (logoAreaH - logoH) * 0.5f);
+
+    const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+
     m_spriteBatch->Begin();
-    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Gold);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_START_BUTTON_RECT, Colors::DarkGreen);
+    m_spriteBatch->Draw(m_titleBgTexture.Get(), fullscreen);
+    m_spriteBatch->Draw(m_titleTexture.Get(), logoPos, nullptr,
+                        Colors::White, 0.0f, XMFLOAT2(0, 0), scale);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_START_BUTTON_RECT,
+                        XMLoadFloat4(&UI_TITLE_START_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), startText, startTextPos,
-                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_EXIT_BUTTON_RECT, Colors::DarkRed);
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
+    m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_EXIT_BUTTON_RECT,
+                        XMLoadFloat4(&UI_TITLE_EXIT_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), exitText, exitTextPos,
-                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
 }
 
-void Renderer::DrawGameOver()
+void Renderer::DrawGameOver(char rankChar)
 {
     const wchar_t *title = L"GAME OVER";
     const wchar_t *btnText = L"EXIT";
-    const float btnScale = 0.5f;
+    wchar_t rankStr[32];
+    swprintf_s(rankStr, L"SYNCHRO RANK : %c", rankChar);
 
-    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
+    XMVECTOR titleSize   = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
+    XMVECTOR rankSize    = m_spriteFont->MeasureString(rankStr);
 
-    // "GAME OVER" を画面中央より少し上に配置
     XMFLOAT2 titlePos(
         (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 60.0f);
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f + UI_RESULT_TITLE_OFFSET_Y);
 
-    // ボタンを "GAME OVER" の下に配置
-    const int btnW = 200, btnH = 60;
-    int btnX = (WINDOW_WIDTH - btnW) / 2;
-    int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
+    XMFLOAT2 rankPos(
+        (WINDOW_WIDTH - XMVectorGetX(rankSize)) * 0.5f,
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(rankSize) * 0.5f + UI_RESULT_RANK_OFFSET_Y);
 
-    // ボタン内テキストを中央揃え
-    float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
-    float textScaledH = XMVectorGetY(btnTextSize) * btnScale;
+    float textScaledW = XMVectorGetX(btnTextSize) * UI_BUTTON_TEXT_SCALE;
+    float textScaledH = XMVectorGetY(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     XMFLOAT2 btnTextPos(
-        btnX + (btnW - textScaledW) * 0.5f,
-        btnY + (btnH - textScaledH) * 0.5f);
+        GAME_OVER_BUTTON_RECT.left + (GAME_OVER_BUTTON_RECT.right  - GAME_OVER_BUTTON_RECT.left - textScaledW) * 0.5f,
+        GAME_OVER_BUTTON_RECT.top  + (GAME_OVER_BUTTON_RECT.bottom - GAME_OVER_BUTTON_RECT.top  - textScaledH) * 0.5f);
 
-    m_spriteBatch->Begin();
-    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Red);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, Colors::DarkRed);
+    const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&UI_RESULT_OVERLAY_COLOR));
+    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&UI_GAME_OVER_TITLE_COLOR));
+    m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, XMLoadFloat4(&UI_GAME_OVER_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
-                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
 }
 
@@ -602,40 +651,34 @@ void Renderer::DrawGameClear(char rankChar)
     const wchar_t *btnText = L"EXIT";
     wchar_t rankStr[32];
     swprintf_s(rankStr, L"SYNCHRO RANK : %c", rankChar);
-    const float btnScale = 0.5f;
 
-    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
+    XMVECTOR titleSize   = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
-    XMVECTOR rankSize = m_spriteFont->MeasureString(rankStr);
+    XMVECTOR rankSize    = m_spriteFont->MeasureString(rankStr);
 
-    // "GAME CLEAR" を画面中央より少し上に配置
     XMFLOAT2 titlePos(
         (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f - 90.0f);
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f + UI_RESULT_TITLE_OFFSET_Y);
 
-    // ランクをタイトルとボタンの間に中央揃えで配置
     XMFLOAT2 rankPos(
         (WINDOW_WIDTH - XMVectorGetX(rankSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(rankSize) * 0.5f - 20.0f);
+        WINDOW_HEIGHT * 0.5f - XMVectorGetY(rankSize) * 0.5f + UI_RESULT_RANK_OFFSET_Y);
 
-    // ボタンを "GAME CLEAR" の下に配置
-    const int btnW = 200, btnH = 60;
-    int btnX = (WINDOW_WIDTH - btnW) / 2;
-    int btnY = static_cast<int>(WINDOW_HEIGHT * 0.5f + 20.0f);
-
-    // ボタン内テキストを中央揃え
-    float textScaledW = XMVectorGetX(btnTextSize) * btnScale;
-    float textScaledH = XMVectorGetY(btnTextSize) * btnScale;
+    float textScaledW = XMVectorGetX(btnTextSize) * UI_BUTTON_TEXT_SCALE;
+    float textScaledH = XMVectorGetY(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     XMFLOAT2 btnTextPos(
-        btnX + (btnW - textScaledW) * 0.5f,
-        btnY + (btnH - textScaledH) * 0.5f);
+        GAME_OVER_BUTTON_RECT.left + (GAME_OVER_BUTTON_RECT.right  - GAME_OVER_BUTTON_RECT.left - textScaledW) * 0.5f,
+        GAME_OVER_BUTTON_RECT.top  + (GAME_OVER_BUTTON_RECT.bottom - GAME_OVER_BUTTON_RECT.top  - textScaledH) * 0.5f);
 
-    m_spriteBatch->Begin();
-    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, Colors::Blue);
-    m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, Colors::Gold);
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, Colors::DarkBlue);
+    const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&UI_RESULT_OVERLAY_COLOR));
+    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&UI_GAME_CLEAR_TITLE_COLOR));
+    m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_OVER_BUTTON_RECT, XMLoadFloat4(&UI_GAME_CLEAR_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
-                             Colors::White, 0.0f, XMFLOAT2(0, 0), btnScale);
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
 }
 

@@ -1,7 +1,5 @@
 #include "MazeSurge/Game/EnemyManager.h"
 
-static const float pi = 3.1415;
-
 void EnemyManager::Init()
 {
     m_poolSize = ENEMYMANAGER_POOL_SIZE;
@@ -23,7 +21,7 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon)
         {
             m_pool[i].active = true;
 
-            float radian = pi * (rand() % 360) / 180.f;
+            float radian = XM_PI * (rand() % 360) / 180.f;
             float norm = dungeon.getMazeSize() * dungeon.getCellSize();
             m_pool[i].position.x = norm * std::cos(radian);
             m_pool[i].position.y = 0.f;
@@ -40,7 +38,7 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
     m_elapsedTime += deltaTime;
 
     // 時間経過で出現間隔を短縮（1分ごとに半分になる）
-    m_spawnInterval = 3.0f / (1.0f + m_elapsedTime / 60.0f);
+    m_spawnInterval = ENEMYMANAGER_SWAWN_INTERVAL / (1.0f + m_elapsedTime / ENEMYMANAGER_SPAWN_TIME_SCALE);
 
     m_spawnTimer += deltaTime;
     if (m_spawnTimer >= m_spawnInterval)
@@ -90,7 +88,7 @@ void EnemyManager::Draw(Renderer &renderer) const
         if (!m_pool[i].active)
             continue;
 
-        XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.4f, m_pool[i].position.z);
+        XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + ENEMY_CELL_SCALE * 0.5f, m_pool[i].position.z);
         renderer.DrawCube(world, m_pool[i].color);
     }
 }

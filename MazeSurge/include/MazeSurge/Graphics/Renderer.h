@@ -5,6 +5,8 @@
 #include "MazeSurge/UI/UIConstant.h"
 #include <SpriteBatch.h>
 #include <SpriteFont.h>
+#include <CommonStates.h>
+#include <WICTextureLoader.h>
 #include <memory>
 
 // ============================================================
@@ -41,7 +43,7 @@ public:
     void DrawTitle();
 
     // 画面中央に "GAME OVER" とボタンを描画する（Present()の前に呼ぶ）
-    void DrawGameOver();
+    void DrawGameOver(char rankChar);
 
     // 画面中央に "GAME CLEAR" とボタンを描画する（Present()の前に呼ぶ）
     void DrawGameClear(char rankChar);
@@ -64,9 +66,14 @@ private:
                               const char *profile, ComPtr<ID3DBlob> &blob);
 
     // ---- SpriteBatch / SpriteFont ----
-    std::unique_ptr<DirectX::SpriteBatch> m_spriteBatch;
-    std::unique_ptr<DirectX::SpriteFont> m_spriteFont;
+    std::unique_ptr<SpriteBatch> m_spriteBatch;
+    std::unique_ptr<SpriteFont> m_spriteFont;
+    std::unique_ptr<CommonStates> m_states;
     ComPtr<ID3D11ShaderResourceView> m_whiteTexture;
+    ComPtr<ID3D11ShaderResourceView> m_titleTexture;
+    UINT m_titleTexWidth = 0;
+    UINT m_titleTexHeight = 0;
+    ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;
 
     // ---- D3D11 コアオブジェクト ----
     ComPtr<ID3D11Device> m_device;

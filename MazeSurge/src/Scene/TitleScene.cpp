@@ -18,7 +18,7 @@ void TitleScene::Update(float deltaTime, const InputState &inputState)
 
 void TitleScene::Draw(Renderer &renderer, const InputState &inputState)
 {
-    renderer.Clear();
+    renderer.Clear(UI_TITLE_BG_COLOR.x, UI_TITLE_BG_COLOR.y, UI_TITLE_BG_COLOR.z);
     renderer.DrawTitle();
     renderer.Present();
 }

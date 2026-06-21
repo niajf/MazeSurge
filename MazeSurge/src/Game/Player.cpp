@@ -33,7 +33,7 @@ XMFLOAT3 Player::CalcMoveVelocity() const
 
 void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &inputState)
 {
-	constexpr float HALF_SIZE = 0.4f;
+	constexpr float HALF_SIZE = PLAYER_CELL_SCALE * 0.5f;
 
 	m_keyW = inputState.keyW;
 	m_keyS = inputState.keyS;
@@ -70,7 +70,7 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 
 void Player::Draw(Renderer &renderer) const
 {
-	XMMATRIX world = XMMatrixScaling(m_scale, m_scale, m_scale) * XMMatrixTranslation(m_position.x, m_position.y + 0.4f, m_position.z);
+	XMMATRIX world = XMMatrixScaling(m_scale, m_scale, m_scale) * XMMatrixTranslation(m_position.x, m_position.y + PLAYER_CELL_SCALE * 0.5f, m_position.z);
 	renderer.DrawCube(world, m_color);
 }
 

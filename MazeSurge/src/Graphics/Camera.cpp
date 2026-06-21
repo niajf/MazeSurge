@@ -31,7 +31,7 @@ XMMATRIX Camera::GetProjectionMatrix() const
 {
     float fov = XMConvertToRadians(m_fovDegree);
     float aspect = static_cast<float>(WINDOW_WIDTH) / static_cast<float>(WINDOW_HEIGHT);
-    return XMMatrixPerspectiveFovLH(fov, aspect, 0.1f, 100.0f);
+    return XMMatrixPerspectiveFovLH(fov, aspect, CAMERA_NEAR_CLIP, CAMERA_FAR_CLIP);
 }
 
 XMFLOAT3 Camera::ScreenToWorldOnPlane(int mouseX, int mouseY, float planeY) const

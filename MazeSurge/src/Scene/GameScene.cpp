@@ -61,6 +61,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 {
     if (m_state == GameState::Playing)
     {
+        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
         renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
         m_dungeon.Draw(renderer);
         m_projectilePool.Draw(renderer);
@@ -74,6 +75,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 
     else if (m_state == GameState::GameClear)
     {
+        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
         renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
         m_dungeon.Draw(renderer);
         m_projectilePool.Draw(renderer);
@@ -88,6 +90,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 
     else if (m_state == GameState::GameOver)
     {
+        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
         renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
         m_dungeon.Draw(renderer);
         m_projectilePool.Draw(renderer);
@@ -96,7 +99,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         renderer.DrawHP(m_player.GetHP());
         renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
         renderer.DrawTime(m_timeLimit - m_elapsedTime);
-        renderer.DrawGameOver();
+        renderer.DrawGameOver(GetRankChar());
         renderer.Present();
     }
 }
@@ -114,17 +117,21 @@ bool GameScene::IsButtonClicked(int x, int y) const
 
 char GameScene::GetRankChar()
 {
+
+    if (m_state == GameState::GameOver)
+        return 'D';
+
     float timeScore = (m_timeLimit - m_elapsedTime) / m_timeLimit;
     float checkPointScore = static_cast<float>(m_getCheckPoint) / static_cast<float>(m_dungeon.GetCheckPointNum());
     float totalScore = (timeScore + checkPointScore) / 2.f;
 
-    if (totalScore >= 0.7f)
+    if (totalScore >= RANK_S_SCORE)
         return 'S';
-    else if (totalScore >= 0.6f)
+    else if (totalScore >= RANK_A_SCORE)
         return 'A';
-    else if (totalScore >= 0.5f)
+    else if (totalScore >= RANK_B_SCORE)
         return 'B';
-    else if (totalScore >= 0.4f)
+    else if (totalScore >= RANK_C_SCORE)
         return 'C';
 
     return 'D';
