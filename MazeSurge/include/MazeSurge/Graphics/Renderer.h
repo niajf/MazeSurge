@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Graphics/Cube.h"
 #include "MazeSurge/Graphics/Camera.h"
@@ -10,77 +10,94 @@
 #include <memory>
 
 // ============================================================
-// Renderer — Direct3D 11 の初期化・リソース管理・描画
+// Renderer — Direct3D 11 の初期化・リソース管理・描画を担う
 // ============================================================
-// D3D11デバイス、スワップチェイン、シェーダー、バッファ、テクスチャなど
-// 描画に必要なすべてのGPUリソースを管理する。
+// D3D11 デバイス、スワップチェイン、シェーダー、バッファ、テクスチャなど
+// 描画に必要なすべての GPU リソースをカプセル化する。
+// グローバルインスタンス g_renderer（下部で extern 宣言）として使用する。
+//
+// 1 フレームの描画順序:
+//   1. Clear()
+//   2. Render()     — 床の 3D 描画、ビュー/プロジェクション行列のキャッシュ
+//   3. DrawCube()   — 各オブジェクトのキューブ描画（複数回呼べる）
+//   4. DrawHP() / DrawCheckPoint() / DrawTime() 等 — 2D HUD
+//   5. Present()    — バックバッファをフロントに表示
 class Renderer
 {
 public:
-    // D3D11の初期化（デバイス、スワップチェイン、シェーダー、バッファ等を一括作成）
+    // D3D11 の全リソース（デバイス・シェーダー・バッファ・テクスチャ等）を初期化する。
+    // 失敗した場合は false を返す。
     bool Init(HWND hwnd);
 
-    // 毎フレームの描画処理
+    // 毎フレームの 3D 描画共通処理。
+    // floorScale: 床の XZ スケール（迷路サイズに合わせて拡縮する）。
+    // 内部でビュー/プロジェクション行列を m_view/m_projection にキャッシュするため、
+    // DrawCube() より前に呼ぶこと。
     void Render(float floorScale, Camera &camera);
 
-    // 外部から任意のキューブを1個描画する
-    // Render()の後、Present()の前に呼ぶこと
+    // 任意のキューブを 1 個描画する。
+    // Render() でキャッシュされた m_view/m_projection を使うため Render() 後に呼ぶこと。
+    // worldMatrix: ワールド変換行列（スケール × 回転 × 平行移動）。
     void DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color);
 
-    // 画面にプレイヤーの HP を描画する（Present()の前に呼ぶ）
-    void DrawHP(int hp);
+    // ---- 2D HUD 描画（SpriteBatch を使用）----
+    // これらはすべて Present() の前に呼ぶこと。
+    // SpriteBatch::Begin/End を内部で完結させているため、呼び出し順序は問わない。
+    void DrawHP(int hp);                              // プレイヤーの HP バーを上部に表示
+    void DrawCheckPoint(int getNum, size_t wholeNum); // 取得済み/全チェックポイント数を表示
+    void DrawTime(float time);                        // 残り時間を MM:SS 形式で表示
 
-    // 画面にチェックポイント数を描画する（Present()の前に呼ぶ）
-    void DrawCheckPoint(int getNum, size_t wholeNum);
-
-    // 画面に残り時間を描画する（Present()の前に呼ぶ）
-    void DrawTime(float time);
-
-    // バックバッファを単色でクリアする（3Dシーンを使わない画面の先頭で呼ぶ）
+    // バックバッファを単色でクリアする。
+    // デフォルト引数は使用されないが、RENDERER_PLAY_BG_COLOR を明示的に渡すこと。
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
 
-    // タイトル画面を描画する（Clear()の後、Present()の前に呼ぶ）
+    // タイトル画面（背景・ロゴ・ボタン）を 2D スプライトで描画する。
     void DrawTitle();
 
-    // 画面中央に "GAME OVER" とボタンを描画する（Present()の前に呼ぶ）
+    // GAME OVER 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
     void DrawGameOver(char rankChar);
-
-    // 画面中央に "GAME CLEAR" とボタンを描画する（Present()の前に呼ぶ）
+    // GAME CLEAR 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
     void DrawGameClear(char rankChar);
 
-    // 画面にプレイ方法を説明する図を描画する（Present()の前に呼ぶ）
+    // ゲーム開始直後の操作説明画像を描画する。
     void DrawHowToPlay();
 
-    // バックバッファを画面に表示する（ゲームループの最後に呼ぶ）
+    // バックバッファをフロントバッファに表示する（垂直同期あり）。
+    // ゲームループの最後に 1 度だけ呼ぶこと。
     void Present();
 
 private:
-    // ---- 初期化のサブ関数 ----
+    // ---- Init() のサブ関数（各フェーズを責務単位で分割）----
     bool CreateDeviceAndSwapChain(HWND hwnd);
-    bool InitSpriteBatch();
+    bool InitSpriteBatch(); // SpriteBatch・SpriteFont・テクスチャの初期化
     bool CreateRenderTargetAndDepthBuffer();
     bool CompileAndCreateShaders();
     bool CreateInputLayout(ComPtr<ID3DBlob> &vsBlob);
     bool CreateConstantBuffers();
-    bool CreateMeshBuffers();
+    bool CreateMeshBuffers(); // キューブ・床の頂点/インデックスバッファを生成
 
-    // ---- 結果画面共通描画 ----
+    // DrawGameOver/DrawGameClear の共通描画ロジック。タイトル文字・色だけ差し替える。
     void DrawResultScreen(const wchar_t *title, char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor);
 
-    // ---- シェーダーコンパイルユーティリティ ----
+    // HLSL ファイルをコンパイルしてバイトコード blob を返す。
+    // static: インスタンス状態に依存しないため（m_device 等を使わない）。
     static bool CompileShader(const wchar_t *filePath, const char *entryPoint,
                               const char *profile, ComPtr<ID3DBlob> &blob);
 
-    // ---- SpriteBatch / SpriteFont ----
-    std::unique_ptr<SpriteBatch> m_spriteBatch;          // 2Dスプライト描画バッチ
-    std::unique_ptr<SpriteFont> m_spriteFont;            // ビットマップフォント
-    std::unique_ptr<CommonStates> m_states;              // ブレンド・ラスタライザ等の共通ステート
-    ComPtr<ID3D11ShaderResourceView> m_whiteTexture;     // 単色描画用の1×1白テクスチャ
+    // ---- SpriteBatch / SpriteFont（DirectXTK）----
+    std::unique_ptr<SpriteBatch> m_spriteBatch; // 2D スプライト描画バッチ
+    std::unique_ptr<SpriteFont> m_spriteFont;   // ビットマップフォント
+    std::unique_ptr<CommonStates> m_states;     // ブレンド・ラスタライザ等の共通ステート集
+    // m_whiteTexture: 1×1 の不透明白ピクセルテクスチャ。
+    // SpriteBatch::Draw がテクスチャを必須とするため、ベタ塗り矩形の描画に使う。
+    // tint カラー引数で任意の色を指定できる。
+    ComPtr<ID3D11ShaderResourceView> m_whiteTexture;
     ComPtr<ID3D11ShaderResourceView> m_titleTexture;     // タイトルロゴ画像
     ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;   // タイトル背景画像
-    ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture; // プレイ方法説明画像
-    UINT m_titleTexWidth = 0;                            // タイトルロゴのピクセル幅
-    UINT m_titleTexHeight = 0;                           // タイトルロゴのピクセル高さ
+    ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture; // 操作説明画像
+    // ロゴをアスペクト比を保ったままスケーリングするために元のピクセルサイズを保持する。
+    UINT m_titleTexWidth = 0;
+    UINT m_titleTexHeight = 0;
 
     // ---- D3D11 コアオブジェクト ----
     ComPtr<ID3D11Device> m_device;
@@ -92,23 +109,27 @@ private:
     // ---- シェーダー ----
     ComPtr<ID3D11VertexShader> m_vertexShader;
     ComPtr<ID3D11PixelShader> m_pixelShader;
+    // m_inputLayout: Vertex 構造体のメモリレイアウトを D3D11 に伝えるオブジェクト。
+    // VS バイトコードと Vertex 構造体の両方が変わった場合は再作成が必要。
     ComPtr<ID3D11InputLayout> m_inputLayout;
 
     // ---- バッファ ----
-    ComPtr<ID3D11Buffer> m_vertexBuffer;
-    ComPtr<ID3D11Buffer> m_indexBuffer;
-    ComPtr<ID3D11Buffer> m_floorVertexBuffer;
-    ComPtr<ID3D11Buffer> m_floorIndexBuffer;
-    ComPtr<ID3D11Buffer> m_constantBuffer;
-    ComPtr<ID3D11Buffer> m_lightBuffer;
+    ComPtr<ID3D11Buffer> m_vertexBuffer;      // キューブ頂点（24 頂点）
+    ComPtr<ID3D11Buffer> m_indexBuffer;       // キューブインデックス（36 個）
+    ComPtr<ID3D11Buffer> m_floorVertexBuffer; // 床頂点（4 頂点）
+    ComPtr<ID3D11Buffer> m_floorIndexBuffer;  // 床インデックス（6 個）
+    ComPtr<ID3D11Buffer> m_constantBuffer;    // WVP + ワールド行列（register b0）
+    ComPtr<ID3D11Buffer> m_lightBuffer;       // ライトパラメータ（register b1）
 
-    // ---- 行列 ----
-    XMMATRIX m_view;       // ビュー行列（カメラ変換）
-    XMMATRIX m_projection; // プロジェクション行列（透視投影）
+    // ---- 行列キャッシュ ----
+    // Render() で計算してキャッシュし、その後の DrawCube() 呼び出しで参照する。
+    XMMATRIX m_view;
+    XMMATRIX m_projection;
 
     XMFLOAT4 m_floorColor;          // 床の描画色
     XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
 };
 
-// グローバルレンダラーインスタンス
+// g_renderer: Renderer.cpp で定義されるグローバルシングルトン。
+// main.cpp で Init() を呼び、各シーンの Draw() 内で使用する。
 extern Renderer g_renderer;
