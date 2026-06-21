@@ -7,9 +7,7 @@ void ProjectilePool::Init()
     m_fireInterval = PROJECTILEPOOL_FIRE_INTERVAL_TIME;
 
     for (size_t i = 0; i < m_poolSize; i++)
-    {
-        m_pool.emplace_back(Projectile());
-    }
+        m_pool.emplace_back();
 }
 
 Projectile *ProjectilePool::Get(XMFLOAT3 playerPos, XMFLOAT3 dir)
@@ -38,6 +36,8 @@ void ProjectilePool::Update(float deltaTime, const Camera &camera, const Dungeon
     {
         m_elapsedTime = 0.0f;
 
+        // planeY=-0.5f: プレイヤー中心(Y≈0)より半ユニット下の水平面にレイを当てる。
+        // 弾の発射高さと一致させることで弾道が画面上のクリック位置と合う。
         XMFLOAT3 hitPos = camera.ScreenToWorldOnPlane(inputState.mouseX, inputState.mouseY, -0.5f);
         XMFLOAT3 playerPos = player.GetPosition();
 

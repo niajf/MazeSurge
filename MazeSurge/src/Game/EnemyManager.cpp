@@ -5,12 +5,10 @@ void EnemyManager::Init()
     m_poolSize = ENEMYMANAGER_POOL_SIZE;
     m_spawnTimer = 0.f;
     m_elapsedTime = 0.f;
-    m_spawnInterval = ENEMYMANAGER_SWAWN_INTERVAL;
+    m_spawnInterval = ENEMYMANAGER_SPAWN_INTERVAL;
 
     for (size_t i = 0; i < m_poolSize; i++)
-    {
-        m_pool.emplace_back(Enemy());
-    }
+        m_pool.emplace_back();
 }
 
 void EnemyManager::SpawnEnemy(Dungeon &dungeon)
@@ -22,6 +20,7 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon)
             m_pool[i].active = true;
 
             float radian = XM_PI * (rand() % 360) / 180.f;
+            // 迷路の外周を半径とする円上にランダムスポーンさせる
             float norm = dungeon.getMazeSize() * dungeon.getCellSize();
             m_pool[i].position.x = norm * std::cos(radian);
             m_pool[i].position.y = 0.f;
@@ -37,8 +36,9 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
 {
     m_elapsedTime += deltaTime;
 
-    // 時間経過で出現間隔を短縮（1分ごとに半分になる）
-    m_spawnInterval = ENEMYMANAGER_SWAWN_INTERVAL / (1.0f + m_elapsedTime / ENEMYMANAGER_SPAWN_TIME_SCALE);
+    // 分母が 1.0f + t/60 なので間隔はゼロに近づくが絶対にゼロにはならない。
+    // t=0s: 3.0s, t=60s: 1.5s, t=300s: 0.5s と加速していく。
+    m_spawnInterval = ENEMYMANAGER_SPAWN_INTERVAL / (1.0f + m_elapsedTime / ENEMYMANAGER_SPAWN_TIME_SCALE);
 
     m_spawnTimer += deltaTime;
     if (m_spawnTimer >= m_spawnInterval)

@@ -18,7 +18,6 @@ public:
     XMFLOAT3 GetPosition() const { return m_position; }
 
     // マウスのスクリーン座標をワールド空間の座標に変換する
-    // 射撃の向き計算に使用する（Week3で使う）
     // planeY: 交差を計算する水平面のY座標（プレイヤーのY）
     XMFLOAT3 ScreenToWorldOnPlane(int mouseX, int mouseY, float planeY) const;
 
@@ -27,5 +26,5 @@ private:
     XMFLOAT3 m_target;   // 注視点（プレイヤーの位置）
     float m_offsetY;     // プレイヤーからの垂直オフセット
     float m_offsetZ;     // プレイヤーからの奥行きオフセット
-    float m_fovDegree;
+    float m_fovDegree;   // 垂直視野角（度数）
 };

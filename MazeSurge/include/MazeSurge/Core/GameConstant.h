@@ -9,8 +9,9 @@ constexpr int WINDOW_HEIGHT = 720;
 constexpr LPCWSTR WINDOW_CLASS = L"MazeSurgeWindowClass";
 constexpr LPCWSTR WINDOW_TITLE = L"MazeSurge";
 
-// 制限時間
-constexpr float TIME_LIMIT = 5.f * 60.f;
+// ---- Scene ----
+constexpr float TIME_LIMIT = 5.f * 60.f;   // 制限時間
+constexpr float INPUT_INVALID_TIME = 0.5f; // タイトルシーンが始まってから、入力を受付ない時間
 
 // ---- Dungeon ----
 constexpr int DUNGEON_GRID_SIZE = 31;      // 迷路のサイズ
@@ -29,7 +30,7 @@ constexpr XMFLOAT4 ENEMY_CELL_COLOR = {1.00f, 0.00f, 0.41f, 1.0f};
 
 // ---- EnemyManager ----
 constexpr size_t ENEMYMANAGER_POOL_SIZE = 50;
-constexpr float ENEMYMANAGER_SWAWN_INTERVAL = 3.0f;
+constexpr float ENEMYMANAGER_SPAWN_INTERVAL = 3.0f;
 constexpr float ENEMYMANAGER_SPAWN_TIME_SCALE = 60.0f; // 経過時間に対するスポーン間隔の短縮スケール
 
 // ---- Player ----
@@ -49,11 +50,11 @@ constexpr float PROJECTILEPOOL_FIRE_INTERVAL_TIME = 0.1f;
 constexpr size_t PROJECTILEPOOL_POOL_SIZE = 50;
 
 // ---- Camera ----
-constexpr float CAMERA_FOV_DEG  = 60.f;
+constexpr float CAMERA_FOV_DEG = 60.f;
 constexpr float CAMERA_OFFSET_Y = 14.0f;
 constexpr float CAMERA_OFFSET_Z = -7.0f;
 constexpr float CAMERA_NEAR_CLIP = 0.1f;
-constexpr float CAMERA_FAR_CLIP  = 100.0f;
+constexpr float CAMERA_FAR_CLIP = 100.0f;
 
 // ---- Rank ----
 constexpr float RANK_S_SCORE = 0.7f;

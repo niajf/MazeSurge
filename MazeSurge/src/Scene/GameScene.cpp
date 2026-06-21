@@ -3,7 +3,7 @@
 void GameScene::Init()
 {
     m_state = GameState::Playing;
-    m_dungeon.Generate(static_cast<unsigned int>(std::time(nullptr)));
+    m_dungeon.Init();
     m_player.Init(m_dungeon.GetStartPosition());
     m_camera.Init();
     m_projectilePool.Init();
@@ -46,68 +46,51 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
     else if (m_state == GameState::GameClear)
     {
+        // !lMouseDown && lMousePrevDown = ボタンを離した瞬間のみ反応（クリック完了判定）
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
-            m_state = GameState::Finished;
+            m_state = GameState::Restart;
     }
 
     else if (m_state == GameState::GameOver)
     {
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
-            m_state = GameState::Finished;
+            m_state = GameState::Restart;
     }
+}
+
+void GameScene::DrawScene3D(Renderer &renderer)
+{
+    renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
+    renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
+    m_dungeon.Draw(renderer);
+    m_projectilePool.Draw(renderer);
+    m_enemyManager.Draw(renderer);
+    m_player.Draw(renderer);
+    renderer.DrawHP(m_player.GetHP());
+    renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
+    renderer.DrawTime(m_timeLimit - m_elapsedTime);
 }
 
 void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 {
     if (m_state == GameState::Playing)
     {
-        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
-        renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
-        m_dungeon.Draw(renderer);
-        m_projectilePool.Draw(renderer);
-        m_enemyManager.Draw(renderer);
-        m_player.Draw(renderer);
-        renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
-        renderer.DrawTime(m_timeLimit - m_elapsedTime);
-
+        DrawScene3D(renderer);
         if (m_elapsedTime < HOW_TO_PLAY_DRAW_TIME)
-        {
             renderer.DrawHowToPlay();
-        }
-
-        renderer.Present();
     }
-
     else if (m_state == GameState::GameClear)
     {
-        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
-        renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
-        m_dungeon.Draw(renderer);
-        m_projectilePool.Draw(renderer);
-        m_enemyManager.Draw(renderer);
-        m_player.Draw(renderer);
-        renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
-        renderer.DrawTime(m_timeLimit - m_elapsedTime);
+        DrawScene3D(renderer);
         renderer.DrawGameClear(GetRankChar());
-        renderer.Present();
     }
-
     else if (m_state == GameState::GameOver)
     {
-        renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
-        renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
-        m_dungeon.Draw(renderer);
-        m_projectilePool.Draw(renderer);
-        m_enemyManager.Draw(renderer);
-        m_player.Draw(renderer);
-        renderer.DrawHP(m_player.GetHP());
-        renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
-        renderer.DrawTime(m_timeLimit - m_elapsedTime);
+        DrawScene3D(renderer);
         renderer.DrawGameOver(GetRankChar());
-        renderer.Present();
     }
+
+    renderer.Present();
 }
 
 GameState GameScene::GetState()
@@ -127,6 +110,7 @@ char GameScene::GetRankChar()
     if (m_state == GameState::GameOver)
         return 'D';
 
+    // 残り時間比率とチェックポイント取得率の平均をスコアとする（各 0.0〜1.0）
     float timeScore = (m_timeLimit - m_elapsedTime) / m_timeLimit;
     float checkPointScore = static_cast<float>(m_getCheckPoint) / static_cast<float>(m_dungeon.GetCheckPointNum());
     float totalScore = (timeScore + checkPointScore) / 2.f;

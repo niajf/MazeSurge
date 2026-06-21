@@ -4,10 +4,10 @@ void Player::Init(const XMFLOAT3 &startPosition)
 {
 	m_color = PLAYER_CELL_COLOR;
 	m_position = startPosition;
-	m_bbox.setBBOX(m_position, m_scale);
 	m_scale = PLAYER_CELL_SCALE;
 	m_speed = PLAYER_MOVE_SPEED;
 	m_hp = PLAYER_HP;
+	m_bbox.setBBOX(m_position, m_scale);
 }
 
 XMFLOAT3 Player::CalcMoveVelocity() const
@@ -42,7 +42,8 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 
 	XMFLOAT3 velocity = CalcMoveVelocity();
 
-	// X軸の移動と壁衝突判定（4コーナーをチェック）
+	// X 軸移動と壁衝突判定（バウンディングボックスの4隅をチェック）
+	// 4隅すべてで判定することで、壁より小さい隙間へのめり込みを防ぐ。
 	float newX = m_position.x + velocity.x * m_speed * deltaTime;
 	if (g_dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
 		g_dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
@@ -52,7 +53,9 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 		newX = m_position.x;
 	}
 
-	// Z軸の移動と壁衝突判定（新しいXを使って4コーナーをチェック）
+	// Z 軸移動と壁衝突判定（X 確定後の座標で判定する）
+	// X→Z の順に独立して解決することで、壁沿いのスライド移動が可能になる。
+	// Z 判定に newX を使う理由：対角コーナーへの引っ掛かりを防ぐため。
 	float newZ = m_position.z + velocity.z * m_speed * deltaTime;
 	if (g_dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
 		g_dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||

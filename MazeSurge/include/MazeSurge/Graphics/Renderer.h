@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "MazeSurge/Core/Core.h"
 #include "MazeSurge/Graphics/Cube.h"
 #include "MazeSurge/Graphics/Camera.h"
@@ -31,9 +31,9 @@ public:
     void DrawHP(int hp);
 
     // 画面にチェックポイント数を描画する（Present()の前に呼ぶ）
-    void DrawCheckPoint(int getNum, int wholeNum);
+    void DrawCheckPoint(int getNum, size_t wholeNum);
 
-    // 画面に残り時間を描画する（Preset()の前に呼ぶ）
+    // 画面に残り時間を描画する（Present()の前に呼ぶ）
     void DrawTime(float time);
 
     // バックバッファを単色でクリアする（3Dシーンを使わない画面の先頭で呼ぶ）
@@ -64,20 +64,23 @@ private:
     bool CreateConstantBuffers();
     bool CreateMeshBuffers();
 
+    // ---- 結果画面共通描画 ----
+    void DrawResultScreen(const wchar_t *title, char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor);
+
     // ---- シェーダーコンパイルユーティリティ ----
     static bool CompileShader(const wchar_t *filePath, const char *entryPoint,
                               const char *profile, ComPtr<ID3DBlob> &blob);
 
     // ---- SpriteBatch / SpriteFont ----
-    std::unique_ptr<SpriteBatch> m_spriteBatch;
-    std::unique_ptr<SpriteFont> m_spriteFont;
-    std::unique_ptr<CommonStates> m_states;
-    ComPtr<ID3D11ShaderResourceView> m_whiteTexture;
-    ComPtr<ID3D11ShaderResourceView> m_titleTexture;
-    ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;
-    ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture;
-    UINT m_titleTexWidth = 0;
-    UINT m_titleTexHeight = 0;
+    std::unique_ptr<SpriteBatch> m_spriteBatch;          // 2Dスプライト描画バッチ
+    std::unique_ptr<SpriteFont> m_spriteFont;            // ビットマップフォント
+    std::unique_ptr<CommonStates> m_states;              // ブレンド・ラスタライザ等の共通ステート
+    ComPtr<ID3D11ShaderResourceView> m_whiteTexture;     // 単色描画用の1×1白テクスチャ
+    ComPtr<ID3D11ShaderResourceView> m_titleTexture;     // タイトルロゴ画像
+    ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;   // タイトル背景画像
+    ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture; // プレイ方法説明画像
+    UINT m_titleTexWidth = 0;                            // タイトルロゴのピクセル幅
+    UINT m_titleTexHeight = 0;                           // タイトルロゴのピクセル高さ
 
     // ---- D3D11 コアオブジェクト ----
     ComPtr<ID3D11Device> m_device;
@@ -100,11 +103,11 @@ private:
     ComPtr<ID3D11Buffer> m_lightBuffer;
 
     // ---- 行列 ----
-    XMMATRIX m_view;
-    XMMATRIX m_projection;
+    XMMATRIX m_view;       // ビュー行列（カメラ変換）
+    XMMATRIX m_projection; // プロジェクション行列（透視投影）
 
-    XMFLOAT4 m_floorColor;
-    XMFLOAT4 m_playBackGroundColor;
+    XMFLOAT4 m_floorColor;          // 床の描画色
+    XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
 };
 
 // グローバルレンダラーインスタンス

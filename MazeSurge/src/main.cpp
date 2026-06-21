@@ -8,7 +8,6 @@
 #include "MazeSurge/Scene/GameScene.h"
 #include "MazeSurge/Scene/TitleScene.h"
 #include <iostream>
-#include <ctime>
 
 // ---- 前方宣言 ----
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -28,7 +27,8 @@ int WINAPI WinMain(
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-    // COM の初期化（WICTextureLoader が内部で使用する）
+    // WICTextureLoader（テクスチャ読み込み）は COM を必要とする。
+    // COINIT_MULTITHREADED: DirectX 系 API に適したマルチスレッドアパートメント。
     HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
     if (FAILED(hr))
     {
@@ -53,6 +53,7 @@ int WINAPI WinMain(
     }
 
     // ---- ウィンドウ作成 ----
+    // リサイズと最大化を無効化してウィンドウサイズを固定する
     constexpr DWORD WINDOW_STYLE = WS_OVERLAPPEDWINDOW & ~(WS_THICKFRAME | WS_MAXIMIZEBOX);
     RECT rc = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
     AdjustWindowRect(&rc, WINDOW_STYLE, FALSE);
@@ -73,7 +74,6 @@ int WINAPI WinMain(
     UpdateWindow(hwnd);
 
     // ---- 初期化 ----
-    // std::unique_ptr<Scene> currentScene = std::make_unique<GameScene>();
     std::unique_ptr<Scene> currentScene = std::make_unique<TitleScene>();
 
     // ---- Rederer初期化 ----
@@ -120,12 +120,21 @@ int WINAPI WinMain(
             // 描画
             currentScene->Draw(g_renderer, inputState);
 
+            // ゲームを終了
             if (currentScene->GetState() == GameState::Finished)
                 isRunning = false;
 
+            // ゲームシーンに遷移
             else if (currentScene->GetState() == GameState::Start)
             {
                 currentScene = std::make_unique<GameScene>();
+                currentScene->Init();
+            }
+
+            // タイトルシーンに遷移
+            else if (currentScene->GetState() == GameState::Restart)
+            {
+                currentScene = std::make_unique<TitleScene>();
                 currentScene->Init();
             }
 
@@ -198,11 +207,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
     case WM_MOUSEMOVE:
         inputState.mouseX = GET_X_LPARAM(lParam);
         inputState.mouseY = GET_Y_LPARAM(lParam);
-        // {
-        //     wchar_t buf[64];
-        //     swprintf_s(buf, L"Mouse: (%d, %d)\n", inputState.mouseX, inputState.mouseY);
-        //     OutputDebugStringW(buf);
-        // }
         return 0;
 
     case WM_LBUTTONDOWN:

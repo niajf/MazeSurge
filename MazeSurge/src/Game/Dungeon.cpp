@@ -9,7 +9,7 @@ void Dungeon::GenerateTestMap()
 	m_grid.push_back({FLOOR, WALL, WALL, FLOOR, GOAL});
 }
 
-void Dungeon::Generate(unsigned seed)
+void Dungeon::Init()
 {
 	// メンバ変数の初期化
 	m_wallColor = DUNGEON_WALL_COLOR;
@@ -21,8 +21,14 @@ void Dungeon::Generate(unsigned seed)
 	m_goalScale = DUNGEON_GOAL_SCALE;
 	m_checkPointScale = DUNGEON_CP_SCALE;
 
+	Generate();
+}
+
+void Dungeon::Generate()
+{
+
 	// シードを設定
-	std::srand(seed);
+	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
 	// 全てのマスを壁で埋める
 	m_grid.resize(m_mazeSize, std::vector<CellType>(m_mazeSize, WALL));
@@ -39,7 +45,8 @@ void Dungeon::Generate(unsigned seed)
 	std::vector<int> di = {-1, 0, 1, 0};
 	std::vector<int> dj = {0, 1, 0, -1};
 
-	// 迷路が単純にならないように、穴を掘る方向をランダムに決定するための配列
+	// startIndex を [0,3] のランダム値にした上で order[startIndex..startIndex+3] の
+	// 4要素を連続取得するため、配列を 2 周分用意してモジュロ計算を不要にしている。
 	std::vector<int> order = {0, 1, 2, 3, 0, 1, 2, 3};
 
 	// 穴掘り法で迷路を生成
@@ -124,8 +131,8 @@ void Dungeon::Generate(unsigned seed)
 			deadEnds.push_back({nowI, nowJ});
 	}
 
-	// 行き止まりの中から、ランダムでチェックポイントを設定
-	// ２番目までの要素はスタートとそれに隣接するセルであるため、候補から除外する
+	// BFS の訪問順でスタート地点(1,1)が最初に行き止まり判定される（通路1本しかない）。
+	// 先頭 2 要素を除外してスタート直近へのチェックポイント配置を防ぐ。
 	deadEnds.erase(deadEnds.begin(), deadEnds.begin() + 2);
 
 	// 指定したチェックポイント数が、生成可能なチェックポイント数よりも大きくならないようにする
@@ -188,6 +195,7 @@ bool Dungeon::IsWallCell(int gridX, int gridZ) const
 	if (gridX < 0 || gridX >= m_mazeSize || gridZ < 0 || gridZ >= m_mazeSize)
 		return true;
 
+	// m_grid は行優先: outer インデックス=行=Z、inner インデックス=列=X
 	return m_grid[gridZ][gridX] == WALL;
 }
 
