@@ -76,8 +76,7 @@ void ProjectilePool::Draw(Renderer &renderer) const
             continue;
 
         XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.5f, m_pool[i].position.z);
-        XMFLOAT4 projectileColor = {(float)220 / 255, (float)20 / 255, (float)60 / 255, 1.0f};
-        renderer.DrawCube(world, projectileColor);
+        renderer.DrawCube(world, m_pool[i].color);
     }
 };
 

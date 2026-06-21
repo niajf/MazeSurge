@@ -115,16 +115,16 @@ bool GameScene::IsButtonClicked(int x, int y) const
 char GameScene::GetRankChar()
 {
     float timeScore = (m_timeLimit - m_elapsedTime) / m_timeLimit;
-    float checkPointScore = m_getCheckPoint / m_dungeon.GetCheckPointNum();
-    float totalScore = timeScore + checkPointScore;
+    float checkPointScore = static_cast<float>(m_getCheckPoint) / static_cast<float>(m_dungeon.GetCheckPointNum());
+    float totalScore = (timeScore + checkPointScore) / 2.f;
 
-    if (totalScore >= 0.9f)
+    if (totalScore >= 0.7f)
         return 'S';
-    else if (totalScore >= 0.8f)
-        return 'A';
-    else if (totalScore >= 0.7f)
-        return 'B';
     else if (totalScore >= 0.6f)
+        return 'A';
+    else if (totalScore >= 0.5f)
+        return 'B';
+    else if (totalScore >= 0.4f)
         return 'C';
 
     return 'D';

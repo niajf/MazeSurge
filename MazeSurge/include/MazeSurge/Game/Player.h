@@ -26,9 +26,10 @@ private:
 	bool m_keyS = false;
 	bool m_keyD = false;
 
-	XMFLOAT3 m_position;	// プレイヤーの座標
-	BBOX m_bbox;			// プレイヤーのBoundingBox
-	float m_scale;			// プレイヤーブロックのスケール
-	float m_speed;			// プレイヤーの移動速度
-	int m_hp;				// プレイヤーのHP
+	XMFLOAT4 m_color;	 // プレイヤーブロックの色
+	XMFLOAT3 m_position; // プレイヤーの座標
+	BBOX m_bbox;		 // プレイヤーのBoundingBox
+	float m_scale;		 // プレイヤーブロックのスケール
+	float m_speed;		 // プレイヤーの移動速度
+	int m_hp;			 // プレイヤーのHP
 };

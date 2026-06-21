@@ -32,6 +32,9 @@ bool Renderer::Init(HWND hwnd)
     if (!InitSpriteBatch())
         return false;
 
+    m_floorColor = RENDERER_FLOOR_COLOR;
+    m_playBackGroundColor = RENDERER_PLAY_BG_COLOR;
+
     return true;
 }
 
@@ -372,7 +375,7 @@ void Renderer::Render(float floorScale, Camera &camera)
     m_deviceContext->RSSetState(nullptr);
 
     // ---- 画面クリア ----
-    float clearColor[4] = {0.1f, 0.1f, 0.15f, 1.0f};
+    float clearColor[4] = {m_playBackGroundColor.x, m_playBackGroundColor.y, m_playBackGroundColor.z, m_playBackGroundColor.w};
     m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), clearColor);
     m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -407,7 +410,7 @@ void Renderer::Render(float floorScale, Camera &camera)
     XMMATRIX floorWorld = XMMatrixScaling(floorScale, 1.f, floorScale);
     cb.wvp = XMMatrixTranspose(floorWorld * m_view * m_projection);
     cb.world = XMMatrixTranspose(floorWorld);
-    cb.objectColor = XMFLOAT4(0.2f, 0.2f, 0.25f, 1.0f);
+    cb.objectColor = m_floorColor;
     m_deviceContext->UpdateSubresource(m_constantBuffer.Get(), 0, nullptr, &cb, 0, 0);
     m_deviceContext->IASetVertexBuffers(0, 1, m_floorVertexBuffer.GetAddressOf(), &stride, &offset);
     m_deviceContext->IASetIndexBuffer(m_floorIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);

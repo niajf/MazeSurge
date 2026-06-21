@@ -12,9 +12,14 @@ void Dungeon::GenerateTestMap()
 void Dungeon::Generate(unsigned seed)
 {
 	// メンバ変数の初期化
+	m_wallColor = DUNGEON_WALL_COLOR;
+	m_goalColor = DUNGEON_GOAL_COLOR;
+	m_checlPointColor = DUNGEON_CP_COLOR;
 	m_mazeSize = DUNGEON_GRID_SIZE;
 	m_numCheckPoint = DUNGEON_CHECKPOINT_NUM;
-	m_cellSize = DUNGEON_CELL_SCALE;
+	m_wallScale = DUNGEON_WALL_SCALE;
+	m_goalScale = DUNGEON_GOAL_SCALE;
+	m_checkPointScale = DUNGEON_CP_SCALE;
 
 	// シードを設定
 	std::srand(seed);
@@ -150,26 +155,22 @@ void Dungeon::Draw(Renderer &renderer) const
 			if (m_grid[i][j] == WALL)
 			{
 				XMFLOAT3 pos = GridToWorld(j, i);
-				XMMATRIX world = XMMatrixScaling(m_cellSize, m_cellSize, m_cellSize) * XMMatrixTranslation(pos.x, pos.y, pos.z);
-				XMFLOAT4 color = {0.2f, 0.50f, 0.50f, 1.0f};
-				renderer.DrawCube(world, color);
+				XMMATRIX world = XMMatrixScaling(m_wallScale, m_wallScale, m_wallScale) * XMMatrixTranslation(pos.x, pos.y, pos.z);
+				renderer.DrawCube(world, m_wallColor);
 			}
 
 			else if (m_grid[i][j] == GOAL)
 			{
 				XMFLOAT3 pos = GridToWorld(j, i);
-				XMMATRIX world = XMMatrixScaling(m_cellSize, m_cellSize, m_cellSize) * XMMatrixTranslation(pos.x, pos.y, pos.z);
-				XMFLOAT4 color = {1.0f, 0.9f, 0.3f, 1.0f};
-				renderer.DrawCube(world, color);
+				XMMATRIX world = XMMatrixScaling(m_goalScale, m_goalScale, m_goalScale) * XMMatrixTranslation(pos.x, pos.y, pos.z);
+				renderer.DrawCube(world, m_goalColor);
 			}
 
 			else if (m_grid[i][j] == CHECKPOINT)
 			{
-				float scale = 0.7f;
 				XMFLOAT3 pos = GridToWorld(j, i);
-				XMMATRIX world = XMMatrixScaling(m_cellSize * scale, m_cellSize * scale, m_cellSize * scale) * XMMatrixTranslation(pos.x, pos.y, pos.z);
-				XMFLOAT4 color = {0.9f, 0.4f, 0.3f, 1.0f};
-				renderer.DrawCube(world, color);
+				XMMATRIX world = XMMatrixScaling(m_checkPointScale, m_checkPointScale, m_checkPointScale) * XMMatrixTranslation(pos.x, pos.y, pos.z);
+				renderer.DrawCube(world, m_checlPointColor);
 			}
 		}
 	}
@@ -194,17 +195,17 @@ XMFLOAT3 Dungeon::GridToWorld(int gridX, int gridZ) const
 {
 	// グリッド中心座標を返す
 	return {
-		m_cellSize * (float)(gridX - (m_mazeSize - 1) / 2),
+		m_wallScale * (float)(gridX - (m_mazeSize - 1) / 2),
 		0.0f,
-		m_cellSize * (float)(gridZ - (m_mazeSize - 1) / 2)};
+		m_wallScale * (float)(gridZ - (m_mazeSize - 1) / 2)};
 }
 
 void Dungeon::WorldToGrid(float worldX, float worldZ, int &gridX, int &gridZ) const
 {
-	// GridToWorldの逆変換: worldX = m_cellSize * (gridX - (m_mazeSize-1)/2)
-	// → gridX = round(worldX / m_cellSize + (m_mazeSize-1)/2)
-	float gx = worldX / m_cellSize + (float)(m_mazeSize - 1) / 2.0f;
-	float gz = worldZ / m_cellSize + (float)(m_mazeSize - 1) / 2.0f;
+	// GridToWorldの逆変換: worldX = m_wallScale * (gridX - (m_mazeSize-1)/2)
+	// → gridX = round(worldX / m_wallScale + (m_mazeSize-1)/2)
+	float gx = worldX / m_wallScale + (float)(m_mazeSize - 1) / 2.0f;
+	float gz = worldZ / m_wallScale + (float)(m_mazeSize - 1) / 2.0f;
 	gridX = std::clamp((int)std::round(gx), 0, m_mazeSize - 1);
 	gridZ = std::clamp((int)std::round(gz), 0, m_mazeSize - 1);
 }

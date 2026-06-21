@@ -91,6 +91,9 @@ private:
     // ---- 行列 ----
     XMMATRIX m_view;
     XMMATRIX m_projection;
+
+    XMFLOAT4 m_floorColor;
+    XMFLOAT4 m_playBackGroundColor;
 };
 
 // グローバルレンダラーインスタンス

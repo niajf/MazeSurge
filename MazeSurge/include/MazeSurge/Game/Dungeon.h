@@ -40,12 +40,17 @@ public:
     XMFLOAT3 GetGoalPosition() const;
 
     int getMazeSize() { return m_mazeSize; };
-    float getCellSize() { return m_cellSize; };
+    float getCellSize() { return m_wallScale; };
     size_t GetCheckPointNum() { return m_numCheckPoint; };
 
 private:
+    XMFLOAT4 m_wallColor;
+    XMFLOAT4 m_goalColor;
+    XMFLOAT4 m_checlPointColor;
     std::vector<std::vector<CellType>> m_grid;
     int m_mazeSize;         // 迷路のサイズ
     size_t m_numCheckPoint; // チェックポイントの数
-    float m_cellSize;       // 壁ブロックのスケール
+    float m_wallScale;      // 壁ブロックのスケール
+    float m_goalScale;
+    float m_checkPointScale;
 };

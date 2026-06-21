@@ -3,11 +3,12 @@
 
 struct Enemy
 {
+    XMFLOAT4 color;
+    XMFLOAT3 position;
+    BBOX bbox;
     bool active;
     float scale;
     float speed;
-    XMFLOAT3 position;
-    BBOX bbox;
 
     Enemy();
 };

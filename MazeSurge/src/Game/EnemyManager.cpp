@@ -91,7 +91,6 @@ void EnemyManager::Draw(Renderer &renderer) const
             continue;
 
         XMMATRIX world = XMMatrixScaling(m_pool[i].scale, m_pool[i].scale, m_pool[i].scale) * XMMatrixTranslation(m_pool[i].position.x, m_pool[i].position.y + 0.4f, m_pool[i].position.z);
-        XMFLOAT4 projectileColor = {(float)128 / 255, (float)0 / 255, (float)0 / 255, 1.0f};
-        renderer.DrawCube(world, projectileColor);
+        renderer.DrawCube(world, m_pool[i].color);
     }
 }

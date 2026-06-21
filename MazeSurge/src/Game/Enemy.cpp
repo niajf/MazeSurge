@@ -3,9 +3,10 @@
 
 Enemy::Enemy()
 {
+    color = ENEMY_CELL_COLOR;
+    position = {0.f, 0.f, 0.f};
+    bbox.setBBOX(position, scale);
     active = false;
     scale = ENEMY_CELL_SCALE;
     speed = ENEMY_MOVE_SPEED;
-    position = {0.f, 0.f, 0.f};
-    bbox.setBBOX(position, scale);
 }
