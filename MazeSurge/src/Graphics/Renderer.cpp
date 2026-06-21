@@ -498,6 +498,19 @@ bool Renderer::InitSpriteBatch()
         return false;
     }
 
+    ComPtr<ID3D11Resource> howToPlayResource;
+    hr = DirectX::CreateWICTextureFromFile(
+        m_device.Get(),
+        UI_HOW_TO_PLAY_IMAGE_PATH,
+        howToPlayResource.GetAddressOf(),
+        m_howToPlayTexture.GetAddressOf());
+
+    if (FAILED(hr))
+    {
+        MessageBox(nullptr, L"タイトル画像の読み込みに失敗", L"エラー", MB_OK);
+        return false;
+    }
+
     // 画像サイズを取得（中央揃え計算用）
     ComPtr<ID3D11Texture2D> titleTex2D;
     titleResource.As(&titleTex2D);
@@ -687,6 +700,13 @@ void Renderer::DrawGameClear(char rankChar)
     m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&UI_GAME_CLEAR_BTN_COLOR));
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawHowToPlay()
+{
+    m_spriteBatch->Begin();
+    m_spriteBatch->Draw(m_howToPlayTexture.Get(), HOW_TO_PLAY_DEAW_RECT);
     m_spriteBatch->End();
 }
 

@@ -48,6 +48,9 @@ public:
     // 画面中央に "GAME CLEAR" とボタンを描画する（Present()の前に呼ぶ）
     void DrawGameClear(char rankChar);
 
+    // 画面にプレイ方法を説明する図を描画する（Present()の前に呼ぶ）
+    void DrawHowToPlay();
+
     // バックバッファを画面に表示する（ゲームループの最後に呼ぶ）
     void Present();
 
@@ -71,9 +74,10 @@ private:
     std::unique_ptr<CommonStates> m_states;
     ComPtr<ID3D11ShaderResourceView> m_whiteTexture;
     ComPtr<ID3D11ShaderResourceView> m_titleTexture;
+    ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;
+    ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture;
     UINT m_titleTexWidth = 0;
     UINT m_titleTexHeight = 0;
-    ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;
 
     // ---- D3D11 コアオブジェクト ----
     ComPtr<ID3D11Device> m_device;

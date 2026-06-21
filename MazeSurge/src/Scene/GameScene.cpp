@@ -70,6 +70,12 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         renderer.DrawHP(m_player.GetHP());
         renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
         renderer.DrawTime(m_timeLimit - m_elapsedTime);
+
+        if (m_elapsedTime < HOW_TO_PLAY_DRAW_TIME)
+        {
+            renderer.DrawHowToPlay();
+        }
+
         renderer.Present();
     }
 

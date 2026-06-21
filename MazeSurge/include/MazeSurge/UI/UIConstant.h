@@ -10,6 +10,11 @@ constexpr RECT TITLE_EXIT_BUTTON_RECT = {540, 620 - 50, 740, 680 - 50};
 constexpr const wchar_t *UI_FONT_PATH = L"fonts/gameover.spritefont";
 constexpr const wchar_t *UI_TITLE_IMAGE_PATH = L"figures/title_logo.png";
 constexpr const wchar_t *UI_TITLE_BG_IMAGE_PATH = L"figures/title_background.png";
+constexpr const wchar_t* UI_HOW_TO_PLAY_IMAGE_PATH = L"figures/how_to_play.png";
+
+// ---- HOW TO PLAY ----
+constexpr RECT HOW_TO_PLAY_DEAW_RECT = {160, 90, 1120, 630};
+constexpr float HOW_TO_PLAY_DRAW_TIME = 5.0f;
 
 // ---- HUD ----
 constexpr float UI_HUD_BAR_HEIGHT = 60.0f;
