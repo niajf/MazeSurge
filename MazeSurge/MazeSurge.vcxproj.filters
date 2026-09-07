@@ -40,6 +40,12 @@
     <Filter Include="include\UI">
       <UniqueIdentifier>{f5570b31-1605-46a5-9841-b60560cda944}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Audio">
+      <UniqueIdentifier>{3d9c8f0a-1b2e-4c7d-8a5f-6e4b9c1d2a3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\Audio">
+      <UniqueIdentifier>{7a1e2b3c-4d5f-4a6b-9c8d-0e1f2a3b4c5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="shaders\shaders.hlsl">
@@ -47,6 +53,9 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Audio\SoundManager.cpp">
+      <Filter>src\Audio</Filter>
+    </ClCompile>
     <ClCompile Include="src\Game\Dungeon.cpp">
       <Filter>src\Game</Filter>
     </ClCompile>
@@ -85,6 +94,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\MazeSurge\Audio\SoundManager.h">
+      <Filter>include\Audio</Filter>
+    </ClInclude>
     <ClInclude Include="include\MazeSurge\Core\Common.h">
       <Filter>include\Core</Filter>
     </ClInclude>

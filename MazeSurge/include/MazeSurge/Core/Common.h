@@ -20,6 +20,7 @@
 // WM_MOUSEMOVE の lParam をキャストする際に符号付き変換を正しく行うために必要。
 #include <windowsx.h>
 #include <stdio.h>
+#include <string>
 
 // ---- DirectX 11 ----
 #include <d3d11.h>

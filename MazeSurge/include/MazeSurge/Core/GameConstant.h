@@ -87,3 +87,9 @@ constexpr float RENDERER_SHININESS = 64.0f;
 constexpr float RENDERER_SPECULAR_INTENSITY = 0.2f; // スペキュラー反射の強度
 // EMISSIVE_INTENSITY=0.7: 環境光の強度。0 だと影の部分が真っ黒になる。
 constexpr float RENDERER_EMISSIVE_INTENSITY = 0.7f;
+
+namespace Audio
+{
+    constexpr const wchar_t *GAMEBGM_PATH = L"Sounds/FinalCorridorDash.wav";
+    constexpr const wchar_t *TITLEBGM_PATH = L"Sounds/PendingAdventure.wav";
+}

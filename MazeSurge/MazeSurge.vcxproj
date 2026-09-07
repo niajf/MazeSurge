@@ -114,6 +114,9 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /Y /D /I "$(ProjectDir)Sounds" "$(OutDir)Sounds"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -143,9 +146,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="src\Audio\SoundManager.cpp" />
+    <ClCompile Include="src\Audio\WAVFileReader.cpp" />
     <ClCompile Include="src\Game\Dungeon.cpp" />
     <ClCompile Include="src\Game\Enemy.cpp" />
     <ClCompile Include="src\Game\EnemyManager.cpp" />
@@ -160,6 +162,9 @@
     <ClCompile Include="src\Utility\Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\MazeSurge\Audio\PlatformHelpers.h" />
+    <ClInclude Include="include\MazeSurge\Audio\SoundManager.h" />
+    <ClInclude Include="include\MazeSurge\Audio\WAVFileReader.h" />
     <ClInclude Include="include\MazeSurge\Core\Common.h" />
     <ClInclude Include="include\MazeSurge\Core\Core.h" />
     <ClInclude Include="include\MazeSurge\Core\GameConstant.h" />
@@ -178,6 +183,9 @@
     <ClInclude Include="include\MazeSurge\Scene\TitleScene.h" />
     <ClInclude Include="include\MazeSurge\UI\UIConstant.h" />
     <ClInclude Include="include\MazeSurge\Utility\Collision.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
