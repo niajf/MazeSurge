@@ -46,8 +46,8 @@ constexpr int PLAYER_HP = 5;                                        // プレイ
 constexpr XMFLOAT4 PLAYER_CELL_COLOR = {0.00f, 0.74f, 1.00f, 1.0f}; // シアン
 
 // ---- Projectile ----
-constexpr float PROJECTILE_CELL_SCALE = 0.2f; // 弾キューブの辺長（プレイヤーより小さい）
-constexpr float PROJECTILE_MOVE_SPEED = 5.0f; // 弾の移動速度（単位/秒）
+constexpr float PROJECTILE_CELL_SCALE = 0.2f;  // 弾キューブの辺長（プレイヤーより小さい）
+constexpr float PROJECTILE_MOVE_SPEED = 10.0f; // 弾の移動速度（単位/秒）
 // LIFE_LIMIT_TIME=10s は通常プレイで迷路の壁に当たる前に消えない十分な長さ。
 // 壁衝突判定を省略しているため、寿命で消滅させている。
 constexpr float PROJECTILE_LIFE_LIMIT_TIME = 10.f;

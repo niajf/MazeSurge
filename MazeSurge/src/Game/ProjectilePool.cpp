@@ -12,20 +12,13 @@ void ProjectilePool::Init()
         m_pool.emplace_back();
 }
 
-Projectile *ProjectilePool::Get(XMFLOAT3 playerPos, XMFLOAT3 dir)
+Projectile *ProjectilePool::Get()
 {
     // プールを先頭から線形探索し、最初の非アクティブスロットを返す。
     for (size_t i = 0; i < m_pool.size(); i++)
     {
         if (!m_pool[i].active)
-        {
-            m_pool[i].active = true;
-            m_pool[i].position = playerPos;
-            m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
-            m_pool[i].direction = dir;
-            m_pool[i].lifetime = 0.f; // 発射時にライフタイムをリセット。
             return &m_pool[i];
-        }
     }
 
     // プールが満杯なら新たに生成しない（nullptr を返して呼び出し側で無視）。
@@ -43,18 +36,42 @@ void ProjectilePool::Update(float deltaTime, const Camera &camera, const Dungeon
     {
         m_elapsedTime = 0.0f;
 
-        // planeY=-0.5f はプレイヤー中心(Y≈0)より半ユニット下の水平面。
-        // 弾の発射高さに合わせることで弾道がクリック位置と視覚的に一致する。
-        XMFLOAT3 hitPos = camera.ScreenToWorldOnPlane(inputState.mouseX, inputState.mouseY, -0.5f);
-        XMFLOAT3 playerPos = player.GetPosition();
+        // プールに非アクティブな弾を取り出す。
+        Projectile *proj = Get();
 
-        // プレイヤー → クリック位置 への正規化方向ベクトルを発射方向にする。
-        XMVECTOR dir_norm = XMVector3Normalize(
-            XMVectorSubtract(XMLoadFloat3(&hitPos), XMLoadFloat3(&playerPos)));
-        XMFLOAT3 dir_float3_norm;
-        XMStoreFloat3(&dir_float3_norm, dir_norm);
+        if (proj)
+        {
+            // planeY=-0.5f はプレイヤー中心(Y≈0)より半ユニット下の水平面。
+            // 弾の発射高さに合わせることで弾道がクリック位置と視覚的に一致する。
+            XMFLOAT3 hitPos = camera.ScreenToWorldOnPlane(inputState.mouseX, inputState.mouseY, -0.5f);
+            XMFLOAT3 playerPos = player.GetPosition();
 
-        Get(playerPos, dir_float3_norm);
+            // プレイヤー → クリック位置 への正規化方向ベクトルを発射方向にする。
+            XMVECTOR dir_norm = XMVector3Normalize(
+                XMVectorSubtract(XMLoadFloat3(&hitPos), XMLoadFloat3(&playerPos)));
+            XMFLOAT3 dir_float3_norm;
+            XMStoreFloat3(&dir_float3_norm, dir_norm);
+
+            // プレイヤーの速さベクトルを計算
+            XMFLOAT3 playerVelVec = player.GetVelocityVector();
+            float playerSpeed = player.GetSpeed();
+            playerVelVec.x *= playerSpeed;
+            playerVelVec.z *= playerSpeed;
+
+            // 弾の速さベクトルを計算
+            dir_float3_norm.x *= proj->speed;
+            dir_float3_norm.z *= proj->speed;
+
+            // 弾にプレイヤーの慣性が乗るようにする
+            dir_float3_norm.z += playerVelVec.z;
+            dir_float3_norm.x += playerVelVec.x;
+
+            proj->active = true;
+            proj->position = playerPos;
+            proj->bbox.setBBOX(proj->position, proj->scale);
+            proj->direction = dir_float3_norm;
+            proj->lifetime = 0.f; // 発射時にライフタイムをリセット。
+        }
     }
 
     // ---- 弾丸の移動とライフタイム管理 ----
@@ -72,9 +89,10 @@ void ProjectilePool::Update(float deltaTime, const Camera &camera, const Dungeon
         }
 
         // 一定方向への等速直線移動。direction は発射時に正規化済み。
-        m_pool[i].position.x += deltaTime * m_pool[i].speed * m_pool[i].direction.x;
-        m_pool[i].position.y += deltaTime * m_pool[i].speed * m_pool[i].direction.y;
-        m_pool[i].position.z += deltaTime * m_pool[i].speed * m_pool[i].direction.z;
+        m_pool[i].position.x += deltaTime * m_pool[i].direction.x;
+        // m_pool[i].position.y += deltaTime * m_pool[i].speed * m_pool[i].direction.y;
+        m_pool[i].position.z += deltaTime * m_pool[i].direction.z;
+
         // 移動後に bbox を再計算して衝突判定を正確にする。
         m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
     }

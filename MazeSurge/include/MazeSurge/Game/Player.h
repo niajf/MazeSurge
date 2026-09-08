@@ -25,11 +25,13 @@ public:
     XMFLOAT3 GetPosition() const { return m_position; }
     BBOX GetBBOX() const { return m_bbox; }
     int GetHP() const { return m_hp; }
+    XMFLOAT3 GetVelocityVector() const { return m_velVec; }
+    float GetSpeed() const { return m_speed; }
 
 private:
     // WASD の押下状態を読み取り、斜め移動を正規化した速度ベクトルを返す。
     // private にしているのは Update() 内部の計算ステップであり、外部から直接呼ぶ必要がないため。
-    XMFLOAT3 CalcMoveVelocity() const;
+    XMFLOAT3 CalcMoveVelocity();
 
     // InputState から毎フレームコピーするキー状態。
     // CalcMoveVelocity() が const メンバのため、入力状態をメンバに持つ必要がある。
@@ -40,8 +42,9 @@ private:
 
     XMFLOAT4 m_color;    // プレイヤーキューブの描画色
     XMFLOAT3 m_position; // ワールド座標（Y=0 固定、床面上）
-    BBOX m_bbox;         // 衝突判定用 AABB（XZ 平面のみ）
-    float m_scale;       // キューブの辺長（均一スケール）
-    float m_speed;       // 移動速度（単位/秒）
-    int m_hp;            // 残り HP
+    XMFLOAT3 m_velVec;
+    BBOX m_bbox;   // 衝突判定用 AABB（XZ 平面のみ）
+    float m_scale; // キューブの辺長（均一スケール）
+    float m_speed; // 移動速度（単位/秒）
+    int m_hp;      // 残り HP
 };

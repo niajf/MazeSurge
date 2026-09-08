@@ -19,7 +19,7 @@ public:
     void Init();
     // プール内の非アクティブスロットを選び、位置と方向を設定してポインタを返す。
     // プールが満杯なら nullptr を返す（呼び出し側で無視する）。
-    Projectile *Get(XMFLOAT3 playerPos, XMFLOAT3 dir);
+    Projectile *Get();
     // 毎フレーム呼ぶ。左クリック時の発射処理・弾の移動・寿命管理を行う。
     // Camera は ScreenToWorldOnPlane() による照準計算に使用する。
     void Update(float deltaTime, const Camera &camera, const Dungeon &dungeon, const Player &player, const InputState &inputState);
