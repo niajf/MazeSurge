@@ -162,7 +162,7 @@ int WINAPI WinMain(
                 currentScene = std::make_unique<TitleScene>();
                 currentScene->Init();
                 g_soundManager.Stop();
-                g_soundManager.PlayGameBGM();
+                g_soundManager.PlayTitleBGM();
             }
 
             // ---- FPS カウンターをタイトルバーに表示 ----
