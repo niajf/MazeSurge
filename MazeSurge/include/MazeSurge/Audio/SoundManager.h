@@ -60,6 +60,9 @@ public:
     // 敵がプレイヤーに衝突したときのSEを再生
     void PlayHitPlayerSE();
 
+    // チェックポイントを取得したときのSEを再生
+    void PlayGetCpSE();
+
     // BGMの再生を終了
     void StopBGM();
 
@@ -82,4 +85,5 @@ private:
     SoundData m_BGM;
     SoundData m_hitEnemySE;
     SoundData m_hitPlayerSE;
+    SoundData m_getCpSE;
 };

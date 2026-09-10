@@ -38,7 +38,13 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         // IsCheckPoint はチェックポイントを踏むと FLOOR に書き換えて true を返す。
         // 同じチェックポイントを 2 度カウントしないようにグリッドを変更している。
         if (m_dungeon.IsCheckPoint(m_player.GetPosition()))
+        {
+            // チェックポイント取得数
             m_getCheckPoint++;
+
+            // SE
+            SoundManager::GetInstance().PlayGetCpSE();
+        }
 
         if (m_dungeon.IsGoal(m_player.GetPosition()))
             m_state = GameState::GameClear;

@@ -163,12 +163,14 @@ bool SoundManager::SetSE()
     if (!CreateSoundData(Audio::HIT_PLAYER_SE_PATH, m_hitPlayerSE))
         return false;
 
+    if (!CreateSoundData(Audio::GET_CP_SE_PATH, m_getCpSE))
+        return false;
+
     return true;
 }
 
 void SoundManager::PlayHitEnemySE()
 {
-
     //
     //  SourceVoiceにデータを送信
     //
@@ -184,7 +186,6 @@ void SoundManager::PlayHitEnemySE()
 
 void SoundManager::PlayHitPlayerSE()
 {
-
     //
     //  SourceVoiceにデータを送信
     //
@@ -196,4 +197,19 @@ void SoundManager::PlayHitPlayerSE()
 
     // 再生
     m_hitPlayerSE.sourceVoice->Start(0);
+}
+
+void SoundManager::PlayGetCpSE()
+{
+    //
+    //  SourceVoiceにデータを送信
+    //
+    XAUDIO2_BUFFER buffer{0};
+    buffer.pAudioData = m_getCpSE.start;
+    buffer.Flags = XAUDIO2_END_OF_STREAM;
+    buffer.AudioBytes = m_getCpSE.bytes;
+    m_getCpSE.sourceVoice->SubmitSourceBuffer(&buffer);
+
+    // 再生
+    m_getCpSE.sourceVoice->Start(0);
 }
