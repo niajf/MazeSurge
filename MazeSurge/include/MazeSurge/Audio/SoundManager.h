@@ -42,12 +42,6 @@ public:
     // 破棄
     void Cleanup();
 
-    // SEのサウンドデータを作成
-    bool CreateSoundData(const wchar_t *filePath, SoundData &soundData);
-
-    // SEをまとめてセットする
-    bool SetSE();
-
     // GameBGMを再生
     void PlayGameBGM();
 
@@ -55,19 +49,13 @@ public:
     void PlayTitleBGM();
 
     // 弾が敵に衝突したときのSEを再生
-    void PlayHitEnemySE();
+    void PlayHitEnemySE() { PlaySE(m_hitEnemySE); }
 
     // 敵がプレイヤーに衝突したときのSEを再生
-    void PlayHitPlayerSE();
+    void PlayHitPlayerSE() { PlaySE(m_hitPlayerSE); };
 
     // チェックポイントを取得したときのSEを再生
-    void PlayGetCpSE();
-
-    // BGMの再生を終了
-    void StopBGM();
-
-    // SEの再生を終了
-    void StopSE();
+    void PlayGetCpSE() { PlaySE(m_getCpSE); };
 
 private:
     // コンストラクタへの外部アクセス禁止
@@ -77,6 +65,15 @@ private:
     // コピーコンストラクタと代入演算子を禁止
     SoundManager(const SoundManager &) = default;
     SoundManager &operator=(const SoundManager &) = default;
+
+    // mp3ファイルを読み込みSoundDataに変換
+    bool LoadMp3(const wchar_t *filePath, SoundData &soundData);
+
+    // SEをまとめてセットする
+    bool SetSE();
+
+    // SEを再生する
+    void PlaySE(SoundData &soundData);
 
     IXAudio2 *m_xaudio = nullptr;
     IXAudio2MasteringVoice *m_masteringVoice = nullptr;

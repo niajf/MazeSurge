@@ -146,8 +146,8 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Audio\dr_mp3.cpp" />
     <ClCompile Include="src\Audio\SoundManager.cpp" />
-    <ClCompile Include="src\Audio\WAVFileReader.cpp" />
     <ClCompile Include="src\Game\Dungeon.cpp" />
     <ClCompile Include="src\Game\Enemy.cpp" />
     <ClCompile Include="src\Game\EnemyManager.cpp" />
@@ -162,13 +162,13 @@
     <ClCompile Include="src\Utility\Collision.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\MazeSurge\Audio\PlatformHelpers.h" />
     <ClInclude Include="include\MazeSurge\Audio\SoundManager.h" />
-    <ClInclude Include="include\MazeSurge\Audio\WAVFileReader.h" />
     <ClInclude Include="include\MazeSurge\Core\Common.h" />
     <ClInclude Include="include\MazeSurge\Core\Core.h" />
     <ClInclude Include="include\MazeSurge\Core\GameConstant.h" />
     <ClInclude Include="include\MazeSurge\Core\Types.h" />
+    <ClInclude Include="include\MazeSurge\External\dr_mp3.h" />
+    <ClInclude Include="include\MazeSurge\External\tiny_obj_loader.h" />
     <ClInclude Include="include\MazeSurge\Game\Dungeon.h" />
     <ClInclude Include="include\MazeSurge\Game\Enemy.h" />
     <ClInclude Include="include\MazeSurge\Game\EnemyManager.h" />
