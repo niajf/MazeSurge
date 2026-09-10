@@ -3,14 +3,31 @@
 #include <xaudio2.h>
 #include <memory>
 #include <cstdint>
+#include <optional>
 
 struct SoundData
 {
     std::unique_ptr<uint8_t[]> data; // バイト列を所有
-    const uint8_t *start = nullptr;  // data 内の再生開始位置
+    IXAudio2SourceVoice *sourceVoice = nullptr;
+    const uint8_t *start = nullptr; // data 内の再生開始位置
     uint32_t bytes = 0;
     uint32_t loopBegin = 0;
     uint32_t loopLength = 0;
+
+    void Release()
+    {
+        if (sourceVoice)
+        {
+            sourceVoice->Stop();
+            sourceVoice->DestroyVoice();
+            sourceVoice = nullptr;
+        }
+        data.reset();
+        start = nullptr;
+        bytes = 0;
+        loopBegin = 0;
+        loopLength = 0;
+    }
 };
 
 class SoundManager
@@ -25,8 +42,11 @@ public:
     // 破棄
     void Cleanup();
 
-    // 弾が敵に衝突したときのSEをセット
-    bool SetHitEnemySE();
+    // SEのサウンドデータを作成
+    bool CreateSoundData(const wchar_t *filePath, SoundData &soundData);
+
+    // SEをまとめてセットする
+    bool SetSE();
 
     // GameBGMを再生
     void PlayGameBGM();
@@ -52,16 +72,10 @@ private:
     SoundManager(const SoundManager &) = default;
     SoundManager &operator=(const SoundManager &) = default;
 
-    IXAudio2 *m_xaudio;
-    IXAudio2MasteringVoice *m_masteringVoice;
-    IXAudio2SourceVoice *m_sourceVoiceBGM;
-    IXAudio2SourceVoice *m_sourceVoiceSE;
+    IXAudio2 *m_xaudio = nullptr;
+    IXAudio2MasteringVoice *m_masteringVoice = nullptr;
 
-    // 各wavファイルを記憶しておくポインタ
-    std::unique_ptr<uint8_t[]> m_waveGameBGM;
-    std::unique_ptr<uint8_t[]> m_waveTitleBGM;
-    std::unique_ptr<uint8_t[]> m_waveHitEnemySE;
-
-    // SEの再生に使う情報を保持
+    // 音声の再生に使う情報を保持
+    SoundData m_BGM;
     SoundData m_hitEnemySE;
 };

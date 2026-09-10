@@ -32,7 +32,7 @@ bool SoundManager::Init()
         return false;
 
     // SEの生成
-    if (!SetHitEnemySE())
+    if (!SetSE())
         return false;
 
     return true;
@@ -43,15 +43,9 @@ void SoundManager::Cleanup()
     //
     // Cleanup XAudio2
     //
-    if (m_sourceVoiceBGM)
-    {
-        StopBGM();
-    }
-
-    if (m_sourceVoiceSE)
-    {
-        StopSE();
-    }
+    m_BGM.Release();
+    m_hitEnemySE.Release();
+    m_hitPlayerSE.Release();
 
     if (m_masteringVoice)
     {
@@ -69,22 +63,21 @@ void SoundManager::Cleanup()
 void SoundManager::PlayGameBGM()
 {
 
-    if (m_sourceVoiceBGM)
-        StopBGM();
+    m_BGM.Release();
 
     //
     //  WAVファイルを開く
     //
     DirectX::WAVData waveData{0};
 
-    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(Audio::GAME_BGM_PATH, m_waveGameBGM, waveData);
+    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(Audio::GAME_BGM_PATH, m_BGM.data, waveData);
     if (FAILED(hr))
         throw "LoadWAVAudioFromFileEx";
 
     //
     //  WAVファイルのWAVEFORMATEXを使ってSourceVoiceを作成
     //
-    if (FAILED(m_xaudio->CreateSourceVoice(&m_sourceVoiceBGM, waveData.wfx)))
+    if (FAILED(m_xaudio->CreateSourceVoice(&m_BGM.sourceVoice, waveData.wfx)))
         throw "CreateSourceVoice";
 
     //
@@ -94,30 +87,30 @@ void SoundManager::PlayGameBGM()
     buffer.pAudioData = waveData.startAudio;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.AudioBytes = waveData.audioBytes;
-    m_sourceVoiceBGM->SubmitSourceBuffer(&buffer);
+    m_BGM.sourceVoice->SubmitSourceBuffer(&buffer);
 
-    m_sourceVoiceBGM->Start(0);
+    // 再生
+    m_BGM.sourceVoice->Start(0);
 }
 
 void SoundManager::PlayTitleBGM()
 {
 
-    if (m_sourceVoiceBGM)
-        StopBGM();
+    m_BGM.Release();
 
     //
     //  WAVファイルを開く
     //
     DirectX::WAVData waveData{0};
 
-    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(Audio::TITLE_BGM_PATH, m_waveGameBGM, waveData);
+    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(Audio::TITLE_BGM_PATH, m_BGM.data, waveData);
     if (FAILED(hr))
         throw "LoadWAVAudioFromFileEx";
 
     //
     //  WAVファイルのWAVEFORMATEXを使ってSourceVoiceを作成
     //
-    if (FAILED(m_xaudio->CreateSourceVoice(&m_sourceVoiceBGM, waveData.wfx)))
+    if (FAILED(m_xaudio->CreateSourceVoice(&m_BGM.sourceVoice, waveData.wfx)))
         throw "CreateSourceVoice";
 
     //
@@ -127,19 +120,19 @@ void SoundManager::PlayTitleBGM()
     buffer.pAudioData = waveData.startAudio;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.AudioBytes = waveData.audioBytes;
-    m_sourceVoiceBGM->SubmitSourceBuffer(&buffer);
+    m_BGM.sourceVoice->SubmitSourceBuffer(&buffer);
 
-    m_sourceVoiceBGM->Start(0);
+    m_BGM.sourceVoice->Start(0);
 }
 
-bool SoundManager::SetHitEnemySE()
+bool SoundManager::CreateSoundData(const wchar_t *filePath, SoundData &soundData)
 {
     //
     //  WAVファイルを開く
     //
     DirectX::WAVData waveData{0};
 
-    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(Audio::HIT_ENEMY_SE_PATH, m_waveHitEnemySE, waveData);
+    HRESULT hr = DirectX::LoadWAVAudioFromFileEx(filePath, soundData.data, waveData);
     if (FAILED(hr))
     {
         MessageBox(nullptr, L"wavファイルの読み込みに失敗", L"エラー", MB_OK);
@@ -149,15 +142,26 @@ bool SoundManager::SetHitEnemySE()
     //
     //  WAVファイルのWAVEFORMATEXを使ってSourceVoiceを作成
     //
-    if (FAILED(m_xaudio->CreateSourceVoice(&m_sourceVoiceSE, waveData.wfx)))
+    if (FAILED(m_xaudio->CreateSourceVoice(&soundData.sourceVoice, waveData.wfx)))
     {
         MessageBox(nullptr, L"sourceVoiceの作成に失敗", L"エラー", MB_OK);
         return false;
     }
 
-    // 再生に必要な情報を保持
-    m_hitEnemySE.start = waveData.startAudio;
-    m_hitEnemySE.bytes = waveData.audioBytes;
+    soundData.start = waveData.startAudio;
+    soundData.bytes = waveData.audioBytes;
+
+    return true;
+}
+
+bool SoundManager::SetSE()
+{
+    // サウンドデータを作成し、保存
+    if (!CreateSoundData(Audio::HIT_ENEMY_SE_PATH, m_hitEnemySE))
+        return false;
+
+    if (!CreateSoundData(Audio::HIT_PLAYER_SE_PATH, m_hitPlayerSE))
+        return false;
 
     return true;
 }
@@ -172,27 +176,14 @@ void SoundManager::PlayHitEnemySE()
     buffer.pAudioData = m_hitEnemySE.start;
     buffer.Flags = XAUDIO2_END_OF_STREAM;
     buffer.AudioBytes = m_hitEnemySE.bytes;
-    m_sourceVoiceSE->SubmitSourceBuffer(&buffer);
+    m_hitEnemySE.sourceVoice->SubmitSourceBuffer(&buffer);
 
-    m_sourceVoiceSE->Start(0);
+    // 再生
+    m_hitEnemySE.sourceVoice->Start(0);
 }
 
-void SoundManager::StopBGM()
 {
-    //
-    // SourceVoiceの破棄
-    //
-    m_sourceVoiceBGM->Stop();
-    m_sourceVoiceBGM->DestroyVoice();
-    m_sourceVoiceBGM = nullptr;
-}
 
-void SoundManager::StopSE()
-{
     //
-    // SourceVoiceの破棄
     //
-    m_sourceVoiceSE->Stop();
-    m_sourceVoiceSE->DestroyVoice();
-    m_sourceVoiceSE = nullptr;
 }
