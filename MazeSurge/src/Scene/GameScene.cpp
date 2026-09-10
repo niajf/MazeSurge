@@ -47,10 +47,22 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         }
 
         if (m_dungeon.IsGoal(m_player.GetPosition()))
+        {
+            // BGM
+            SoundManager::GetInstance().PlayClearBGM();
+
+            // シーンフラグの変更
             m_state = GameState::GameClear;
+        }
 
         if (m_player.GetHP() <= 0)
+        {
+            // BGM
+            SoundManager::GetInstance().PlayOverBGM();
+
+            // シーンフラグの変更
             m_state = GameState::GameOver;
+        }
     }
 
     else if (m_state == GameState::GameClear)

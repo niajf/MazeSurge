@@ -48,6 +48,12 @@ public:
     // TitleBGMを再生
     void PlayTitleBGM();
 
+    // Game Clear BGMを再生
+    void PlayClearBGM();
+
+    // Game over BGMを再生
+    void PlayOverBGM();
+
     // 弾が敵に衝突したときのSEを再生
     void PlayHitEnemySE() { PlaySE(m_hitEnemySE); }
 
@@ -74,6 +80,9 @@ private:
 
     // SEを再生する
     void PlaySE(SoundData &soundData);
+
+    // セットされているBGMを再生する
+    void PlayBGM();
 
     IXAudio2 *m_xaudio = nullptr;
     IXAudio2MasteringVoice *m_masteringVoice = nullptr;

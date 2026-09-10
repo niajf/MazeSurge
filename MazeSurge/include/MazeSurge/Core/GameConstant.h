@@ -92,6 +92,8 @@ namespace Audio
 {
     constexpr const wchar_t *GAME_BGM_PATH = L"Sounds/FinalCorridorDash.mp3";
     constexpr const wchar_t *TITLE_BGM_PATH = L"Sounds/PendingAdventure.mp3";
+    constexpr const wchar_t *CLEAR_BGM_PATH = L"Sounds/ClearTheMaze.mp3";
+    constexpr const wchar_t *OVER_BGM_PATH = L"Sounds/ZeroCreditLeft.mp3";
     constexpr const wchar_t *HIT_ENEMY_SE_PATH = L"Sounds/8bitDamage10.mp3";
     constexpr const wchar_t *HIT_PLAYER_SE_PATH = L"Sounds/8bitAlert3.mp3";
     constexpr const wchar_t *GET_CP_SE_PATH = L"Sounds/8bitRecover3.mp3";

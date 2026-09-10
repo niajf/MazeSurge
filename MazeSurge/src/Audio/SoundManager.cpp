@@ -62,23 +62,11 @@ void SoundManager::Cleanup()
 
 void SoundManager::PlayGameBGM()
 {
-
     m_BGM.Release();
     if (!LoadMp3(Audio::GAME_BGM_PATH, m_BGM))
         throw "LoadMp3";
 
-    //
-    //  SourceVoiceにデータを送信
-    //
-    XAUDIO2_BUFFER buffer{0};
-    buffer.pAudioData = m_BGM.start;
-    buffer.Flags = XAUDIO2_END_OF_STREAM;
-    buffer.AudioBytes = m_BGM.bytes;
-    buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
-    m_BGM.sourceVoice->SubmitSourceBuffer(&buffer);
-
-    // 再生
-    m_BGM.sourceVoice->Start(0);
+    PlayBGM();
 }
 
 void SoundManager::PlayTitleBGM()
@@ -88,18 +76,27 @@ void SoundManager::PlayTitleBGM()
     if (!LoadMp3(Audio::TITLE_BGM_PATH, m_BGM))
         throw "LoadMp3";
 
-    //
-    //  SourceVoiceにデータを送信
-    //
-    XAUDIO2_BUFFER buffer{0};
-    buffer.pAudioData = m_BGM.start;
-    buffer.Flags = XAUDIO2_END_OF_STREAM;
-    buffer.AudioBytes = m_BGM.bytes;
-    buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
-    m_BGM.sourceVoice->SubmitSourceBuffer(&buffer);
+    PlayBGM();
+}
 
-    // 再生
-    m_BGM.sourceVoice->Start(0);
+void SoundManager::PlayClearBGM()
+{
+
+    m_BGM.Release();
+    if (!LoadMp3(Audio::CLEAR_BGM_PATH, m_BGM))
+        throw "LoadMp3";
+
+    PlayBGM();
+}
+
+void SoundManager::PlayOverBGM()
+{
+
+    m_BGM.Release();
+    if (!LoadMp3(Audio::OVER_BGM_PATH, m_BGM))
+        throw "LoadMp3";
+
+    PlayBGM();
 }
 
 // AI生成
@@ -189,4 +186,20 @@ void SoundManager::PlaySE(SoundData &soundData)
 
     // 再生
     soundData.sourceVoice->Start(0);
+}
+
+void SoundManager::PlayBGM()
+{
+    //
+    //  SourceVoiceにデータを送信
+    //
+    XAUDIO2_BUFFER buffer{0};
+    buffer.pAudioData = m_BGM.start;
+    buffer.Flags = XAUDIO2_END_OF_STREAM;
+    buffer.AudioBytes = m_BGM.bytes;
+    buffer.LoopCount = XAUDIO2_LOOP_INFINITE;
+    m_BGM.sourceVoice->SubmitSourceBuffer(&buffer);
+
+    // 再生
+    m_BGM.sourceVoice->Start(0);
 }
