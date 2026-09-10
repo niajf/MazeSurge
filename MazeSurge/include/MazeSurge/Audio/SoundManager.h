@@ -7,6 +7,9 @@
 class SoundManager
 {
 public:
+    // 唯一のインスタンスを返す関数
+    static SoundManager &GetInstance();
+
     // 初期化
     bool Init();
 
@@ -29,6 +32,14 @@ public:
     void StopSE();
 
 private:
+    // コンストラクタへの外部アクセス禁止
+    SoundManager() = default;
+    ~SoundManager() = default;
+
+    // コピーコンストラクタと代入演算子を禁止
+    SoundManager(const SoundManager &) = default;
+    SoundManager &operator=(const SoundManager &) = default;
+
     IXAudio2 *m_xaudio;
     IXAudio2MasteringVoice *m_masteringVoice;
     IXAudio2SourceVoice *m_sourceVoiceBGM;
@@ -39,5 +50,3 @@ private:
     std::unique_ptr<uint8_t[]> m_waveTitleBGM;
     std::unique_ptr<uint8_t[]> m_waveHitEnemySE;
 };
-
-extern SoundManager g_soundManager;

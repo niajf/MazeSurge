@@ -3,8 +3,11 @@
 #include <vector>
 #include <string>
 
-// グローバルSoundManagerインスタンスの定義
-SoundManager g_soundManager;
+SoundManager &SoundManager::GetInstance()
+{
+    static SoundManager instance;
+    return instance;
+}
 
 bool SoundManager::Init()
 {
@@ -36,21 +39,35 @@ void SoundManager::Cleanup()
     //
     // Cleanup XAudio2
     //
-    if (m_masteringVoice != 0)
+    if (m_sourceVoiceBGM)
+    {
+        StopBGM();
+    }
+
+    if (m_sourceVoiceSE)
+    {
+        StopSE();
+    }
+
+    if (m_masteringVoice)
     {
         m_masteringVoice->DestroyVoice();
-        m_masteringVoice = 0;
+        m_masteringVoice = nullptr;
     }
-    if (m_xaudio != 0)
+
+    if (m_xaudio)
     {
         m_xaudio->Release();
-        m_xaudio = 0;
+        m_xaudio = nullptr;
     }
-    CoUninitialize();
 }
 
 void SoundManager::PlayGameBGM()
 {
+
+    if (m_sourceVoiceBGM)
+        StopBGM();
+
     //
     //  WAVファイルを開く
     //
@@ -80,6 +97,10 @@ void SoundManager::PlayGameBGM()
 
 void SoundManager::PlayTitleBGM()
 {
+
+    if (m_sourceVoiceBGM)
+        StopBGM();
+
     //
     //  WAVファイルを開く
     //
@@ -143,6 +164,7 @@ void SoundManager::StopBGM()
     //
     m_sourceVoiceBGM->Stop();
     m_sourceVoiceBGM->DestroyVoice();
+    m_sourceVoiceBGM = nullptr;
 }
 
 void SoundManager::StopSE()
@@ -152,4 +174,5 @@ void SoundManager::StopSE()
     //
     m_sourceVoiceSE->Stop();
     m_sourceVoiceSE->DestroyVoice();
+    m_sourceVoiceSE = nullptr;
 }

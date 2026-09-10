@@ -90,7 +90,7 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
         if (projectilePool.DeactiveOnCollision(m_pool[i].bbox))
         {
             m_pool[i].active = false;
-            g_soundManager.PlayHitEnemySE();
+            SoundManager::GetInstance().PlayHitEnemySE();
         }
     }
 }

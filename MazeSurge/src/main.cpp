@@ -82,14 +82,15 @@ int WINAPI WinMain(
     UpdateWindow(hwnd); // WM_PAINT を即座に送出してウィンドウを初期描画する。
 
     // XAudio2を初期化
-    if (!g_soundManager.Init())
+    SoundManager::GetInstance();
+    if (!SoundManager::GetInstance().Init())
     {
         MessageBox(nullptr, L"XAudio2の初期化に失敗", L"エラー", MB_OK);
         return -1;
     }
 
     // BGMを鳴らす
-    g_soundManager.PlayTitleBGM();
+    SoundManager::GetInstance().PlayTitleBGM();
 
     // ---- 初期シーンをタイトルシーンとして生成 ----
     // unique_ptr<Scene> で多態性を持ちつつシーン切り替え時に自動解放する。
@@ -153,16 +154,14 @@ int WINAPI WinMain(
                 // unique_ptr の代入で旧シーンが自動解放されてから新シーンが初期化される。
                 currentScene = std::make_unique<GameScene>();
                 currentScene->Init();
-                g_soundManager.StopBGM();
-                g_soundManager.PlayGameBGM();
+                SoundManager::GetInstance().PlayGameBGM();
             }
             else if (currentScene->GetState() == GameState::Restart)
             {
                 // ゲームオーバー/クリア → タイトルシーン遷移。
                 currentScene = std::make_unique<TitleScene>();
                 currentScene->Init();
-                g_soundManager.StopBGM();
-                g_soundManager.PlayTitleBGM();
+                SoundManager::GetInstance().PlayTitleBGM();
             }
 
             // ---- FPS カウンターをタイトルバーに表示 ----
@@ -181,7 +180,7 @@ int WINAPI WinMain(
     }
 
     // SoundManagerを解放
-    g_soundManager.Cleanup();
+    SoundManager::GetInstance().Cleanup();
 
     // COM を解放する。CoInitializeEx と対になる必要があるため、
     // D3D オブジェクトの解放（スコープ終了時）より後にならないよう注意する。
