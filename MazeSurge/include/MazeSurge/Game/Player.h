@@ -1,5 +1,6 @@
 #pragma once
 #include "MazeSurge/Core/Core.h"
+#include "MazeSurge/Audio/SoundManager.h"
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Graphics/Renderer.h"
 #include <algorithm>

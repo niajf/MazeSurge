@@ -182,8 +182,18 @@ void SoundManager::PlayHitEnemySE()
     m_hitEnemySE.sourceVoice->Start(0);
 }
 
+void SoundManager::PlayHitPlayerSE()
 {
 
     //
+    //  SourceVoiceにデータを送信
     //
+    XAUDIO2_BUFFER buffer{0};
+    buffer.pAudioData = m_hitPlayerSE.start;
+    buffer.Flags = XAUDIO2_END_OF_STREAM;
+    buffer.AudioBytes = m_hitPlayerSE.bytes;
+    m_hitPlayerSE.sourceVoice->SubmitSourceBuffer(&buffer);
+
+    // 再生
+    m_hitPlayerSE.sourceVoice->Start(0);
 }

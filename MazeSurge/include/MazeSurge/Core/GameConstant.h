@@ -93,4 +93,5 @@ namespace Audio
     constexpr const wchar_t *GAME_BGM_PATH = L"Sounds/FinalCorridorDash.wav";
     constexpr const wchar_t *TITLE_BGM_PATH = L"Sounds/PendingAdventure.wav";
     constexpr const wchar_t *HIT_ENEMY_SE_PATH = L"Sounds/8bitDamage10.wav";
+    constexpr const wchar_t *HIT_PLAYER_SE_PATH = L"Sounds/8bitAlert3.wav";
 }

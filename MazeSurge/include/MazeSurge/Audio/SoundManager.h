@@ -57,6 +57,9 @@ public:
     // 弾が敵に衝突したときのSEを再生
     void PlayHitEnemySE();
 
+    // 敵がプレイヤーに衝突したときのSEを再生
+    void PlayHitPlayerSE();
+
     // BGMの再生を終了
     void StopBGM();
 
@@ -78,4 +81,5 @@ private:
     // 音声の再生に使う情報を保持
     SoundData m_BGM;
     SoundData m_hitEnemySE;
+    SoundData m_hitPlayerSE;
 };

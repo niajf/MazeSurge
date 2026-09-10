@@ -98,4 +98,7 @@ void Player::hitEnemy()
 	// 敵との衝突 1 回につき HP を 1 減らす。
 	// 0 以下になった場合の GameOver 判定は GameScene::Update() 側で行う。
 	m_hp--;
+
+	// ダメージを受けたSEを鳴らす
+	SoundManager::GetInstance().PlayHitPlayerSE();
 }
