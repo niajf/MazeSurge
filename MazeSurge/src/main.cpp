@@ -153,7 +153,7 @@ int WINAPI WinMain(
                 // unique_ptr の代入で旧シーンが自動解放されてから新シーンが初期化される。
                 currentScene = std::make_unique<GameScene>();
                 currentScene->Init();
-                g_soundManager.Stop();
+                g_soundManager.StopBGM();
                 g_soundManager.PlayGameBGM();
             }
             else if (currentScene->GetState() == GameState::Restart)
@@ -161,7 +161,7 @@ int WINAPI WinMain(
                 // ゲームオーバー/クリア → タイトルシーン遷移。
                 currentScene = std::make_unique<TitleScene>();
                 currentScene->Init();
-                g_soundManager.Stop();
+                g_soundManager.StopBGM();
                 g_soundManager.PlayTitleBGM();
             }
 

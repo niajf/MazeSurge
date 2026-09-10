@@ -1,4 +1,5 @@
 #include "MazeSurge/Game/EnemyManager.h"
+#include "MazeSurge/Audio/SoundManager.h"
 
 void EnemyManager::Init()
 {
@@ -87,7 +88,10 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
         // ---- 弾丸との衝突判定 ----
         // DeactiveOnCollision は弾が当たった場合に弾も非アクティブ化して true を返す。
         if (projectilePool.DeactiveOnCollision(m_pool[i].bbox))
+        {
             m_pool[i].active = false;
+            g_soundManager.PlayHitEnemySE();
+        }
     }
 }
 

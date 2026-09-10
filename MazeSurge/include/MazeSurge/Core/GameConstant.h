@@ -90,6 +90,7 @@ constexpr float RENDERER_EMISSIVE_INTENSITY = 0.7f;
 
 namespace Audio
 {
-    constexpr const wchar_t *GAMEBGM_PATH = L"Sounds/FinalCorridorDash.wav";
-    constexpr const wchar_t *TITLEBGM_PATH = L"Sounds/PendingAdventure.wav";
+    constexpr const wchar_t *GAME_BGM_PATH = L"Sounds/FinalCorridorDash.wav";
+    constexpr const wchar_t *TITLE_BGM_PATH = L"Sounds/PendingAdventure.wav";
+    constexpr const wchar_t *HIT_ENEMY_SE_PATH = L"Sounds/8bitDamage10.wav";
 }
