@@ -4,6 +4,15 @@
 #include <memory>
 #include <cstdint>
 
+struct SoundData
+{
+    std::unique_ptr<uint8_t[]> data; // バイト列を所有
+    const uint8_t *start = nullptr;  // data 内の再生開始位置
+    uint32_t bytes = 0;
+    uint32_t loopBegin = 0;
+    uint32_t loopLength = 0;
+};
+
 class SoundManager
 {
 public:
@@ -15,6 +24,9 @@ public:
 
     // 破棄
     void Cleanup();
+
+    // 弾が敵に衝突したときのSEをセット
+    bool SetHitEnemySE();
 
     // GameBGMを再生
     void PlayGameBGM();
@@ -49,4 +61,7 @@ private:
     std::unique_ptr<uint8_t[]> m_waveGameBGM;
     std::unique_ptr<uint8_t[]> m_waveTitleBGM;
     std::unique_ptr<uint8_t[]> m_waveHitEnemySE;
+
+    // SEの再生に使う情報を保持
+    SoundData m_hitEnemySE;
 };
