@@ -159,19 +159,19 @@ void GameScene::DrawScene3DPrePare(Renderer &renderer)
 void GameScene::DrawResultRank(Renderer &renderer)
 {
     if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 5.f && GetRankInt() >= 5)
-        renderer.DrawResultText(L"S", UI_RESULT_RANK_COLOR, 360.f);
+        renderer.DrawResultText(L"S", UI_RESULT_RANK_S_COLOR, 360.f);
 
     else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 4.f && GetRankInt() >= 4)
-        renderer.DrawResultText(L"A", UI_RESULT_RANK_COLOR, 360.f);
+        renderer.DrawResultText(L"A", UI_RESULT_RANK_A_COLOR, 360.f);
 
     else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 3.f && GetRankInt() >= 3)
-        renderer.DrawResultText(L"B", UI_RESULT_RANK_COLOR, 360.f);
+        renderer.DrawResultText(L"B", UI_RESULT_RANK_B_COLOR, 360.f);
 
     else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 2.f && GetRankInt() >= 2)
-        renderer.DrawResultText(L"C", UI_RESULT_RANK_COLOR, 360.f);
+        renderer.DrawResultText(L"C", UI_RESULT_RANK_C_COLOR, 360.f);
 
     else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL && GetRankInt() >= 1)
-        renderer.DrawResultText(L"D", UI_RESULT_RANK_COLOR, 360.f);
+        renderer.DrawResultText(L"D", UI_RESULT_RANK_D_COLOR, 360.f);
 }
 
 void GameScene::Draw(Renderer &renderer, const InputState &inputState)
@@ -205,7 +205,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
             renderer.DrawResultText(L"GAME CLEAR", UI_GAME_CLEAR_TITLE_COLOR, UI_RESULT_TITLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_MIDLE_SEC)
-            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_COLOR, UI_RESULT_MIDLE_Y);
+            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_S_COLOR, UI_RESULT_MIDLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
             renderer.DrawResultButton(UI_GAME_CLEAR_BTN_COLOR);
@@ -221,7 +221,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
             renderer.DrawResultText(L"GAME OVER", UI_GAME_OVER_TITLE_COLOR, UI_RESULT_TITLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_MIDLE_SEC)
-            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_COLOR, UI_RESULT_MIDLE_Y);
+            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_S_COLOR, UI_RESULT_MIDLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
             renderer.DrawResultButton(UI_GAME_OVER_BTN_COLOR);

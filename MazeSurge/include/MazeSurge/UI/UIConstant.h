@@ -61,8 +61,14 @@ constexpr XMFLOAT4 UI_GAME_CLEAR_TITLE_COLOR = {0.00f, 0.74f, 1.00f, 1.0f}; // �
 constexpr XMFLOAT4 UI_GAME_CLEAR_BTN_COLOR = {0.00f, 0.44f, 0.60f, 1.0f};   // 同色系の暗め
 
 // ---- 結果画面 共通配色 ----
-// ランク文字はチェックポイント色（ゴールデンイエロー）で表示し視認性を上げる。
-constexpr XMFLOAT4 UI_RESULT_RANK_COLOR = {0.91f, 0.66f, 0.00f, 1.0f};
+// ランク文字は D→S でレア感が段階的に増すよう、
+// グレー（コモン）→ 緑 → 青 → 紫 → 金（レジェンダリー）の定番配色を採用する。
+// S は既存のゴールデンイエローで固定し、そこから逆算して D〜A を配色。
+constexpr XMFLOAT4 UI_RESULT_RANK_D_COLOR = {0.69f, 0.69f, 0.69f, 1.0f}; // グレー（コモン）
+constexpr XMFLOAT4 UI_RESULT_RANK_C_COLOR = {0.30f, 0.69f, 0.31f, 1.0f}; // 緑（アンコモン）
+constexpr XMFLOAT4 UI_RESULT_RANK_B_COLOR = {0.13f, 0.59f, 0.95f, 1.0f}; // 青（レア）
+constexpr XMFLOAT4 UI_RESULT_RANK_A_COLOR = {0.61f, 0.15f, 0.69f, 1.0f}; // 紫（エピック）
+constexpr XMFLOAT4 UI_RESULT_RANK_S_COLOR = {0.91f, 0.66f, 0.00f, 1.0f}; // 金（レジェンダリー・固定）
 
 // ---- 結果画面 共通時間 ----
 constexpr float UI_RESULT_DRAW_RANK_INREVAL = 0.2f;
