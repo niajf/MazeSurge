@@ -55,6 +55,11 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
 
         // シーンフラグの変更
         m_state = GameState::GameClear;
+
+        // SE(ゴール到達時は、ボタン押下のSEを使い回す)
+        SoundManager::GetInstance().PlaySelectSE();
+
+        // リザルト画面に必要なメンバ変数を初期化
         m_ResultTimer = 0.f;
         m_ResultSETimer = 0.f;
         m_rankUpCount = 0;
@@ -67,6 +72,8 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
 
         // シーンフラグの変更
         m_state = GameState::GameOver;
+
+        // リザルト画面に必要なメンバ変数を初期化
         m_ResultTimer = 0.f;
         m_ResultSETimer = 0.f;
         m_rankUpCount = 0;
