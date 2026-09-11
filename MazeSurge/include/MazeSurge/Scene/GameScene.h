@@ -43,6 +43,9 @@ private:
     // 準備時間の3D シーン（ダンジョン）を描画する。
     void DrawScene3DPrePare(Renderer &renderer);
 
+    // リザルトの画面のランクを描画する
+    void DrawResultRank(Renderer &renderer);
+
     // 残り時間比率とチェックポイント取得率の平均からランク文字（S/A/B/C/D）を返す。
     // GameOver 時は無条件で 'D'。
     int GetRankInt();
@@ -65,4 +68,7 @@ private:
     float m_elapsedTime;
     float m_elapsedTimeHowToPlay;
     float m_elapsedTimePrepare;
+
+    // リザルト画面用のタイマー
+    float m_ResultTimer;
 };

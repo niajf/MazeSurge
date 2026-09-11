@@ -55,7 +55,7 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
 
         // シーンフラグの変更
         m_state = GameState::GameClear;
-        g_renderer.ResetFadeTimer();
+        m_ResultTimer = 0.f;
     }
 
     if (m_player.GetHP() <= 0)
@@ -65,7 +65,7 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
 
         // シーンフラグの変更
         m_state = GameState::GameOver;
-        g_renderer.ResetFadeTimer();
+        m_ResultTimer = 0.f;
     }
 }
 
@@ -112,7 +112,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
             m_state = GameState::Restart;
 
-        g_renderer.UpdateFadeTimer(deltaTime);
+        m_ResultTimer += deltaTime;
     }
 
     else if (m_state == GameState::GameOver)
@@ -120,7 +120,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
             m_state = GameState::Restart;
 
-        g_renderer.UpdateFadeTimer(deltaTime);
+        m_ResultTimer += deltaTime;
     }
 }
 
@@ -156,8 +156,27 @@ void GameScene::DrawScene3DPrePare(Renderer &renderer)
     m_enemyManager.Draw(renderer);
 }
 
+void GameScene::DrawResultRank(Renderer &renderer)
+{
+    if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 5.f && GetRankInt() >= 5)
+        renderer.DrawResultText(L"S", UI_RESULT_RANK_COLOR, 360.f);
+
+    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 4.f && GetRankInt() >= 4)
+        renderer.DrawResultText(L"A", UI_RESULT_RANK_COLOR, 360.f);
+
+    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 3.f && GetRankInt() >= 3)
+        renderer.DrawResultText(L"B", UI_RESULT_RANK_COLOR, 360.f);
+
+    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 2.f && GetRankInt() >= 2)
+        renderer.DrawResultText(L"C", UI_RESULT_RANK_COLOR, 360.f);
+
+    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL && GetRankInt() >= 1)
+        renderer.DrawResultText(L"D", UI_RESULT_RANK_COLOR, 360.f);
+}
+
 void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 {
+
     // ゲームシーン開始直後はHow To Playを描画する
     if (m_state == GameState::HowToPlay)
     {
@@ -179,13 +198,33 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
     {
         // リザルト画面は 3D シーンの上にオーバーレイ表示する。
         DrawScene3D(renderer);
-        renderer.DrawGameClear(GetRankChar());
+        renderer.DrawResultOverlay(m_ResultTimer);
+        DrawResultRank(renderer);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_TITLE_SEC)
+            renderer.DrawResultText(L"GAME CLEAR", UI_GAME_CLEAR_TITLE_COLOR, UI_RESULT_TITLE_Y);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_MIDLE_SEC)
+            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_COLOR, UI_RESULT_MIDLE_Y);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
+            renderer.DrawResultButton(UI_GAME_CLEAR_BTN_COLOR);
     }
 
     else if (m_state == GameState::GameOver)
     {
         DrawScene3D(renderer);
-        renderer.DrawGameOver(GetRankChar());
+        renderer.DrawResultOverlay(m_ResultTimer);
+        DrawResultRank(renderer);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_TITLE_SEC)
+            renderer.DrawResultText(L"GAME OVER", UI_GAME_OVER_TITLE_COLOR, UI_RESULT_TITLE_Y);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_MIDLE_SEC)
+            renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_COLOR, UI_RESULT_MIDLE_Y);
+
+        if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
+            renderer.DrawResultButton(UI_GAME_OVER_BTN_COLOR);
     }
 
     // Present は必ず最後に 1 度だけ呼ぶ。状態に関わらずここで統一する。

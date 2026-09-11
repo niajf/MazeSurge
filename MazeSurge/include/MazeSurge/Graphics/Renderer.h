@@ -47,10 +47,6 @@ public:
     void DrawCheckPoint(int getNum, size_t wholeNum); // 取得済み/全チェックポイント数を表示
     void DrawTime(float time);                        // 残り時間を MM:SS 形式で表示
 
-    // リザルト画面のフェードインタイマーを初期化
-    void ResetFadeTimer() { m_resultFadeTimer = 0.f; }
-    void UpdateFadeTimer(float deltaTime) { m_resultFadeTimer += deltaTime; }
-
     // バックバッファを単色でクリアする。
     // デフォルト引数は使用されないが、RENDERER_PLAY_BG_COLOR を明示的に渡すこと。
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
@@ -58,14 +54,13 @@ public:
     // タイトル画面（背景・ロゴ・ボタン）を 2D スプライトで描画する。
     void DrawTitle();
 
-    // GAME OVER 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
-    void DrawGameOver(const char rankChar);
-
-    // GAME CLEAR 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
-    void DrawGameClear(const char rankChar);
-
     // ゲーム開始直後の操作説明画像を描画する。
     void DrawHowToPlay();
+
+    // リザルト画面描画メソッド
+    void DrawResultOverlay(float elapsedTime);
+    void DrawResultText(const wchar_t *text, const XMFLOAT4 &textColor, float height);
+    void DrawResultButton(const XMFLOAT4 &bntColor);
 
     // バックバッファをフロントバッファに表示する（垂直同期あり）。
     // ゲームループの最後に 1 度だけ呼ぶこと。
@@ -80,9 +75,6 @@ private:
     bool CreateInputLayout(ComPtr<ID3DBlob> &vsBlob);
     bool CreateConstantBuffers();
     bool CreateMeshBuffers(); // キューブ・床の頂点/インデックスバッファを生成
-
-    // DrawGameOver/DrawGameClear の共通描画ロジック。タイトル文字・色だけ差し替える。
-    void DrawResultScreen(const wchar_t *title, const char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor);
 
     // HLSL ファイルをコンパイルしてバイトコード blob を返す。
     // static: インスタンス状態に依存しないため（m_device 等を使わない）。
@@ -136,9 +128,6 @@ private:
 
     XMFLOAT4 m_floorColor;          // 床の描画色
     XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
-
-    // ---- 各種タイマー ----
-    float m_resultFadeTimer;
 };
 
 // g_renderer: Renderer.cpp で定義されるグローバルシングルトン。

@@ -721,79 +721,51 @@ void Renderer::DrawTitle()
     m_spriteBatch->End();
 }
 
-// DrawGameOver / DrawGameClear は共通の結果画面レイアウトを共有するため
-// DrawResultScreen に処理を委譲し、タイトル文字列・色だけを差し替える。
-void Renderer::DrawResultScreen(const wchar_t *title, char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor)
+void Renderer::DrawResultOverlay(float elapsedTime)
 {
+    // 　フェードインの計算
     XMFLOAT4 resultOverlayColor = UI_RESULT_OVERLAY_COLOR;
-    resultOverlayColor.w = 0.65f * std::clamp(m_resultFadeTimer, 0.f, 1.f);
+    resultOverlayColor.w = 0.65f * std::clamp(elapsedTime, 0.f, 1.f);
 
+    const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
+
+    // NonPremultiplied: 半透明オーバーレイを正しくブレンドするために必要。
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&resultOverlayColor));
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawResultText(const wchar_t *text, const XMFLOAT4 &textColor, float height)
+{
+    XMVECTOR textSize = m_spriteFont->MeasureString(text);
+
+    XMFLOAT2 textPos((WINDOW_WIDTH - XMVectorGetX(textSize)) * 0.5f, height);
+
+    // NonPremultiplied: 半透明オーバーレイを正しくブレンドするために必要。
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
+    m_spriteFont->DrawString(m_spriteBatch.get(), text, textPos, XMLoadFloat4(&textColor));
+    m_spriteBatch->End();
+}
+
+void Renderer::DrawResultButton(const XMFLOAT4 &btnColor)
+{
     const wchar_t *btnText = L"TITLE";
-    wchar_t mediumStr[32];
-    wchar_t rankStr[8];
-
-    swprintf_s(mediumStr, L"SYNCHRO RANK");
-    swprintf_s(rankStr, L"%c", rankChar);
-
-    // 各テキストの描画サイズを測定して中央揃え座標を計算する。
-    XMVECTOR titleSize = m_spriteFont->MeasureString(title);
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
-    XMVECTOR mediumSize = m_spriteFont->MeasureString(mediumStr);
-    XMVECTOR rankSize = m_spriteFont->MeasureString(rankStr);
-
-    // タイトル文字を画面垂直中央から UI_RESULT_TITLE_OFFSET_Y だけずらした位置に配置する。
-    XMFLOAT2 titlePos(
-        (WINDOW_WIDTH - XMVectorGetX(titleSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(titleSize) * 0.5f + UI_RESULT_TITLE_OFFSET_Y);
-
-    // ランク文字も同様に垂直中央からずらして配置する。
-    XMFLOAT2 mediumPos(
-        (WINDOW_WIDTH - XMVectorGetX(mediumSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(mediumSize) * 0.5f + UI_RESULT_RANK_OFFSET_Y);
-
-    XMFLOAT2 rankPos(
-        (WINDOW_WIDTH - XMVectorGetX(rankSize)) * 0.5f,
-        WINDOW_HEIGHT * 0.5f - XMVectorGetY(rankSize) * 0.5f + UI_RESULT_RANK_OFFSET_Y + 80.f);
-
-    // ボタン矩形内でテキストを中央揃えにする座標を計算する。
     float textScaledW = XMVectorGetX(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     float textScaledH = XMVectorGetY(btnTextSize) * UI_BUTTON_TEXT_SCALE;
     XMFLOAT2 btnTextPos(
         GAME_EXIT_BUTTON_RECT.left + (GAME_EXIT_BUTTON_RECT.right - GAME_EXIT_BUTTON_RECT.left - textScaledW) * 0.5f,
         GAME_EXIT_BUTTON_RECT.top + (GAME_EXIT_BUTTON_RECT.bottom - GAME_EXIT_BUTTON_RECT.top - textScaledH) * 0.5f);
 
-    const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
-
     // NonPremultiplied: 半透明オーバーレイを正しくブレンドするために必要。
     m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
 
-    // オーバーレイ
-    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&resultOverlayColor)); // 暗転オーバーレイ
-
-    if (resultOverlayColor.w >= 0.65f)
-    {
-        // テキスト
-        m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&titleColor));
-        m_spriteFont->DrawString(m_spriteBatch.get(), mediumStr, mediumPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
-        m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
-
-        // ボタン
-        m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&btnColor)); // ボタン背景
-        m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
-                                 Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
-    }
+    // ボタン
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&btnColor)); // ボタン背景
+    m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
+                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
 
     m_spriteBatch->End();
-}
-
-void Renderer::DrawGameOver(const char rankChar)
-{
-    DrawResultScreen(L"GAME OVER", rankChar, UI_GAME_OVER_TITLE_COLOR, UI_GAME_OVER_BTN_COLOR);
-}
-
-void Renderer::DrawGameClear(const char rankChar)
-{
-    DrawResultScreen(L"GAME CLEAR", rankChar, UI_GAME_CLEAR_TITLE_COLOR, UI_GAME_CLEAR_BTN_COLOR);
 }
 
 void Renderer::DrawHowToPlay()
