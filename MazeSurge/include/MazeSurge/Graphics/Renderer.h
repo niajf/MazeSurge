@@ -123,8 +123,8 @@ private:
 
     // ---- 行列キャッシュ ----
     // Render() で計算してキャッシュし、その後の DrawCube() 呼び出しで参照する。
-    XMMATRIX m_view;
-    XMMATRIX m_projection;
+    XMMATRIX m_view = XMMatrixIdentity();
+    XMMATRIX m_projection = XMMatrixIdentity();
 
     XMFLOAT4 m_floorColor;          // 床の描画色
     XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
