@@ -63,7 +63,10 @@ public:
     // チェックポイントを取得したときのSEを再生
     void PlayGetCpSE() { PlaySE(m_getCpSE); };
 
-    // ボタンやランクカウントアップのSEを再生
+    // ボタンのSEを再生
+    void PlayRankUpSE() { PlaySE(m_rankUpSE); };
+
+    // ボタンのSEを再生
     void PlaySelectSE() { PlaySE(m_selectSE); };
 
 private:
@@ -95,5 +98,6 @@ private:
     SoundData m_hitEnemySE;
     SoundData m_hitPlayerSE;
     SoundData m_getCpSE;
+    SoundData m_rankUpSE;
     SoundData m_selectSE;
 };

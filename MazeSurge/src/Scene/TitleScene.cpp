@@ -20,10 +20,22 @@ void TitleScene::Update(float deltaTime, const InputState &inputState)
     if (!inputState.lMouseDown && inputState.lMousePrevDown)
     {
         if (IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_START_BUTTON_RECT))
-            m_state = GameState::Start; // ゲームシーンへ遷移。
+        {
+            // ゲームシーンへ遷移
+            m_state = GameState::Start;
+
+            // SE
+            SoundManager::GetInstance().PlaySelectSE();
+        }
 
         if (IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_EXIT_BUTTON_RECT))
-            m_state = GameState::Finished; // アプリケーション終了。
+        {
+            // アプリケーション終了
+            m_state = GameState::Finished;
+
+            // SE
+            SoundManager::GetInstance().PlaySelectSE();
+        }
     }
 }
 

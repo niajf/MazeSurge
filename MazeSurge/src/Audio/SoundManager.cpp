@@ -166,6 +166,9 @@ bool SoundManager::SetSE()
     if (!LoadMp3(Audio::GET_CP_SE_PATH, m_getCpSE))
         return false;
 
+    if (!LoadMp3(Audio::RANK_UP_SE_PATH, m_rankUpSE))
+        return false;
+
     if (!LoadMp3(Audio::SELECT_SE_PATH, m_selectSE))
         return false;
 

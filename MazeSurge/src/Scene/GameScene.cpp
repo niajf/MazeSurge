@@ -83,8 +83,14 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         // クリックされたらHow To Playを消し、ゲームを開始
         if ((!inputState.lMouseDown && inputState.lMousePrevDown) && m_elapsedTimeHowToPlay > 1.0f)
         {
+            // 準備時間へ
             m_state = GameState::Prepare;
+
+            // タイマーリセット
             m_elapsedTimeHowToPlay = 0.f;
+
+            // SE
+            SoundManager::GetInstance().PlaySelectSE();
         }
 
         m_camera.Update(m_player.GetPosition());
@@ -96,7 +102,10 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
         if (m_elapsedTimePrepare > 1.0f)
         {
+            // インゲーム開始
             m_state = GameState::Playing;
+
+            // タイマーリセット
             m_elapsedTimePrepare = 0.f;
         }
 
@@ -114,7 +123,13 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         // 押し続けている間は無視し、クリック完了（Press → Release）を検出する。
         // これによりシーン遷移直後の意図しない入力を防ぐ。
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
+        {
+            // リスタート
             m_state = GameState::Restart;
+
+            // SE
+            SoundManager::GetInstance().PlaySelectSE();
+        }
 
         m_ResultTimer += deltaTime;
         m_ResultSETimer += deltaTime;
@@ -124,15 +139,22 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
             m_ResultSETimer = 3.0f - UI_RESULT_DRAW_RANK_INREVAL;
             m_rankUpCount++;
 
+            // SE
             if (m_rankUpCount <= 5)
-                SoundManager::GetInstance().PlaySelectSE();
+                SoundManager::GetInstance().PlayRankUpSE();
         }
     }
 
     else if (m_state == GameState::GameOver)
     {
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
+        {
+            // リスタート
             m_state = GameState::Restart;
+
+            // SE
+            SoundManager::GetInstance().PlaySelectSE();
+        }
 
         m_ResultTimer += deltaTime;
         m_ResultSETimer += deltaTime;
