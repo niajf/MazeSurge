@@ -141,9 +141,9 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         m_ResultTimer += deltaTime;
         m_ResultSETimer += deltaTime;
 
-        if (m_ResultSETimer >= 3.0f)
+        if (m_ResultSETimer >= UI_RESULT_DRAW_RANK_SEC)
         {
-            m_ResultSETimer = 3.0f - UI_RESULT_DRAW_RANK_INREVAL;
+            m_ResultSETimer = UI_RESULT_DRAW_RANK_SEC - UI_RESULT_DRAW_RANK_INREVAL;
             m_rankUpCount++;
 
             // SE
@@ -202,19 +202,19 @@ void GameScene::DrawScene3DPrePare(Renderer &renderer)
 
 void GameScene::DrawResultRank(Renderer &renderer)
 {
-    if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 5.f && GetRankInt() >= 5)
+    if (m_ResultTimer > UI_RESULT_DRAW_RANK_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f && GetRankInt() >= 5)
         renderer.DrawResultText(L"S", UI_RESULT_RANK_S_COLOR, 360.f);
 
-    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 4.f && GetRankInt() >= 4)
+    else if (m_ResultTimer > UI_RESULT_DRAW_RANK_SEC + UI_RESULT_DRAW_RANK_INREVAL * 4.f && GetRankInt() >= 4)
         renderer.DrawResultText(L"A", UI_RESULT_RANK_A_COLOR, 360.f);
 
-    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 3.f && GetRankInt() >= 3)
+    else if (m_ResultTimer > UI_RESULT_DRAW_RANK_SEC + UI_RESULT_DRAW_RANK_INREVAL * 3.f && GetRankInt() >= 3)
         renderer.DrawResultText(L"B", UI_RESULT_RANK_B_COLOR, 360.f);
 
-    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL * 2.f && GetRankInt() >= 2)
+    else if (m_ResultTimer > UI_RESULT_DRAW_RANK_SEC + UI_RESULT_DRAW_RANK_INREVAL * 2.f && GetRankInt() >= 2)
         renderer.DrawResultText(L"C", UI_RESULT_RANK_C_COLOR, 360.f);
 
-    else if (m_ResultTimer > 3.0f + UI_RESULT_DRAW_RANK_INREVAL && GetRankInt() >= 1)
+    else if (m_ResultTimer > UI_RESULT_DRAW_RANK_SEC + UI_RESULT_DRAW_RANK_INREVAL && GetRankInt() >= 1)
         renderer.DrawResultText(L"D", UI_RESULT_RANK_D_COLOR, 360.f);
 }
 

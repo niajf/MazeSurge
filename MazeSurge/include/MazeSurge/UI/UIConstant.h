@@ -74,6 +74,7 @@ constexpr XMFLOAT4 UI_RESULT_RANK_S_COLOR = {0.91f, 0.66f, 0.00f, 1.0f}; // 金�
 constexpr float UI_RESULT_DRAW_RANK_INREVAL = 0.2f;
 constexpr float UI_RESULT_DRAW_TITLE_SEC = 1.f;
 constexpr float UI_RESULT_DRAW_MIDLE_SEC = 2.f;
+constexpr float UI_RESULT_DRAW_RANK_SEC = 3.f;
 constexpr float UI_RESULT_DRAW_BTN_SEC = 4.f;
 
 // オーバーレイは半透明（alpha=0.65）にして背景の 3D シーンを薄く透かせる。
