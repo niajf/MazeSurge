@@ -56,6 +56,7 @@ public:
 
     // GAME OVER 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
     void DrawGameOver(char rankChar);
+    
     // GAME CLEAR 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
     void DrawGameClear(char rankChar);
 

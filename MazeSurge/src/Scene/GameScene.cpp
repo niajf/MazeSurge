@@ -101,6 +101,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
     {
         UpdateInGame(deltaTime, inputState);
     }
+
     else if (m_state == GameState::GameClear)
     {
         // !lMouseDown && lMousePrevDown = ボタンを「離した瞬間」のみ反応。
@@ -157,20 +158,24 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         DrawScene3DPrePare(renderer);
         renderer.DrawHowToPlay();
     }
+
     else if (m_state == GameState::Prepare)
     {
         DrawScene3DPrePare(renderer);
     }
+
     else if (m_state == GameState::Playing)
     {
         DrawScene3D(renderer);
     }
+
     else if (m_state == GameState::GameClear)
     {
         // リザルト画面は 3D シーンの上にオーバーレイ表示する。
         DrawScene3D(renderer);
         renderer.DrawGameClear(GetRankChar());
     }
+
     else if (m_state == GameState::GameOver)
     {
         DrawScene3D(renderer);

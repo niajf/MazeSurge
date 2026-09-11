@@ -5,6 +5,7 @@
 // GAME_EXIT_BUTTON: ゲームオーバー/クリア画面の「TITLE へ戻る」ボタン。
 // 画面中央下部（x: 540〜740, y: 480〜540）に配置。
 constexpr RECT GAME_EXIT_BUTTON_RECT = {540, 480, 740, 540};
+
 // TITLE_START/EXIT_BUTTON: タイトル画面のボタン。
 // ロゴの下方（y: 490〜630 あたり）に 2 段並べて配置。
 constexpr RECT TITLE_START_BUTTON_RECT = {540, 540 - 50, 740, 600 - 50};
@@ -21,6 +22,7 @@ constexpr const wchar_t *UI_HOW_TO_PLAY_IMAGE_PATH = L"figures/how_to_play.png";
 // HOW_TO_PLAY_DRAW_RECT: 操作説明画像を画面内に収めるための描画矩形。
 // 画面四辺から一定マージンを取り、迷路ビューを部分的に覆うサイズ。
 constexpr RECT HOW_TO_PLAY_DRAW_RECT = {160, 90, 1120, 630};
+
 // HOW_TO_PLAY_DRAW_TIME: ゲーム開始から 7 秒間だけ操作説明を表示する。
 // プレイヤーが操作を把握するのに十分な時間。
 constexpr float HOW_TO_PLAY_DRAW_TIME = 7.0f;
@@ -61,5 +63,6 @@ constexpr XMFLOAT4 UI_GAME_CLEAR_BTN_COLOR = {0.00f, 0.44f, 0.60f, 1.0f};   // �
 // ---- 結果画面 共通配色 ----
 // ランク文字はチェックポイント色（ゴールデンイエロー）で表示し視認性を上げる。
 constexpr XMFLOAT4 UI_RESULT_RANK_COLOR = {0.91f, 0.66f, 0.00f, 1.0f};
+
 // オーバーレイは半透明（alpha=0.65）にして背景の 3D シーンを薄く透かせる。
 constexpr XMFLOAT4 UI_RESULT_OVERLAY_COLOR = {0.96f, 0.95f, 0.92f, 0.65f};

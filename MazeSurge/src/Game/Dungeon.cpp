@@ -12,16 +12,28 @@ void Dungeon::GenerateTestMap()
 
 void Dungeon::Init()
 {
+	// m_wallColor = DUNGEON_WALL_COLOR;
+	// m_goalColor = DUNGEON_GOAL_COLOR;
+	// m_checlPointColor = DUNGEON_CP_COLOR;
+	// m_mazeSize = DUNGEON_GRID_SIZE;
+	// m_numCheckPoint = DUNGEON_CHECKPOINT_NUM;
+	// m_wallScale = DUNGEON_WALL_SCALE;
+	// m_goalScale = DUNGEON_GOAL_SCALE;
+	// m_checkPointScale = DUNGEON_CP_SCALE;
+
+	// Generate();
+
 	m_wallColor = DUNGEON_WALL_COLOR;
 	m_goalColor = DUNGEON_GOAL_COLOR;
 	m_checlPointColor = DUNGEON_CP_COLOR;
-	m_mazeSize = DUNGEON_GRID_SIZE;
-	m_numCheckPoint = DUNGEON_CHECKPOINT_NUM;
+
+	m_mazeSize = 5;
+	m_numCheckPoint = 1;
 	m_wallScale = DUNGEON_WALL_SCALE;
 	m_goalScale = DUNGEON_GOAL_SCALE;
 	m_checkPointScale = DUNGEON_CP_SCALE;
 
-	Generate();
+	GenerateTestMap();
 }
 
 void Dungeon::Generate()
