@@ -11,7 +11,7 @@ constexpr LPCWSTR WINDOW_TITLE = L"MazeSurge";
 constexpr float TIME_LIMIT = 5.f * 60.f; // ゲームの制限時間（秒）= 5 分
 // INPUT_INVALID_TIME: シーン遷移直後の一定時間、入力を無効にする。
 // ゲームシーンでのクリックがタイトルシーンに引き継がれる誤入力を防ぐ。
-constexpr float INPUT_INVALID_TIME = 2.0f;
+constexpr float INPUT_INVALID_TIME = 1.0f;
 
 // ---- Dungeon ----
 // DUNGEON_GRID_SIZE は奇数でなければならない。
