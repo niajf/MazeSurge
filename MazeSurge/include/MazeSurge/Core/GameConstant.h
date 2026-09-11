@@ -96,7 +96,7 @@ namespace Audio
     constexpr const wchar_t *OVER_BGM_PATH = L"Sounds/ZeroCreditLeft.mp3";
     constexpr const wchar_t *HIT_ENEMY_SE_PATH = L"Sounds/8bitDamage10.mp3";
     constexpr const wchar_t *HIT_PLAYER_SE_PATH = L"Sounds/8bitAlert3.mp3";
-    constexpr const wchar_t *GET_CP_SE_PATH = L"Sounds/8bitRecover3.mp3";
+    constexpr const wchar_t *GET_CP_SE_PATH = L"Sounds/8bitGet8.mp3";
     constexpr const wchar_t *RANK_UP_SE_PATH = L"Sounds/8bitSelect2.mp3";
     constexpr const wchar_t *SELECT_SE_PATH = L"Sounds/8bitGet6.mp3";
 }
