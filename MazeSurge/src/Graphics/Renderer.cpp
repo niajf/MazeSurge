@@ -241,7 +241,7 @@ bool Renderer::CreateInputLayout(ComPtr<ID3DBlob> &vsBlob)
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
             {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-        };
+    };
 
     // 入力レイアウトは VS バイトコードと照合して整合性を検証する。
     // VS を再コンパイルした場合はレイアウトも再作成しなければならない。
@@ -329,7 +329,7 @@ bool Renderer::CreateMeshBuffers()
             {XMFLOAT3(0.5f, 0.5f, 0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(1, 0)},
             {XMFLOAT3(0.5f, -0.5f, 0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(1, 1)},
             {XMFLOAT3(0.5f, -0.5f, -0.5f), XMFLOAT3(1, 0, 0), XMFLOAT2(0, 1)},
-        };
+    };
 
     // 各面 2 トライアングル = 6 インデックス、6 面で合計 36 インデックス。
     // パターン: {n, n+1, n+2, n, n+2, n+3} (左回り = 反時計回り CCW)
@@ -371,7 +371,7 @@ bool Renderer::CreateMeshBuffers()
             20,
             22,
             23, // 右面
-        };
+    };
 
     // ---- 床頂点データ ----
     // y = -0.5 に配置し、キューブ（高さ 1.0 = -0.5〜+0.5）の底と揃える。
@@ -382,7 +382,7 @@ bool Renderer::CreateMeshBuffers()
             {XMFLOAT3(1.f, -0.5f, -1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(10, 0)},
             {XMFLOAT3(1.f, -0.5f, 1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(10, 10)},
             {XMFLOAT3(-1.f, -0.5f, 1.f), XMFLOAT3(0, 1, 0), XMFLOAT2(0, 10)},
-        };
+    };
 
     // 床は 2 トライアングル = 6 インデックス。
     // {0,2,1, 0,3,2} は上から見て時計回り（CW）になるよう頂点順を調整している。
@@ -776,7 +776,7 @@ void Renderer::DrawGameClear(char rankChar)
 
 void Renderer::DrawHowToPlay()
 {
-    m_spriteBatch->Begin();
+    m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
     // HOW_TO_PLAY_DRAW_RECT で指定した矩形にテクスチャをストレッチ描画する。
     m_spriteBatch->Draw(m_howToPlayTexture.Get(), HOW_TO_PLAY_DRAW_RECT);
     m_spriteBatch->End();

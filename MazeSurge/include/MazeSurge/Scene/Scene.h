@@ -10,8 +10,10 @@
 // 状態に応じて currentScene を切り替える。
 enum class GameState
 {
-    Title,     // タイトル画面表示中
-    Start,     // タイトル → ゲームシーンへの遷移トリガー
+    Title, // タイトル画面表示中
+    Start, // タイトル → ゲームシーンへの遷移トリガー
+    HowToPlay,
+    Prepare,
     Playing,   // ゲームプレイ中
     GameOver,  // タイムアップまたは HP 切れ
     GameClear, // ゴール到達
