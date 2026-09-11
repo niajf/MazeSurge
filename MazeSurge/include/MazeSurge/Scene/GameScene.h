@@ -69,6 +69,11 @@ private:
     float m_elapsedTimeHowToPlay;
     float m_elapsedTimePrepare;
 
-    // リザルト画面用のタイマー
+    // ---- リザルト画面 ----
+    // タイマー
     float m_ResultTimer;
+    float m_ResultSETimer;
+
+    // ランクアップカウント
+    int m_rankUpCount;
 };

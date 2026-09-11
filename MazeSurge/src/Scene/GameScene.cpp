@@ -56,6 +56,8 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
         // シーンフラグの変更
         m_state = GameState::GameClear;
         m_ResultTimer = 0.f;
+        m_ResultSETimer = 0.f;
+        m_rankUpCount = 0;
     }
 
     if (m_player.GetHP() <= 0)
@@ -66,6 +68,8 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
         // シーンフラグの変更
         m_state = GameState::GameOver;
         m_ResultTimer = 0.f;
+        m_ResultSETimer = 0.f;
+        m_rankUpCount = 0;
     }
 }
 
@@ -113,6 +117,16 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
             m_state = GameState::Restart;
 
         m_ResultTimer += deltaTime;
+        m_ResultSETimer += deltaTime;
+
+        if (m_ResultSETimer >= 3.0f)
+        {
+            m_ResultSETimer = 3.0f - UI_RESULT_DRAW_RANK_INREVAL;
+            m_rankUpCount++;
+
+            if (m_rankUpCount <= 5)
+                SoundManager::GetInstance().PlaySelectSE();
+        }
     }
 
     else if (m_state == GameState::GameOver)
@@ -121,6 +135,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
             m_state = GameState::Restart;
 
         m_ResultTimer += deltaTime;
+        m_ResultSETimer += deltaTime;
     }
 }
 
