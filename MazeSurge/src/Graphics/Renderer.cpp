@@ -666,7 +666,21 @@ void Renderer::Clear(float r, float g, float b)
     m_deviceContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 }
 
-void Renderer::DrawTitle()
+XMFLOAT4 Renderer::GetButtonStateColor(const XMFLOAT4 &baseColor, bool isHover, bool isPressed)
+{
+    // 押下中はホバーより優先して暗くする。
+    if (isPressed)
+        return XMFLOAT4(baseColor.x * UI_BUTTON_PRESSED_SCALE, baseColor.y * UI_BUTTON_PRESSED_SCALE,
+                        baseColor.z * UI_BUTTON_PRESSED_SCALE, baseColor.w);
+
+    if (isHover)
+        return XMFLOAT4(std::min(baseColor.x * UI_BUTTON_HOVER_SCALE, 1.f), std::min(baseColor.y * UI_BUTTON_HOVER_SCALE, 1.f),
+                        std::min(baseColor.z * UI_BUTTON_HOVER_SCALE, 1.f), baseColor.w);
+
+    return baseColor;
+}
+
+void Renderer::DrawTitle(bool startHover, bool startPressed, bool exitHover, bool exitPressed)
 {
     const wchar_t *startText = L"START";
     const wchar_t *exitText = L"EXIT";
@@ -706,16 +720,19 @@ void Renderer::DrawTitle()
 
     const RECT fullscreen = {0, 0, WINDOW_WIDTH, WINDOW_HEIGHT};
 
+    XMFLOAT4 startBtnColor = GetButtonStateColor(UI_TITLE_START_BTN_COLOR, startHover, startPressed);
+    XMFLOAT4 exitBtnColor = GetButtonStateColor(UI_TITLE_EXIT_BTN_COLOR, exitHover, exitPressed);
+
     m_spriteBatch->Begin();
     m_spriteBatch->Draw(m_titleBgTexture.Get(), fullscreen); // 背景
     m_spriteBatch->Draw(m_titleTexture.Get(), logoPos, nullptr,
                         Colors::White, 0.0f, XMFLOAT2(0, 0), scale); // ロゴ
     m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_START_BUTTON_RECT,
-                        XMLoadFloat4(&UI_TITLE_START_BTN_COLOR)); // START ボタン背景
+                        XMLoadFloat4(&startBtnColor)); // START ボタン背景
     m_spriteFont->DrawString(m_spriteBatch.get(), startText, startTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->Draw(m_whiteTexture.Get(), TITLE_EXIT_BUTTON_RECT,
-                        XMLoadFloat4(&UI_TITLE_EXIT_BTN_COLOR)); // EXIT ボタン背景
+                        XMLoadFloat4(&exitBtnColor)); // EXIT ボタン背景
     m_spriteFont->DrawString(m_spriteBatch.get(), exitText, exitTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
     m_spriteBatch->End();
@@ -747,7 +764,7 @@ void Renderer::DrawResultText(const wchar_t *text, const XMFLOAT4 &textColor, fl
     m_spriteBatch->End();
 }
 
-void Renderer::DrawResultButton(const XMFLOAT4 &btnColor)
+void Renderer::DrawResultButton(const XMFLOAT4 &btnColor, bool isHover, bool isPressed)
 {
     const wchar_t *btnText = L"TITLE";
     XMVECTOR btnTextSize = m_spriteFont->MeasureString(btnText);
@@ -757,11 +774,13 @@ void Renderer::DrawResultButton(const XMFLOAT4 &btnColor)
         GAME_EXIT_BUTTON_RECT.left + (GAME_EXIT_BUTTON_RECT.right - GAME_EXIT_BUTTON_RECT.left - textScaledW) * 0.5f,
         GAME_EXIT_BUTTON_RECT.top + (GAME_EXIT_BUTTON_RECT.bottom - GAME_EXIT_BUTTON_RECT.top - textScaledH) * 0.5f);
 
+    XMFLOAT4 stateColor = GetButtonStateColor(btnColor, isHover, isPressed);
+
     // NonPremultiplied: 半透明オーバーレイを正しくブレンドするために必要。
     m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
 
     // ボタン
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&btnColor)); // ボタン背景
+    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&stateColor)); // ボタン背景
     m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
                              Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
 

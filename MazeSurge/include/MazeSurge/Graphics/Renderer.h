@@ -52,7 +52,7 @@ public:
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
 
     // タイトル画面（背景・ロゴ・ボタン）を 2D スプライトで描画する。
-    void DrawTitle();
+    void DrawTitle(bool startHover, bool startPressed, bool exitHover, bool exitPressed);
 
     // ゲーム開始直後の操作説明画像を描画する。
     void DrawHowToPlay();
@@ -60,7 +60,7 @@ public:
     // リザルト画面描画メソッド
     void DrawResultOverlay(float elapsedTime);
     void DrawResultText(const wchar_t *text, const XMFLOAT4 &textColor, float height);
-    void DrawResultButton(const XMFLOAT4 &bntColor);
+    void DrawResultButton(const XMFLOAT4 &btnColor, bool isHover, bool isPressed);
 
     // バックバッファをフロントバッファに表示する（垂直同期あり）。
     // ゲームループの最後に 1 度だけ呼ぶこと。
@@ -80,6 +80,9 @@ private:
     // static: インスタンス状態に依存しないため（m_device 等を使わない）。
     static bool CompileShader(const wchar_t *filePath, const char *entryPoint,
                               const char *profile, ComPtr<ID3DBlob> &blob);
+
+    // isPressed > isHover の優先度でベース色を明暗させたボタン色を返す。
+    static XMFLOAT4 GetButtonStateColor(const XMFLOAT4 &baseColor, bool isHover, bool isPressed);
 
     // ---- SpriteBatch / SpriteFont（DirectXTK）----
     std::unique_ptr<SpriteBatch> m_spriteBatch; // 2D スプライト描画バッチ

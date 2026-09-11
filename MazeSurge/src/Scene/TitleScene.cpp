@@ -43,7 +43,13 @@ void TitleScene::Draw(Renderer &renderer, const InputState &inputState)
 {
     // タイトル画面は 3D 描画なし。背景色でクリアしてから 2D スプライトを描画する。
     renderer.Clear(UI_TITLE_BG_COLOR.x, UI_TITLE_BG_COLOR.y, UI_TITLE_BG_COLOR.z);
-    renderer.DrawTitle();
+
+    // ホバー: カーソルがボタン領域内。押下: ホバー中かつ左ボタン押下中。
+    bool startHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_START_BUTTON_RECT);
+    bool exitHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_EXIT_BUTTON_RECT);
+
+    renderer.DrawTitle(startHover, startHover && inputState.lMouseDown,
+                       exitHover, exitHover && inputState.lMouseDown);
     renderer.Present();
 }
 

@@ -252,7 +252,10 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
             renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_S_COLOR, UI_RESULT_MIDLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
-            renderer.DrawResultButton(UI_GAME_CLEAR_BTN_COLOR);
+        {
+            bool exitHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT);
+            renderer.DrawResultButton(UI_GAME_CLEAR_BTN_COLOR, exitHover, exitHover && inputState.lMouseDown);
+        }
     }
 
     else if (m_state == GameState::GameOver)
@@ -268,7 +271,10 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
             renderer.DrawResultText(L"SYNCHRO RANK", UI_RESULT_RANK_S_COLOR, UI_RESULT_MIDLE_Y);
 
         if (m_ResultTimer > UI_RESULT_DRAW_BTN_SEC + UI_RESULT_DRAW_RANK_INREVAL * 5.f)
-            renderer.DrawResultButton(UI_GAME_OVER_BTN_COLOR);
+        {
+            bool exitHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT);
+            renderer.DrawResultButton(UI_GAME_OVER_BTN_COLOR, exitHover, exitHover && inputState.lMouseDown);
+        }
     }
 
     // Present は必ず最後に 1 度だけ呼ぶ。状態に関わらずここで統一する。

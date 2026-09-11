@@ -39,6 +39,10 @@ constexpr XMFLOAT4 UI_HUD_BAR_COLOR = {0.08f, 0.08f, 0.12f, 0.78f};
 // ---- ボタン ----
 constexpr float UI_BUTTON_TEXT_SCALE = 0.5f; // ボタン内テキストの拡大率
 
+// ボタンの状態変化: ホバー時は明るく、押下時は暗く
+constexpr float UI_BUTTON_HOVER_SCALE = 1.3f;   // ホバー時の明るさ倍率
+constexpr float UI_BUTTON_PRESSED_SCALE = 0.7f; // 押下時の暗さ倍率
+
 // ---- 結果画面（GAME OVER / GAME CLEAR）オフセット ----
 // 画面縦中央からの Y 方向ずらし量（負値 = 上方向）。
 // タイトル文字、ランク文字、ボタンの 3 段を縦に並べるためのオフセット。
