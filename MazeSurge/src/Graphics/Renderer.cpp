@@ -1,6 +1,6 @@
 #include "MazeSurge/Graphics/Renderer.h"
-#include "MazeSurge/Graphics/Camera.h"
 #include <string>
+#include <algorithm>
 
 // グローバルレンダラーインスタンスの定義
 Renderer g_renderer;
@@ -725,6 +725,9 @@ void Renderer::DrawTitle()
 // DrawResultScreen に処理を委譲し、タイトル文字列・色だけを差し替える。
 void Renderer::DrawResultScreen(const wchar_t *title, char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor)
 {
+    XMFLOAT4 resultOverlayColor = UI_RESULT_OVERLAY_COLOR;
+    resultOverlayColor.w = 0.65f * std::clamp(m_resultFadeTimer, 0.f, 1.f);
+
     const wchar_t *btnText = L"TITLE";
     wchar_t mediumStr[32];
     wchar_t rankStr[8];
@@ -765,27 +768,30 @@ void Renderer::DrawResultScreen(const wchar_t *title, char rankChar, const XMFLO
     m_spriteBatch->Begin(SpriteSortMode_Deferred, m_states->NonPremultiplied());
 
     // オーバーレイ
-    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&UI_RESULT_OVERLAY_COLOR)); // 暗転オーバーレイ
+    m_spriteBatch->Draw(m_whiteTexture.Get(), fullscreen, XMLoadFloat4(&resultOverlayColor)); // 暗転オーバーレイ
 
-    // テキスト
-    m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&titleColor));
-    m_spriteFont->DrawString(m_spriteBatch.get(), mediumStr, mediumPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
-    m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
+    if (resultOverlayColor.w >= 0.65f)
+    {
+        // テキスト
+        m_spriteFont->DrawString(m_spriteBatch.get(), title, titlePos, XMLoadFloat4(&titleColor));
+        m_spriteFont->DrawString(m_spriteBatch.get(), mediumStr, mediumPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
+        m_spriteFont->DrawString(m_spriteBatch.get(), rankStr, rankPos, XMLoadFloat4(&UI_RESULT_RANK_COLOR));
 
-    // ボタン
-    m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&btnColor)); // ボタン背景
-    m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
-                             Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
+        // ボタン
+        m_spriteBatch->Draw(m_whiteTexture.Get(), GAME_EXIT_BUTTON_RECT, XMLoadFloat4(&btnColor)); // ボタン背景
+        m_spriteFont->DrawString(m_spriteBatch.get(), btnText, btnTextPos,
+                                 Colors::White, 0.0f, XMFLOAT2(0, 0), UI_BUTTON_TEXT_SCALE);
+    }
 
     m_spriteBatch->End();
 }
 
-void Renderer::DrawGameOver(char rankChar)
+void Renderer::DrawGameOver(const char rankChar)
 {
     DrawResultScreen(L"GAME OVER", rankChar, UI_GAME_OVER_TITLE_COLOR, UI_GAME_OVER_BTN_COLOR);
 }
 
-void Renderer::DrawGameClear(char rankChar)
+void Renderer::DrawGameClear(const char rankChar)
 {
     DrawResultScreen(L"GAME CLEAR", rankChar, UI_GAME_CLEAR_TITLE_COLOR, UI_GAME_CLEAR_BTN_COLOR);
 }

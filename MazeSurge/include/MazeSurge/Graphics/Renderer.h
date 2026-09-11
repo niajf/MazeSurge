@@ -47,6 +47,10 @@ public:
     void DrawCheckPoint(int getNum, size_t wholeNum); // 取得済み/全チェックポイント数を表示
     void DrawTime(float time);                        // 残り時間を MM:SS 形式で表示
 
+    // リザルト画面のフェードインタイマーを初期化
+    void ResetFadeTimer() { m_resultFadeTimer = 0.f; }
+    void UpdateFadeTimer(float deltaTime) { m_resultFadeTimer += deltaTime; }
+
     // バックバッファを単色でクリアする。
     // デフォルト引数は使用されないが、RENDERER_PLAY_BG_COLOR を明示的に渡すこと。
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
@@ -55,10 +59,10 @@ public:
     void DrawTitle();
 
     // GAME OVER 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
-    void DrawGameOver(char rankChar);
-    
+    void DrawGameOver(const char rankChar);
+
     // GAME CLEAR 画面をオーバーレイで描画する。DrawScene3D() の後に呼ぶこと。
-    void DrawGameClear(char rankChar);
+    void DrawGameClear(const char rankChar);
 
     // ゲーム開始直後の操作説明画像を描画する。
     void DrawHowToPlay();
@@ -78,7 +82,7 @@ private:
     bool CreateMeshBuffers(); // キューブ・床の頂点/インデックスバッファを生成
 
     // DrawGameOver/DrawGameClear の共通描画ロジック。タイトル文字・色だけ差し替える。
-    void DrawResultScreen(const wchar_t *title, char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor);
+    void DrawResultScreen(const wchar_t *title, const char rankChar, const XMFLOAT4 &titleColor, const XMFLOAT4 &btnColor);
 
     // HLSL ファイルをコンパイルしてバイトコード blob を返す。
     // static: インスタンス状態に依存しないため（m_device 等を使わない）。
@@ -89,6 +93,7 @@ private:
     std::unique_ptr<SpriteBatch> m_spriteBatch; // 2D スプライト描画バッチ
     std::unique_ptr<SpriteFont> m_spriteFont;   // ビットマップフォント
     std::unique_ptr<CommonStates> m_states;     // ブレンド・ラスタライザ等の共通ステート集
+
     // m_whiteTexture: 1×1 の不透明白ピクセルテクスチャ。
     // SpriteBatch::Draw がテクスチャを必須とするため、ベタ塗り矩形の描画に使う。
     // tint カラー引数で任意の色を指定できる。
@@ -96,6 +101,7 @@ private:
     ComPtr<ID3D11ShaderResourceView> m_titleTexture;     // タイトルロゴ画像
     ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;   // タイトル背景画像
     ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture; // 操作説明画像
+
     // ロゴをアスペクト比を保ったままスケーリングするために元のピクセルサイズを保持する。
     UINT m_titleTexWidth = 0;
     UINT m_titleTexHeight = 0;
@@ -110,6 +116,7 @@ private:
     // ---- シェーダー ----
     ComPtr<ID3D11VertexShader> m_vertexShader;
     ComPtr<ID3D11PixelShader> m_pixelShader;
+
     // m_inputLayout: Vertex 構造体のメモリレイアウトを D3D11 に伝えるオブジェクト。
     // VS バイトコードと Vertex 構造体の両方が変わった場合は再作成が必要。
     ComPtr<ID3D11InputLayout> m_inputLayout;
@@ -129,6 +136,9 @@ private:
 
     XMFLOAT4 m_floorColor;          // 床の描画色
     XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
+
+    // ---- 各種タイマー ----
+    float m_resultFadeTimer;
 };
 
 // g_renderer: Renderer.cpp で定義されるグローバルシングルトン。
