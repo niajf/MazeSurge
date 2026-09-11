@@ -63,6 +63,8 @@ constexpr XMFLOAT4 UI_GAME_CLEAR_BTN_COLOR = {0.00f, 0.44f, 0.60f, 1.0f};   // �
 // ---- 結果画面 共通配色 ----
 // ランク文字はチェックポイント色（ゴールデンイエロー）で表示し視認性を上げる。
 constexpr XMFLOAT4 UI_RESULT_RANK_COLOR = {0.91f, 0.66f, 0.00f, 1.0f};
+
+// ---- 結果画面 共通時間 ----
 constexpr float UI_RESULT_DRAW_RANK_INREVAL = 0.2f;
 constexpr float UI_RESULT_DRAW_TITLE_SEC = 1.f;
 constexpr float UI_RESULT_DRAW_MIDLE_SEC = 2.f;
