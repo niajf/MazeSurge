@@ -88,7 +88,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
         m_elapsedTimeHowToPlay += deltaTime;
 
         // クリックされたらHow To Playを消し、ゲームを開始
-        if ((!inputState.lMouseDown && inputState.lMousePrevDown) && m_elapsedTimeHowToPlay > 1.0f)
+        if ((!inputState.lMouseDown && inputState.lMousePrevDown) && m_elapsedTimeHowToPlay > INPUT_INVALID_TIME)
         {
             // 準備時間へ
             m_state = GameState::Prepare;
