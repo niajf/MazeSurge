@@ -147,7 +147,7 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
             m_rankUpCount++;
 
             // SE
-            if (m_rankUpCount <= 5)
+            if (m_rankUpCount <= GetRankInt())
                 SoundManager::GetInstance().PlayRankUpSE();
         }
     }
@@ -165,6 +165,16 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
         m_ResultTimer += deltaTime;
         m_ResultSETimer += deltaTime;
+
+        if (m_ResultSETimer >= UI_RESULT_DRAW_RANK_SEC)
+        {
+            m_ResultSETimer = UI_RESULT_DRAW_RANK_SEC - UI_RESULT_DRAW_RANK_INREVAL;
+            m_rankUpCount++;
+
+            // SE
+            if (m_rankUpCount <= GetRankInt())
+                SoundManager::GetInstance().PlayRankUpSE();
+        }
     }
 }
 
