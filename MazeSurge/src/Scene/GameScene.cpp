@@ -204,11 +204,11 @@ bool GameScene::IsButtonClicked(int x, int y, const RECT &button) const
            y >= button.top && y <= button.bottom;
 }
 
-char GameScene::GetRankChar()
+int GameScene::GetRankInt()
 {
     // GameOver 時は問答無用で最低ランク D。
     if (m_state == GameState::GameOver)
-        return 'D';
+        return 1;
 
     // ランク計算: 残り時間比率とチェックポイント取得率の平均（各 0.0〜1.0）。
     // どちらかだけが高くても S ランクは取れないよう平均を採用している。
@@ -217,13 +217,13 @@ char GameScene::GetRankChar()
     float totalScore = (timeScore + checkPointScore) / 2.f;
 
     if (totalScore >= RANK_S_SCORE)
-        return 'S';
+        return 5;
     else if (totalScore >= RANK_A_SCORE)
-        return 'A';
+        return 4;
     else if (totalScore >= RANK_B_SCORE)
-        return 'B';
+        return 3;
     else if (totalScore >= RANK_C_SCORE)
-        return 'C';
+        return 2;
 
-    return 'D';
+    return 1;
 }

@@ -45,7 +45,7 @@ private:
 
     // 残り時間比率とチェックポイント取得率の平均からランク文字（S/A/B/C/D）を返す。
     // GameOver 時は無条件で 'D'。
-    char GetRankChar();
+    int GetRankInt();
 
     Camera m_camera;                 // 三人称俯瞰カメラ
     Player m_player;                 // プレイヤー
