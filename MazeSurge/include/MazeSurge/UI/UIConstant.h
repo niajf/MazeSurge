@@ -42,8 +42,8 @@ constexpr float UI_BUTTON_TEXT_SCALE = 0.5f; // ボタン内テキストの拡�
 // ---- 結果画面（GAME OVER / GAME CLEAR）オフセット ----
 // 画面縦中央からの Y 方向ずらし量（負値 = 上方向）。
 // タイトル文字、ランク文字、ボタンの 3 段を縦に並べるためのオフセット。
-constexpr float UI_RESULT_TITLE_OFFSET_Y = -120.0f; // タイトル文字（最上段）
-constexpr float UI_RESULT_RANK_OFFSET_Y = -40.0f;   // ランク文字（中段）
+constexpr float UI_RESULT_TITLE_Y = 200.f; // タイトル（最上段）
+constexpr float UI_RESULT_MIDLE_Y = 280.f; // シンクロランク（中段）
 
 // ---- タイトルシーン配色 ----
 constexpr XMFLOAT4 UI_TITLE_BG_COLOR = {0.84f, 0.84f, 0.84f, 1.0f};        // ライトグレー背景
@@ -63,6 +63,10 @@ constexpr XMFLOAT4 UI_GAME_CLEAR_BTN_COLOR = {0.00f, 0.44f, 0.60f, 1.0f};   // �
 // ---- 結果画面 共通配色 ----
 // ランク文字はチェックポイント色（ゴールデンイエロー）で表示し視認性を上げる。
 constexpr XMFLOAT4 UI_RESULT_RANK_COLOR = {0.91f, 0.66f, 0.00f, 1.0f};
+constexpr float UI_RESULT_DRAW_RANK_INREVAL = 0.2f;
+constexpr float UI_RESULT_DRAW_TITLE_SEC = 1.f;
+constexpr float UI_RESULT_DRAW_MIDLE_SEC = 2.f;
+constexpr float UI_RESULT_DRAW_BTN_SEC = 4.f;
 
 // オーバーレイは半透明（alpha=0.65）にして背景の 3D シーンを薄く透かせる。
 constexpr XMFLOAT4 UI_RESULT_OVERLAY_COLOR = {0.96f, 0.95f, 0.92f, 0.65f};
