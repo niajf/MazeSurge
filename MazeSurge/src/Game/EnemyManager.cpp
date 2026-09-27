@@ -24,9 +24,12 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
 
             m_pool[i].active = true;
 
+            // プレイヤーから一定距離離れた床セルに敵をポップさせる
+            // 初め、ランダムな角度の方向に床セルがあるかを調べ、
+            // 床セルでない場合は、その角度を始点として角度を10度ずつ変化させ、探索を継続
             bool isEnemyPlaced = false;
-
             int degree = rand() % 360;
+            int startDegree = degree;
 
             while (!isEnemyPlaced)
             {
@@ -40,13 +43,21 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
 
                 if (dungeon.IsFloor(m_pool[i].position))
                 {
+                    // 敵をポップできたら探索を中止
                     isEnemyPlaced = true;
                 }
 
                 else
                 {
+                    // 角度を10度ずつ更新
                     degree += 10;
                     degree % 360;
+                }
+
+                // どの角度にも敵をポップさせられない場合、探索を中止
+                if (degree = startDegree)
+                {
+                    break;
                 }
             }
 
