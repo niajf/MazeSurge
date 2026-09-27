@@ -34,7 +34,7 @@ constexpr XMFLOAT4 ENEMY_CELL_COLOR = {1.00f, 0.00f, 0.41f, 1.0f}; // ホット�
 // ---- EnemyManager ----
 constexpr size_t ENEMYMANAGER_POOL_SIZE = 50;       // 同時存在できる敵の上限数
 constexpr float ENEMYMANAGER_SPAWN_INTERVAL = 3.0f; // 初期スポーン間隔（秒）
-constexpr float ENEMYMANAGER_SPAWN_RADIUS = 5;      // プレイヤーを中心とした敵がスポーンする位置の半径(これにセルのサイズを乗算して使用する)
+constexpr float ENEMYMANAGER_SPAWN_RADIUS = 15.f;   // プレイヤーを中心とした敵がスポーンする位置の半径(これにセルのサイズを乗算して使用する)
 constexpr int ENEMYMANAGER_DELTA_DEGREE = 10;       // 敵がスポーンする位置を探索するとき、角度を何度ずつ変化させるか
 // SPAWN_TIME_SCALE: スポーン間隔の短縮スピードを制御する。
 // 計算式: interval = SPAWN_INTERVAL / (1 + elapsedTime / SPAWN_TIME_SCALE)
@@ -57,7 +57,7 @@ constexpr XMFLOAT4 PROJECTILE_CELL_COLOR = {1.00f, 0.48f, 0.00f, 1.0f}; // オ�
 
 // ---- ProjectilePool ----
 // FIRE_INTERVAL_TIME=0.1s: 1 秒間に最大 10 発の連射が可能。
-constexpr float PROJECTILEPOOL_FIRE_INTERVAL_TIME = 0.1f;
+constexpr float PROJECTILEPOOL_FIRE_INTERVAL_TIME = 0.5f;
 constexpr size_t PROJECTILEPOOL_POOL_SIZE = 50; // 同時に存在できる弾の上限数
 
 // ---- Camera ----
