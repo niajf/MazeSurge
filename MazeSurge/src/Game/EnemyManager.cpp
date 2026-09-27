@@ -36,7 +36,7 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
                 // 迷路外周の円上（半径 = グリッドサイズ × セルサイズ）のランダムな角度にスポーンさせる。
                 // これにより迷路の外側から敵が侵入する演出になる。
                 float radian = XM_PI * degree / 180.f;
-                float norm = 5.f * dungeon.getCellSize();
+                float norm = ENEMYMANAGER_SPAWN_RADIUS * dungeon.getCellSize();
                 m_pool[i].position.x = norm * std::cos(radian) + player.GetPosition().x;
                 m_pool[i].position.y = 0.f; // 敵は常に床面（Y=0）に配置する。
                 m_pool[i].position.z = norm * std::sin(radian) + player.GetPosition().z;
@@ -50,24 +50,27 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
                 else
                 {
                     // 角度を10度ずつ更新
-                    degree += 10;
-                    degree % 360;
+                    degree += ENEMYMANAGER_DELTA_DEGREE;
+                    degree %= 360;
                 }
 
                 // どの角度にも敵をポップさせられない場合、探索を中止
-                if (degree = startDegree)
+                if (degree == startDegree)
                 {
                     break;
                 }
             }
 
-            // 敵の座標を補正
-            int gridX, gridZ;
-            dungeon.WorldToGrid(m_pool[i].position.x, m_pool[i].position.x, gridX, gridZ);
-            XMFLOAT3 adjPos = dungeon.GridToWorld(gridX, gridZ);
-            m_pool[i].position.x = adjPos.x;
-            m_pool[i].position.z = adjPos.z;
-            m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
+            if (isEnemyPlaced)
+            {
+                // 敵の座標を補正
+                int gridX, gridZ;
+                dungeon.WorldToGrid(m_pool[i].position.x, m_pool[i].position.z, gridX, gridZ);
+                XMFLOAT3 adjPos = dungeon.GridToWorld(gridX, gridZ);
+                m_pool[i].position.x = adjPos.x;
+                m_pool[i].position.z = adjPos.z;
+                m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
+            }
 
             return; // 1 体スポーンしたら即リターン（1 回の呼び出しで 1 体のみ）。
         }
