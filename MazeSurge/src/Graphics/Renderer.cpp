@@ -1,6 +1,5 @@
 #include "MazeSurge/Graphics/Renderer.h"
 #include <string>
-#include <algorithm>
 
 // グローバルレンダラーインスタンスの定義
 Renderer g_renderer;

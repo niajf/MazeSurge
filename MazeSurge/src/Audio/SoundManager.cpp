@@ -1,6 +1,5 @@
 #include "MazeSurge/Audio/SoundManager.h"
 #include "MazeSurge/External/dr_mp3.h"
-#include <vector>
 #include <string>
 
 SoundManager &SoundManager::GetInstance()

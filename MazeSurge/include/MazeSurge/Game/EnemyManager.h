@@ -6,8 +6,6 @@
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Game/ProjectilePool.h"
 #include <cstdlib>
-#include <cmath>
-#include <queue>
 
 // ============================================================
 // EnemyManager — 敵のスポーン・更新・描画を一括管理する
