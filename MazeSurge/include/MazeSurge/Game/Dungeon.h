@@ -58,6 +58,9 @@ public:
     // プレイヤーがゴールセルにいれば true を返す（セルは変化しない）。
     bool IsGoal(XMFLOAT3 playerPos);
 
+    // 敵の生成処理に使用する
+    bool IsFloor(XMFLOAT3 enemyPos);
+
     // スタートセルのワールド座標を返す（プレイヤー初期化時に使用）。
     XMFLOAT3 GetStartPosition() const;
     // ゴールセルのワールド座標を返す（現在は使用していないが配置確認に便利）。

@@ -14,22 +14,42 @@ void EnemyManager::Init()
         m_pool.emplace_back();
 }
 
-void EnemyManager::SpawnEnemy(Dungeon &dungeon)
+void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
 {
     // プールを先頭から線形探索し、最初の非アクティブスロットを再利用する。
     for (size_t i = 0; i < m_pool.size(); i++)
     {
         if (!m_pool[i].active)
         {
+
             m_pool[i].active = true;
 
-            // 迷路外周の円上（半径 = グリッドサイズ × セルサイズ）のランダムな角度にスポーンさせる。
-            // これにより迷路の外側から敵が侵入する演出になる。
-            float radian = XM_PI * (rand() % 360) / 180.f;
-            float norm = dungeon.getMazeSize() * dungeon.getCellSize();
-            m_pool[i].position.x = norm * std::cos(radian);
-            m_pool[i].position.y = 0.f; // 敵は常に床面（Y=0）に配置する。
-            m_pool[i].position.z = norm * std::sin(radian);
+            bool isEnemyPlaced = false;
+
+            int degree = rand() % 360;
+
+            while (!isEnemyPlaced)
+            {
+                // 迷路外周の円上（半径 = グリッドサイズ × セルサイズ）のランダムな角度にスポーンさせる。
+                // これにより迷路の外側から敵が侵入する演出になる。
+                float radian = XM_PI * degree / 180.f;
+                float norm = 5.f * dungeon.getCellSize();
+                m_pool[i].position.x = norm * std::cos(radian) + player.GetPosition().x;
+                m_pool[i].position.y = 0.f; // 敵は常に床面（Y=0）に配置する。
+                m_pool[i].position.z = norm * std::sin(radian) + player.GetPosition().z;
+
+                if (dungeon.IsFloor(m_pool[i].position))
+                {
+                    isEnemyPlaced = true;
+                }
+
+                else
+                {
+                    degree += 10;
+                    degree % 360;
+                }
+            }
+
             m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
 
             return; // 1 体スポーンしたら即リターン（1 回の呼び出しで 1 体のみ）。
@@ -52,7 +72,7 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
     if (m_spawnTimer >= m_spawnInterval)
     {
         m_spawnTimer = 0;
-        SpawnEnemy(dungeon);
+        SpawnEnemy(dungeon, player);
     }
 
     for (size_t i = 0; i < m_pool.size(); i++)

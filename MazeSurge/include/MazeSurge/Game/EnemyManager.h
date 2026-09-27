@@ -20,7 +20,7 @@ public:
     void Init();
     // プール内の非アクティブスロットを選び、迷路外周の円上にスポーンさせる。
     // プールが満杯なら何もしない（上限を超えた生成は行わない）。
-    void SpawnEnemy(Dungeon &dungeon);
+    void SpawnEnemy(Dungeon &dungeon, Player &player);
     // 毎フレーム呼ぶ。スポーンタイマー更新・敵の移動・プレイヤー/弾との衝突判定を処理する。
     void Update(float deltaTime, Player &player, Dungeon &dungeon, ProjectilePool &projectilePool);
     // アクティブな敵をすべて描画する。

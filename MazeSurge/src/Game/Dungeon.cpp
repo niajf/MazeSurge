@@ -277,6 +277,17 @@ bool Dungeon::IsGoal(XMFLOAT3 playerPos)
 	return false;
 }
 
+bool Dungeon::IsFloor(XMFLOAT3 enemyPos)
+{
+	int gridX = 0, gridZ = 0;
+	WorldToGrid(enemyPos.x, enemyPos.z, gridX, gridZ);
+
+	if (m_grid[gridZ][gridX] == CellType::FLOOR)
+		return true;
+
+	return false;
+}
+
 XMFLOAT3 Dungeon::GetStartPosition() const
 {
 	// グリッドを線形探索して START セルを見つけ、ワールド座標に変換して返す。
