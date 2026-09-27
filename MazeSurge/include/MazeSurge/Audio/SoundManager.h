@@ -4,6 +4,7 @@
 #include <memory>
 #include <cstdint>
 #include <optional>
+#include <string>
 
 struct SoundData
 {

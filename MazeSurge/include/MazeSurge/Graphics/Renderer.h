@@ -8,6 +8,7 @@
 #include <CommonStates.h>
 #include <WICTextureLoader.h>
 #include <memory>
+#include <string>
 
 // ============================================================
 // Renderer — Direct3D 11 の初期化・リソース管理・描画を担う
