@@ -61,6 +61,12 @@ void EnemyManager::SpawnEnemy(Dungeon &dungeon, Player &player)
                 }
             }
 
+            // 敵の座標を補正
+            int gridX, gridZ;
+            dungeon.WorldToGrid(m_pool[i].position.x, m_pool[i].position.x, gridX, gridZ);
+            XMFLOAT3 adjPos = dungeon.GridToWorld(gridX, gridZ);
+            m_pool[i].position.x = adjPos.x;
+            m_pool[i].position.z = adjPos.z;
             m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
 
             return; // 1 体スポーンしたら即リターン（1 回の呼び出しで 1 体のみ）。
