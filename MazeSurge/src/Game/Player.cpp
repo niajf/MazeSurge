@@ -38,7 +38,7 @@ XMFLOAT3 Player::CalcMoveVelocity()
 	return velocity;
 }
 
-void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &inputState)
+void Player::Update(float deltaTime, Dungeon &dungeon, const InputState &inputState)
 {
 	// HALF_SIZE: バウンディングボックスの半辺長。壁判定の 4 隅オフセットに使う。
 	// constexpr にすることで毎フレームの乗算コストをゼロにする。
@@ -56,10 +56,10 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 	// バウンディングボックスの 4 隅すべてで IsWall を判定することで、
 	// キューブの角が壁にめり込むケース（1 点だけ壁内に入る）を防ぐ。
 	float newX = m_position.x + m_velVec.x * m_speed * deltaTime;
-	if (g_dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
-		g_dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
-		g_dungeon.IsWall(newX - HALF_SIZE, m_position.z + HALF_SIZE) ||
-		g_dungeon.IsWall(newX + HALF_SIZE, m_position.z + HALF_SIZE))
+	if (dungeon.IsWall(newX - HALF_SIZE, m_position.z - HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, m_position.z - HALF_SIZE) ||
+		dungeon.IsWall(newX - HALF_SIZE, m_position.z + HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, m_position.z + HALF_SIZE))
 	{
 		// 壁に当たった場合は X 位置を変えない（壁へのめり込みを防ぐ）。
 		newX = m_position.x;
@@ -70,10 +70,10 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 	// これにより対角コーナーへの引っ掛かりを防ぎ、壁沿いのスライド移動が可能になる。
 	// X→Z の順に独立して解決するのが「軸分離 AABB スライド」の基本パターン。
 	float newZ = m_position.z + m_velVec.z * m_speed * deltaTime;
-	if (g_dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
-		g_dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||
-		g_dungeon.IsWall(newX - HALF_SIZE, newZ + HALF_SIZE) ||
-		g_dungeon.IsWall(newX + HALF_SIZE, newZ + HALF_SIZE))
+	if (dungeon.IsWall(newX - HALF_SIZE, newZ - HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, newZ - HALF_SIZE) ||
+		dungeon.IsWall(newX - HALF_SIZE, newZ + HALF_SIZE) ||
+		dungeon.IsWall(newX + HALF_SIZE, newZ + HALF_SIZE))
 	{
 		newZ = m_position.z;
 	}
@@ -83,6 +83,9 @@ void Player::Update(float deltaTime, Dungeon &g_dungeon, const InputState &input
 
 	// 位置が変わったので bbox を再計算する。
 	m_bbox.setBBOX(m_position, m_scale);
+
+	// プレイヤーから、到達可能なセルへの移動コストを計算
+	CalcCostGrid(dungeon);
 }
 
 void Player::Draw(Renderer &renderer) const
@@ -101,4 +104,52 @@ void Player::hitEnemy()
 
 	// ダメージを受けたSEを鳴らす
 	SoundManager::GetInstance().PlayHitPlayerSE();
+}
+
+void Player::CalcCostGrid(const Dungeon &dungeon)
+{
+	int gridSize = static_cast<int>(dungeon.getMazeSize());
+
+	m_costGrid = std::vector<std::vector<int>>(gridSize, std::vector<int>(gridSize, -1));
+
+	int playerGridX, playerGridZ;
+	dungeon.WorldToGrid(m_position.x, m_position.z, playerGridX, playerGridZ);
+
+	// BFSで、プレイヤーを始点として到達可能なマスへの最短経路を計算する
+	std::queue<std::pair<int, std::pair<int, int>>> que;
+	que.push({0, {playerGridZ, playerGridX}});
+
+	std::vector<int> dz = {-1, 0, 1, 0};
+	std::vector<int> dx = {0, 1, 0, -1};
+
+	while (!que.empty())
+	{
+		auto [cost, pos] = que.front();
+		que.pop();
+
+		if (m_costGrid[pos.first][pos.second] != -1)
+		{
+			continue;
+		}
+
+		m_costGrid[pos.first][pos.second] = cost;
+
+		for (int i = 0; i < 4; i++)
+		{
+			int nz = pos.first + dz[i];
+			int nx = pos.second + dx[i];
+
+			if (!(0 <= nz && nz < gridSize && 0 <= nx && nx < gridSize))
+			{
+				continue;
+			}
+
+			if (dungeon.GetGridType(nx, nz) == Dungeon::CellType::WALL)
+			{
+				continue;
+			}
+
+			que.push({cost + 1, {nz, nx}});
+		}
+	}
 }

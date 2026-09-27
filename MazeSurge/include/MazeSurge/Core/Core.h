@@ -7,3 +7,7 @@
 #include "MazeSurge/Core/Types.h"         // Vertex / ConstantBuffer / BBOX / InputState
 #include "MazeSurge/Core/GameConstant.h"  // ゲームロジック・描画定数
 #include "MazeSurge/Audio/SoundManager.h" // サウンド系
+
+#include <vector>
+#include <queue>
+#include <algorithm>

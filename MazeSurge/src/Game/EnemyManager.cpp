@@ -92,6 +92,9 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
         SpawnEnemy(dungeon, player);
     }
 
+    std::vector<int> dz = {-1, 0, 1, 0};
+    std::vector<int> dx = {0, 1, 0, -1};
+
     for (size_t i = 0; i < m_pool.size(); i++)
     {
         if (!m_pool[i].active)
@@ -100,17 +103,12 @@ void EnemyManager::Update(float deltaTime, Player &player, Dungeon &dungeon, Pro
         // ---- プレイヤーへの追尾移動 ----
         // 敵からプレイヤーへの方向ベクトルを正規化して速度に掛ける。
         // Y 成分も計算に含まれるが、スポーン時に Y=0 に固定しているため影響は小さい。
-        XMFLOAT3 playerPosFloat = player.GetPosition();
-        XMVECTOR playerPosVec = XMLoadFloat3(&playerPosFloat);
-        XMVECTOR enemyPosVec = XMLoadFloat3(&m_pool[i].position);
-        XMVECTOR dirVec = XMVectorSubtract(playerPosVec, enemyPosVec);
-        XMVECTOR dirVecNorm = XMVector3Normalize(dirVec);
-        XMFLOAT3 dirFloatNorm;
-        XMStoreFloat3(&dirFloatNorm, dirVecNorm);
+        XMFLOAT3 dirFloatNorm = GetMoveVector(dungeon, player, m_pool[i].position);
 
         m_pool[i].position.x += deltaTime * m_pool[i].speed * dirFloatNorm.x;
         m_pool[i].position.y += deltaTime * m_pool[i].speed * dirFloatNorm.y;
         m_pool[i].position.z += deltaTime * m_pool[i].speed * dirFloatNorm.z;
+
         // 移動後に bbox を更新して衝突判定を正確にする。
         m_pool[i].bbox.setBBOX(m_pool[i].position, m_pool[i].scale);
 
@@ -145,4 +143,74 @@ void EnemyManager::Draw(Renderer &renderer) const
                                                                                                                   m_pool[i].position.z);
         renderer.DrawCube(world, m_pool[i].color);
     }
+}
+
+XMFLOAT3 EnemyManager::GetMoveVector(const Dungeon &dungeon, const Player &player, XMFLOAT3 pos)
+{
+    int enemyGridX, enemyGridZ;
+    dungeon.WorldToGrid(pos.x, pos.z, enemyGridX, enemyGridZ);
+
+    int playerGridX, playerGridZ;
+    dungeon.WorldToGrid(player.GetPosition().x, player.GetPosition().z, playerGridX, playerGridZ);
+
+    int gridSize = dungeon.getMazeSize();
+
+    // プレイヤーと敵が同じセルにいる場合、ワールド座標から直接移動ベクトルを作成
+    if (playerGridX == enemyGridX && playerGridZ == enemyGridZ)
+    {
+        XMFLOAT3 fPlayer = player.GetPosition();
+        XMVECTOR vPlayer = XMLoadFloat3(&fPlayer);
+        XMVECTOR vEnemy = XMLoadFloat3(&pos);
+        XMVECTOR vDir = XMVectorSubtract(vPlayer, vEnemy);
+        XMVECTOR vDirNorm = XMVector3Normalize(vDir);
+        XMFLOAT3 result;
+        XMStoreFloat3(&result, vDirNorm);
+
+        return result;
+    }
+
+    // 自身の4近傍セルの内、プレイヤーまでの距離が最も近いセルの方向へ移動する
+    std::vector<int> dz = {-1, 0, 1, 0};
+    std::vector<int> dx = {0, 1, 0, -1};
+
+    int minCost = 1000000;
+    int ansX = -1, ansZ = -1;
+    for (int i = 0; i < 4; i++)
+    {
+        int nz = enemyGridZ + dz[i];
+        int nx = enemyGridX + dx[i];
+
+        if (!(0 <= nz && nz < gridSize && 0 <= nx && nx < gridSize))
+            continue;
+
+        int cost = player.GetMoveCostToPlayer(nx, nz);
+
+        // 到達不可能なセル
+        if (cost == -1)
+            continue;
+
+        if (cost < minCost)
+        {
+            minCost = cost;
+            ansZ = nz;
+            ansX = nx;
+        }
+    }
+
+    // 移動可能なセルが4近傍に存在しない場合、移動しない
+    if (ansX == -1 && ansZ == -1)
+    {
+        return XMFLOAT3(0.f, 0.f, 0.f);
+    }
+
+    XMFLOAT3 fTo = dungeon.GridToWorld(ansX, ansZ);
+    XMVECTOR vTo = XMLoadFloat3(&fTo);
+    XMVECTOR vFrom = XMLoadFloat3(&pos);
+    XMVECTOR vDir = XMVectorSubtract(vTo, vFrom);
+    XMVECTOR vDirNorm = XMVector3Normalize(vDir);
+
+    XMFLOAT3 result;
+    XMStoreFloat3(&result, vDirNorm);
+
+    return result;
 }

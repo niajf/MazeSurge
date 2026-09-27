@@ -7,6 +7,7 @@
 #include "MazeSurge/Game/ProjectilePool.h"
 #include <cstdlib>
 #include <cmath>
+#include <queue>
 
 // ============================================================
 // EnemyManager — 敵のスポーン・更新・描画を一括管理する
@@ -27,6 +28,8 @@ public:
     void Draw(Renderer &renderer) const;
 
 private:
+    XMFLOAT3 GetMoveVector(const Dungeon &dungeon, const Player &player, XMFLOAT3 pos);
+
     size_t m_poolSize; // プールの最大サイズ（= 同時に存在できる敵の上限）
     // m_spawnTimer: 前回スポーンからの経過時間。m_spawnInterval を超えたらスポーンする。
     float m_spawnTimer;

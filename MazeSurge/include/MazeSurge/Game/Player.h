@@ -3,7 +3,6 @@
 #include "MazeSurge/Audio/SoundManager.h"
 #include "MazeSurge/Game/Dungeon.h"
 #include "MazeSurge/Graphics/Renderer.h"
-#include <algorithm>
 
 // ============================================================
 // Player — プレイヤーの状態管理・移動・描画
@@ -23,6 +22,10 @@ public:
     // GameOver 判定は GameScene::Update() が HP <= 0 を検知して行う。
     void hitEnemy();
 
+    // 引数のセルインデックスから、プレイヤーに到達するまでのコストを返す
+    // 値が-1のセルは到達不可能
+    int GetMoveCostToPlayer(int gridX, int gridZ) const { return m_costGrid[gridZ][gridX]; }
+
     XMFLOAT3 GetPosition() const { return m_position; }
     BBOX GetBBOX() const { return m_bbox; }
     int GetHP() const { return m_hp; }
@@ -33,6 +36,9 @@ private:
     // WASD の押下状態を読み取り、斜め移動を正規化した速度ベクトルを返す。
     // private にしているのは Update() 内部の計算ステップであり、外部から直接呼ぶ必要がないため。
     XMFLOAT3 CalcMoveVelocity();
+
+    // プレイヤーから、到達可能なセルの距離を格納した2次元配列を計算
+    void CalcCostGrid(const Dungeon &dungeon);
 
     // InputState から毎フレームコピーするキー状態。
     // CalcMoveVelocity() が const メンバのため、入力状態をメンバに持つ必要がある。
@@ -48,4 +54,6 @@ private:
     float m_scale; // キューブの辺長（均一スケール）
     float m_speed; // 移動速度（単位/秒）
     int m_hp;      // 残り HP
+
+    std::vector<std::vector<int>> m_costGrid;
 };

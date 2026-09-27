@@ -67,12 +67,15 @@ public:
     XMFLOAT3 GetGoalPosition() const;
 
     // 迷路のグリッドサイズ（縦横ともに同値）を返す。
-    int getMazeSize() { return m_mazeSize; }
+    int getMazeSize() const { return m_mazeSize; }
     // 1 セルのワールド単位サイズを返す（床スケール計算に使用）。
     float getCellSize() { return m_wallScale; }
     // チェックポイントの総数を返す（Generate() で確定した実際の数）。
     // DUNGEON_CHECKPOINT_NUM より少ない場合がある（行き止まり数の上限による）。
     size_t GetCheckPointNum() { return m_numCheckPoint; }
+
+    // 指定したインデックスのCellTypeを返す
+    CellType GetGridType(int gridX, int gridZ) const { return m_grid[gridZ][gridX]; }
 
 private:
     XMFLOAT4 m_wallColor;       // 壁セルの描画色
