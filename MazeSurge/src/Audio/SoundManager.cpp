@@ -47,6 +47,9 @@ void SoundManager::Cleanup()
     m_BGM.Release();
     m_hitEnemySE.Release();
     m_hitPlayerSE.Release();
+    m_getCpSE.Release();
+    m_rankUpSE.Release();
+    m_selectSE.Release();
 
     if (m_masteringVoice)
     {
