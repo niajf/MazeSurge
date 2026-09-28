@@ -34,7 +34,7 @@ bool SoundManager::Init()
         return false;
 
     // SEのボリューム設定
-    SetSEVolume(0.5f);
+    m_seVolume = Audio::SE_VOLUME;
 
     return true;
 }

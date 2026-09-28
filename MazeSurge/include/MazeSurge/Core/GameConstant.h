@@ -92,6 +92,10 @@ constexpr float RENDERER_EMISSIVE_INTENSITY = 0.7f;
 
 namespace Audio
 {
+    // 音量
+    constexpr float SE_VOLUME = 0.3f; // 　SEの音量
+
+    // 音声ファイルのパス
     constexpr const wchar_t *GAME_BGM_PATH = L"Sounds/FinalCorridorDash.mp3";
     constexpr const wchar_t *TITLE_BGM_PATH = L"Sounds/PendingAdventure.mp3";
     constexpr const wchar_t *CLEAR_BGM_PATH = L"Sounds/ClearTheMaze.mp3";
