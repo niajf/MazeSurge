@@ -70,6 +70,9 @@ public:
     // ボタンのSEを再生
     void PlaySelectSE() { PlaySE(m_selectSE); };
 
+    // SEのボリュームを調整
+    void SetSEVolume(float volume) { m_seVolume = volume; }
+
 private:
     // コンストラクタへの外部アクセス禁止
     SoundManager() = default;
@@ -101,4 +104,7 @@ private:
     SoundData m_getCpSE;
     SoundData m_rankUpSE;
     SoundData m_selectSE;
+
+    // SEボリューム
+    float m_seVolume;
 };

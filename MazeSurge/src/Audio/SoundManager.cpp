@@ -33,6 +33,9 @@ bool SoundManager::Init()
     if (!SetSE())
         return false;
 
+    // SEのボリューム設定
+    SetSEVolume(0.5f);
+
     return true;
 }
 
@@ -189,6 +192,7 @@ void SoundManager::PlaySE(SoundData &soundData)
     soundData.sourceVoice->SubmitSourceBuffer(&buffer);
 
     // 再生
+    soundData.sourceVoice->SetVolume(m_seVolume);
     soundData.sourceVoice->Start(0);
 }
 
