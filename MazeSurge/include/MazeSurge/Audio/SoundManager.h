@@ -79,8 +79,8 @@ private:
     ~SoundManager() = default;
 
     // コピーコンストラクタと代入演算子を禁止
-    SoundManager(const SoundManager &) = default;
-    SoundManager &operator=(const SoundManager &) = default;
+    SoundManager(const SoundManager &) = delete;
+    SoundManager &operator=(const SoundManager &) = delete;
 
     // mp3ファイルを読み込みSoundDataに変換
     bool LoadMp3(const wchar_t *filePath, SoundData &soundData);
