@@ -9,14 +9,14 @@ constexpr LPCWSTR WINDOW_TITLE = L"MazeSurge";
 
 // ---- Scene ----
 constexpr float TIME_LIMIT = 5.f * 60.f; // ゲームの制限時間（秒）= 5 分
-// INPUT_INVALID_TIME: シーン遷移直後の一定時間、入力を無効にする。
-// ゲームシーンでのクリックがタイトルシーンに引き継がれる誤入力を防ぐ。
+// INPUT_INVALID_TIME: シーン遷移直後の一定時間、入力を無効にする
+// ゲームシーンでのクリックがタイトルシーンに引き継がれる誤入力を防ぐ
 constexpr float INPUT_INVALID_TIME = 1.0f;
 
 // ---- Dungeon ----
-// DUNGEON_GRID_SIZE は奇数でなければならない。
+// DUNGEON_GRID_SIZE は奇数でなければならない
 // 穴掘り法（Recursive Backtracker）は外周を壁として保持するため奇数グリッドで
-// 通路セルが (size-1)/2 × (size-1)/2 のパターンに収まる。
+// 通路セルが (size-1)/2 × (size-1)/2 のパターンに収まる
 constexpr int DUNGEON_GRID_SIZE = 31;
 constexpr int DUNGEON_CHECKPOINT_NUM = 5;
 constexpr float DUNGEON_WALL_SCALE = 2.0f;                           // 1 セルのワールド単位サイズ（壁ブロック）
@@ -36,9 +36,10 @@ constexpr size_t ENEMYMANAGER_POOL_SIZE = 50;       // 同時存在できる敵�
 constexpr float ENEMYMANAGER_SPAWN_INTERVAL = 3.0f; // 初期スポーン間隔（秒）
 constexpr float ENEMYMANAGER_SPAWN_RADIUS = 15.f;   // プレイヤーを中心とした敵がスポーンする位置の半径(これにセルのサイズを乗算して使用する)
 constexpr int ENEMYMANAGER_DELTA_DEGREE = 10;       // 敵がスポーンする位置を探索するとき、角度を何度ずつ変化させるか
-// SPAWN_TIME_SCALE: スポーン間隔の短縮スピードを制御する。
+
+// SPAWN_TIME_SCALE: スポーン間隔の短縮スピードを制御する
 // 計算式: interval = SPAWN_INTERVAL / (1 + elapsedTime / SPAWN_TIME_SCALE)
-// この値が小さいほど難易度の上昇が速くなる。
+// この値が小さいほど難易度の上昇が速くなる
 constexpr float ENEMYMANAGER_SPAWN_TIME_SCALE = 60.0f;
 
 // ---- Player ----
@@ -50,23 +51,27 @@ constexpr XMFLOAT4 PLAYER_CELL_COLOR = {0.00f, 0.74f, 1.00f, 1.0f}; // シアン
 // ---- Projectile ----
 constexpr float PROJECTILE_CELL_SCALE = 0.2f;  // 弾キューブの辺長（プレイヤーより小さい）
 constexpr float PROJECTILE_MOVE_SPEED = 10.0f; // 弾の移動速度（単位/秒）
-// LIFE_LIMIT_TIME=10s は通常プレイで迷路の壁に当たる前に消えない十分な長さ。
-// 壁衝突判定を省略しているため、寿命で消滅させている。
+
+// LIFE_LIMIT_TIME=10s は通常プレイで迷路の壁に当たる前に消えない十分な長さ
+// 壁衝突判定を省略しているため、寿命で消滅させている
 constexpr float PROJECTILE_LIFE_LIMIT_TIME = 10.f;
 constexpr XMFLOAT4 PROJECTILE_CELL_COLOR = {1.00f, 0.48f, 0.00f, 1.0f}; // オレンジ
 
 // ---- ProjectilePool ----
-// FIRE_INTERVAL_TIME=0.1s: 1 秒間に最大 10 発の連射が可能。
+// FIRE_INTERVAL_TIME=0.1s: 1 秒間に最大 10 発の連射が可能
 constexpr float PROJECTILEPOOL_FIRE_INTERVAL_TIME = 0.5f;
 constexpr size_t PROJECTILEPOOL_POOL_SIZE = 50; // 同時に存在できる弾の上限数
 
 // ---- Camera ----
-constexpr float CAMERA_FOV_DEG = 60.f; // 垂直視野角（度）。広すぎると歪みが目立つ。
-// OFFSET_Y: プレイヤーの真上 14 ユニット。迷路全体が俯瞰できる高さ。
+constexpr float CAMERA_FOV_DEG = 60.f; // 垂直視野角（度）広すぎると歪みが目立つ
+
+// OFFSET_Y: プレイヤーの真上 14 ユニット迷路全体が俯瞰できる高さ
 constexpr float CAMERA_OFFSET_Y = 14.0f;
-// OFFSET_Z: プレイヤーより -7 ユニット（手前方向）。視点が少し傾いて奥行き感が出る。
+
+// OFFSET_Z: プレイヤーより -7 ユニット（手前方向）視点が少し傾いて奥行き感が出る
 constexpr float CAMERA_OFFSET_Z = -7.0f;
-// NEAR_CLIP が小さすぎると深度バッファの精度が下がり Z ファイティングが発生する。
+
+// NEAR_CLIP が小さすぎると深度バッファの精度が下がり Z ファイティングが発生する
 constexpr float CAMERA_NEAR_CLIP = 0.1f;
 constexpr float CAMERA_FAR_CLIP = 100.0f;
 
@@ -81,13 +86,16 @@ constexpr float RANK_C_SCORE = 0.4f; // C: スコア 40% 以上
 // ---- Renderer ----
 constexpr XMFLOAT4 RENDERER_FLOOR_COLOR = {0.88f, 0.86f, 0.82f, 1.0f};   // ライトグレー（床）
 constexpr XMFLOAT4 RENDERER_PLAY_BG_COLOR = {0.96f, 0.95f, 0.92f, 1.0f}; // オフホワイト（背景）
-// LIGHT_DIR: 右斜め上方からの方向光。normalize は HLSL シェーダー側で行う。
+
+// LIGHT_DIR: 右斜め上方からの方向光normalize は HLSL シェーダー側で行う
 constexpr XMFLOAT3 RENDERER_LIGHT_DIR = {0.5f, -1.0f, 0.3f};
 constexpr XMFLOAT3 RENDERER_LIGHT_COLOR = {1.0f, 1.0f, 0.95f}; // 白に近い暖色
-// SHININESS=64: Phong モデルの指数。大きいほどスペキュラーが鋭く小さくなる。
+
+// SHININESS=64: Phong モデルの指数大きいほどスペキュラーが鋭く小さくなる
 constexpr float RENDERER_SHININESS = 64.0f;
 constexpr float RENDERER_SPECULAR_INTENSITY = 0.2f; // スペキュラー反射の強度
-// EMISSIVE_INTENSITY=0.7: 環境光の強度。0 だと影の部分が真っ黒になる。
+
+// EMISSIVE_INTENSITY=0.7: 環境光の強度0 だと影の部分が真っ黒になる
 constexpr float RENDERER_EMISSIVE_INTENSITY = 0.7f;
 
 namespace Audio

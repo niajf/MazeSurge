@@ -4,8 +4,8 @@ void GameScene::Init()
 {
     m_state = GameState::HowToPlay;
 
-    // 各システムを依存関係の順に初期化する。
-    // Dungeon を先に Init して GetStartPosition() を使えるようにしてから Player を Init する。
+    // 各システムを依存関係の順に初期化する
+    // Dungeon を先に Init して GetStartPosition() を使えるようにしてから Player を Init する
     m_dungeon.Init();
     m_player.Init(m_dungeon.GetStartPosition());
     m_camera.Init();
@@ -25,20 +25,20 @@ void GameScene::UpdateInGame(float deltaTime, const InputState &inputState)
 {
     m_elapsedTime += deltaTime;
 
-    // タイムリミット超過で GameOver に遷移。
+    // タイムリミット超過で GameOver に遷移
     if (m_elapsedTime > m_timeLimit)
         m_state = GameState::GameOver;
 
-    // 各システムを更新する順序は依存関係を考慮している。
+    // 各システムを更新する順序は依存関係を考慮している
     // Player → Camera → Projectile → Enemy の順で処理することで、
-    // Camera がプレイヤー最新位置を参照でき、弾道計算にも反映される。
+    // Camera がプレイヤー最新位置を参照でき、弾道計算にも反映される
     m_player.Update(deltaTime, m_dungeon, inputState);
     m_camera.Update(m_player.GetPosition());
     m_projectilePool.Update(deltaTime, m_camera, m_dungeon, m_player, inputState);
     m_enemyManager.Update(deltaTime, m_player, m_dungeon, m_projectilePool);
 
-    // IsCheckPoint はチェックポイントを踏むと FLOOR に書き換えて true を返す。
-    // 同じチェックポイントを 2 度カウントしないようにグリッドを変更している。
+    // IsCheckPoint はチェックポイントを踏むと FLOOR に書き換えて true を返す
+    // 同じチェックポイントを 2 度カウントしないようにグリッドを変更している
     if (m_dungeon.IsCheckPoint(m_player.GetPosition()))
     {
         // チェックポイント取得数
@@ -126,9 +126,9 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
     else if (m_state == GameState::GameClear)
     {
-        // !lMouseDown && lMousePrevDown = ボタンを「離した瞬間」のみ反応。
-        // 押し続けている間は無視し、クリック完了（Press → Release）を検出する。
-        // これによりシーン遷移直後の意図しない入力を防ぐ。
+        // !lMouseDown && lMousePrevDown = ボタンを「離した瞬間」のみ反応
+        // 押し続けている間は無視し、クリック完了（Press → Release）を検出する
+        // これによりシーン遷移直後の意図しない入力を防ぐ
         if (!inputState.lMouseDown && inputState.lMousePrevDown && IsButtonClicked(inputState.mouseX, inputState.mouseY, GAME_EXIT_BUTTON_RECT))
         {
             // リスタート
@@ -180,18 +180,18 @@ void GameScene::Update(float deltaTime, const InputState &inputState)
 
 void GameScene::DrawScene3D(Renderer &renderer)
 {
-    // Clear → Render（床）→ 各オブジェクト → HUD の順で描画する。
-    // HUD は SpriteBatch を使うため 3D 描画の後に呼ぶ必要がある。
+    // Clear → Render（床）→ 各オブジェクト → HUD の順で描画する
+    // HUD は SpriteBatch を使うため 3D 描画の後に呼ぶ必要がある
     renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
 
-    // floorScale に迷路サイズを渡すことで床が迷路全体を覆う大きさになる。
+    // floorScale に迷路サイズを渡すことで床が迷路全体を覆う大きさになる
     renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
     m_dungeon.Draw(renderer);
     m_projectilePool.Draw(renderer);
     m_enemyManager.Draw(renderer);
     m_player.Draw(renderer);
 
-    // HUD 表示（2D スプライト）: 残り時間を表示するため timeLimit - elapsed を渡す。
+    // HUD 表示（2D スプライト）: 残り時間を表示するため timeLimit - elapsed を渡す
     renderer.DrawHP(m_player.GetHP());
     renderer.DrawCheckPoint(m_getCheckPoint, m_dungeon.GetCheckPointNum());
     renderer.DrawTime(m_timeLimit - m_elapsedTime);
@@ -199,11 +199,11 @@ void GameScene::DrawScene3D(Renderer &renderer)
 
 void GameScene::DrawScene3DPrePare(Renderer &renderer)
 {
-    // Clear → Render（床）→ 各オブジェクト → HUD の順で描画する。
-    // HUD は SpriteBatch を使うため 3D 描画の後に呼ぶ必要がある。
+    // Clear → Render（床）→ 各オブジェクト → HUD の順で描画する
+    // HUD は SpriteBatch を使うため 3D 描画の後に呼ぶ必要がある
     renderer.Clear(RENDERER_PLAY_BG_COLOR.x, RENDERER_PLAY_BG_COLOR.y, RENDERER_PLAY_BG_COLOR.z);
 
-    // floorScale に迷路サイズを渡すことで床が迷路全体を覆う大きさになる。
+    // floorScale に迷路サイズを渡すことで床が迷路全体を覆う大きさになる
     renderer.Render(static_cast<float>(m_dungeon.getMazeSize()), m_camera);
     m_dungeon.Draw(renderer);
     m_projectilePool.Draw(renderer);
@@ -250,7 +250,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
 
     else if (m_state == GameState::GameClear)
     {
-        // リザルト画面は 3D シーンの上にオーバーレイ表示する。
+        // リザルト画面は 3D シーンの上にオーバーレイ表示する
         DrawScene3D(renderer);
         renderer.DrawResultOverlay(m_ResultTimer);
         DrawResultRank(renderer);
@@ -287,7 +287,7 @@ void GameScene::Draw(Renderer &renderer, const InputState &inputState)
         }
     }
 
-    // Present は必ず最後に 1 度だけ呼ぶ。状態に関わらずここで統一する。
+    // Present は必ず最後に 1 度だけ呼ぶ状態に関わらずここで統一する
     renderer.Present();
 }
 
@@ -298,19 +298,19 @@ GameState GameScene::GetState()
 
 bool GameScene::IsButtonClicked(int x, int y, const RECT &button) const
 {
-    // マウス座標がボタン矩形の内側かどうかを確認する（包含判定）。
+    // マウス座標がボタン矩形の内側かどうかを確認する（包含判定）
     return x >= button.left && x <= button.right &&
            y >= button.top && y <= button.bottom;
 }
 
 int GameScene::GetRankInt()
 {
-    // GameOver 時は問答無用で最低ランク D。
+    // GameOver 時は問答無用で最低ランク D
     if (m_state == GameState::GameOver)
         return 1;
 
-    // ランク計算: 残り時間比率とチェックポイント取得率の平均（各 0.0〜1.0）。
-    // どちらかだけが高くても S ランクは取れないよう平均を採用している。
+    // ランク計算: 残り時間比率とチェックポイント取得率の平均（各 0.0〜1.0）
+    // どちらかだけが高くても S ランクは取れないよう平均を採用している
     float timeScore = (m_timeLimit - m_elapsedTime) / m_timeLimit;
     float checkPointScore = static_cast<float>(m_getCheckPoint) / static_cast<float>(m_dungeon.GetCheckPointNum());
     float totalScore = (timeScore + checkPointScore) / 2.f;

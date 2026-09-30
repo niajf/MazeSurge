@@ -10,12 +10,14 @@
 #include <memory>
 #include <string>
 
+// レンダリング関連の処理はAIの生成及びAIのアドバイスを受けて作成しています
+
 // ============================================================
 // Renderer — Direct3D 11 の初期化・リソース管理・描画を担う
 // ============================================================
 // D3D11 デバイス、スワップチェイン、シェーダー、バッファ、テクスチャなど
-// 描画に必要なすべての GPU リソースをカプセル化する。
-// グローバルインスタンス g_renderer（下部で extern 宣言）として使用する。
+// 描画に必要なすべての GPU リソースをカプセル化する
+// グローバルインスタンス g_renderer（下部で extern 宣言）として使用する
 //
 // 1 フレームの描画順序:
 //   1. Clear()
@@ -26,36 +28,36 @@
 class Renderer
 {
 public:
-    // D3D11 の全リソース（デバイス・シェーダー・バッファ・テクスチャ等）を初期化する。
-    // 失敗した場合は false を返す。
+    // D3D11 の全リソース（デバイス・シェーダー・バッファ・テクスチャ等）を初期化する
+    // 失敗した場合は false を返す
     bool Init(HWND hwnd);
 
-    // 毎フレームの 3D 描画共通処理。
-    // floorScale: 床の XZ スケール（迷路サイズに合わせて拡縮する）。
+    // 毎フレームの 3D 描画共通処理
+    // floorScale: 床の XZ スケール（迷路サイズに合わせて拡縮する）
     // 内部でビュー/プロジェクション行列を m_view/m_projection にキャッシュするため、
-    // DrawCube() より前に呼ぶこと。
+    // DrawCube() より前に呼ぶこと
     void Render(float floorScale, Camera &camera);
 
-    // 任意のキューブを 1 個描画する。
-    // Render() でキャッシュされた m_view/m_projection を使うため Render() 後に呼ぶこと。
-    // worldMatrix: ワールド変換行列（スケール × 回転 × 平行移動）。
+    // 任意のキューブを 1 個描画する
+    // Render() でキャッシュされた m_view/m_projection を使うため Render() 後に呼ぶこと
+    // worldMatrix: ワールド変換行列（スケール × 回転 × 平行移動）
     void DrawCube(const XMMATRIX &worldMatrix, const XMFLOAT4 &color);
 
     // ---- 2D HUD 描画（SpriteBatch を使用）----
-    // これらはすべて Present() の前に呼ぶこと。
-    // SpriteBatch::Begin/End を内部で完結させているため、呼び出し順序は問わない。
+    // これらはすべて Present() の前に呼ぶこと
+    // SpriteBatch::Begin/End を内部で完結させているため、呼び出し順序は問わない
     void DrawHP(int hp);                              // プレイヤーの HP バーを上部に表示
     void DrawCheckPoint(int getNum, size_t wholeNum); // 取得済み/全チェックポイント数を表示
     void DrawTime(float time);                        // 残り時間を MM:SS 形式で表示
 
-    // バックバッファを単色でクリアする。
-    // デフォルト引数は使用されないが、RENDERER_PLAY_BG_COLOR を明示的に渡すこと。
+    // バックバッファを単色でクリアする
+    // デフォルト引数は使用されないが、RENDERER_PLAY_BG_COLOR を明示的に渡すこと
     void Clear(float r = 0.1f, float g = 0.1f, float b = 0.15f);
 
-    // タイトル画面（背景・ロゴ・ボタン）を 2D スプライトで描画する。
+    // タイトル画面（背景・ロゴ・ボタン）を 2D スプライトで描画する
     void DrawTitle(bool startHover, bool startPressed, bool exitHover, bool exitPressed);
 
-    // ゲーム開始直後の操作説明画像を描画する。
+    // ゲーム開始直後の操作説明画像を描画する
     void DrawHowToPlay();
 
     // リザルト画面描画メソッド
@@ -63,8 +65,8 @@ public:
     void DrawResultText(const wchar_t *text, const XMFLOAT4 &textColor, float height);
     void DrawResultButton(const XMFLOAT4 &btnColor, bool isHover, bool isPressed);
 
-    // バックバッファをフロントバッファに表示する（垂直同期あり）。
-    // ゲームループの最後に 1 度だけ呼ぶこと。
+    // バックバッファをフロントバッファに表示する（垂直同期あり）
+    // ゲームループの最後に 1 度だけ呼ぶこと
     void Present();
 
 private:
@@ -77,12 +79,12 @@ private:
     bool CreateConstantBuffers();
     bool CreateMeshBuffers(); // キューブ・床の頂点/インデックスバッファを生成
 
-    // HLSL ファイルをコンパイルしてバイトコード blob を返す。
-    // static: インスタンス状態に依存しないため（m_device 等を使わない）。
+    // HLSL ファイルをコンパイルしてバイトコード blob を返す
+    // static: インスタンス状態に依存しないため（m_device 等を使わない）
     static bool CompileShader(const wchar_t *filePath, const char *entryPoint,
                               const char *profile, ComPtr<ID3DBlob> &blob);
 
-    // isPressed > isHover の優先度でベース色を明暗させたボタン色を返す。
+    // isPressed > isHover の優先度でベース色を明暗させたボタン色を返す
     static XMFLOAT4 GetButtonStateColor(const XMFLOAT4 &baseColor, bool isHover, bool isPressed);
 
     // ---- SpriteBatch / SpriteFont（DirectXTK）----
@@ -90,15 +92,15 @@ private:
     std::unique_ptr<SpriteFont> m_spriteFont;   // ビットマップフォント
     std::unique_ptr<CommonStates> m_states;     // ブレンド・ラスタライザ等の共通ステート集
 
-    // m_whiteTexture: 1×1 の不透明白ピクセルテクスチャ。
-    // SpriteBatch::Draw がテクスチャを必須とするため、ベタ塗り矩形の描画に使う。
-    // tint カラー引数で任意の色を指定できる。
+    // m_whiteTexture: 1×1 の不透明白ピクセルテクスチャ
+    // SpriteBatch::Draw がテクスチャを必須とするため、ベタ塗り矩形の描画に使う
+    // tint カラー引数で任意の色を指定できる
     ComPtr<ID3D11ShaderResourceView> m_whiteTexture;
     ComPtr<ID3D11ShaderResourceView> m_titleTexture;     // タイトルロゴ画像
     ComPtr<ID3D11ShaderResourceView> m_titleBgTexture;   // タイトル背景画像
     ComPtr<ID3D11ShaderResourceView> m_howToPlayTexture; // 操作説明画像
 
-    // ロゴをアスペクト比を保ったままスケーリングするために元のピクセルサイズを保持する。
+    // ロゴをアスペクト比を保ったままスケーリングするために元のピクセルサイズを保持する
     UINT m_titleTexWidth = 0;
     UINT m_titleTexHeight = 0;
 
@@ -113,8 +115,8 @@ private:
     ComPtr<ID3D11VertexShader> m_vertexShader;
     ComPtr<ID3D11PixelShader> m_pixelShader;
 
-    // m_inputLayout: Vertex 構造体のメモリレイアウトを D3D11 に伝えるオブジェクト。
-    // VS バイトコードと Vertex 構造体の両方が変わった場合は再作成が必要。
+    // m_inputLayout: Vertex 構造体のメモリレイアウトを D3D11 に伝えるオブジェクト
+    // VS バイトコードと Vertex 構造体の両方が変わった場合は再作成が必要
     ComPtr<ID3D11InputLayout> m_inputLayout;
 
     // ---- バッファ ----
@@ -126,7 +128,7 @@ private:
     ComPtr<ID3D11Buffer> m_lightBuffer;       // ライトパラメータ（register b1）
 
     // ---- 行列キャッシュ ----
-    // Render() で計算してキャッシュし、その後の DrawCube() 呼び出しで参照する。
+    // Render() で計算してキャッシュし、その後の DrawCube() 呼び出しで参照する
     XMMATRIX m_view = XMMatrixIdentity();
     XMMATRIX m_projection = XMMatrixIdentity();
 
@@ -134,6 +136,6 @@ private:
     XMFLOAT4 m_playBackGroundColor; // プレイ中の背景クリア色
 };
 
-// g_renderer: Renderer.cpp で定義されるグローバルシングルトン。
-// main.cpp で Init() を呼び、各シーンの Draw() 内で使用する。
+// g_renderer: Renderer.cpp で定義されるグローバルシングルトン
+// main.cpp で Init() を呼び、各シーンの Draw() 内で使用する
 extern Renderer g_renderer;

@@ -121,7 +121,7 @@ bool SoundManager::LoadMp3(const wchar_t *filePath, SoundData &soundData)
         return false;
     }
 
-    // s16 で全展開（f32 の半分のメモリ。1回だけの変換コストは無視できる）
+    // s16 で全展開（f32 の半分のメモリ1回だけの変換コストは無視できる）
     uint32_t channels = mp3.channels;
     uint32_t sampleRate = mp3.sampleRate;
     size_t sampleCount = static_cast<size_t>(totalFrames) * channels;

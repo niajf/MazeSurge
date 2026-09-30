@@ -8,18 +8,21 @@
 // Player — プレイヤーの状態管理・移動・描画
 // ============================================================
 // 移動はキー入力に基づく等速直線移動で、X 軸と Z 軸を独立して解決する
-// 軸分離 AABB スライド方式により壁沿い移動に対応している。
+// 軸分離 AABB スライド方式により壁沿い移動に対応している
 class Player
 {
 public:
-    // 初期位置を受け取り、色・スケール・速度・HP・BBOX を初期化する。
+    // 初期位置を受け取り、色・スケール・速度・HP・BBOX を初期化する
     void Init(const XMFLOAT3 &staticPosition);
-    // 毎フレーム呼ぶ。入力取得・移動計算・壁衝突解決・BBOX 更新を行う。
+
+    // 毎フレーム呼ぶ入力取得・移動計算・壁衝突解決・BBOX 更新を行う
     void Update(float deltaTime, Dungeon &g_dungeon, const InputState &inputState);
-    // プレイヤーキューブをレンダラーに描画させる。
+
+    // プレイヤーキューブをレンダラーに描画させる
     void Draw(Renderer &renderer) const;
-    // 敵との衝突時に呼ばれ、HP を 1 減らす。
-    // GameOver 判定は GameScene::Update() が HP <= 0 を検知して行う。
+
+    // 敵との衝突時に呼ばれ、HP を 1 減らす
+    // GameOver 判定は GameScene::Update() が HP <= 0 を検知して行う
     void hitEnemy();
 
     // 引数のセルインデックスから、プレイヤーに到達するまでのコストを返す
@@ -33,15 +36,15 @@ public:
     float GetSpeed() const { return m_speed; }
 
 private:
-    // WASD の押下状態を読み取り、斜め移動を正規化した速度ベクトルを返す。
-    // private にしているのは Update() 内部の計算ステップであり、外部から直接呼ぶ必要がないため。
+    // WASD の押下状態を読み取り、斜め移動を正規化した速度ベクトルを返す
+    // private にしているのは Update() 内部の計算ステップであり、外部から直接呼ぶ必要がないため
     XMFLOAT3 CalcMoveVelocity();
 
     // プレイヤーから、到達可能なセルの距離を格納した2次元配列を計算
     void CalcCostGrid(const Dungeon &dungeon);
 
-    // InputState から毎フレームコピーするキー状態。
-    // CalcMoveVelocity() が const メンバのため、入力状態をメンバに持つ必要がある。
+    // InputState から毎フレームコピーするキー状態
+    // CalcMoveVelocity() が const メンバのため、入力状態をメンバに持つ必要がある
     bool m_keyW = false; // W キー（前進 +Z）
     bool m_keyA = false; // A キー（左移動 -X）
     bool m_keyS = false; // S キー（後退 -Z）

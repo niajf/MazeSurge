@@ -32,12 +32,16 @@ class Scene
 public:
     // シーン開始時に 1 度だけ呼ばれる。メンバ変数の初期化はここで行う。
     virtual void Init() = 0;
+
     // 毎フレーム呼ばれる状態更新処理。deltaTime は秒単位の経過時間。
     virtual void Update(float deltaTIme, const InputState &inputState) = 0;
+
     // 毎フレーム呼ばれる描画処理。Present() の呼び出しもここで行う。
     virtual void Draw(Renderer &renderer, const InputState &inputState) = 0;
+
     // 現在の GameState を返す。main.cpp がシーン遷移判断に使用する。
     virtual GameState GetState() = 0;
+
     // 派生クラスが正しくデストラクトされるように仮想デストラクタを宣言する。
     virtual ~Scene() = default;
 };

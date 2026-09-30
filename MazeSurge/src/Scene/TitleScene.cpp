@@ -10,13 +10,13 @@ void TitleScene::Update(float deltaTime, const InputState &inputState)
 {
     m_elapsedTime += deltaTime;
 
-    // シーン遷移直後の一定時間は入力を無効にする。
-    // ゲームシーンでのボタン離し（lMouseUp）がそのままタイトルでも誤検出される問題を防ぐ。
+    // シーン遷移直後の一定時間は入力を無効にする
+    // ゲームシーンでのボタン離し（lMouseUp）がそのままタイトルでも誤検出される問題を防ぐ
     if (m_elapsedTime < INPUT_INVALID_TIME)
         return;
 
-    // !lMouseDown && lMousePrevDown = クリック完了（Press → Release）の瞬間だけ処理。
-    // 押しっぱなしや離し続けの状態は無視する。
+    // !lMouseDown && lMousePrevDown = クリック完了（Press → Release）の瞬間だけ処理
+    // 押しっぱなしや離し続けの状態は無視する
     if (!inputState.lMouseDown && inputState.lMousePrevDown)
     {
         if (IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_START_BUTTON_RECT))
@@ -41,10 +41,10 @@ void TitleScene::Update(float deltaTime, const InputState &inputState)
 
 void TitleScene::Draw(Renderer &renderer, const InputState &inputState)
 {
-    // タイトル画面は 3D 描画なし。背景色でクリアしてから 2D スプライトを描画する。
+    // タイトル画面は 3D 描画なし背景色でクリアしてから 2D スプライトを描画する
     renderer.Clear(UI_TITLE_BG_COLOR.x, UI_TITLE_BG_COLOR.y, UI_TITLE_BG_COLOR.z);
 
-    // ホバー: カーソルがボタン領域内。押下: ホバー中かつ左ボタン押下中。
+    // ホバー: カーソルがボタン領域内押下: ホバー中かつ左ボタン押下中
     bool startHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_START_BUTTON_RECT);
     bool exitHover = IsButtonClicked(inputState.mouseX, inputState.mouseY, TITLE_EXIT_BUTTON_RECT);
 
