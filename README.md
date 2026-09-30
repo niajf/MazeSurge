@@ -4,7 +4,9 @@ C++ と DirectX 11 を用いて、開発した3Dトップダウン迷路シュ�
 **迷路の自動生成・BFS による敵の経路探索・オブジェクトプーリング** など、ゲームを支えるアルゴリズムとデータ構造を自前で設計・実装することに重点を置いています。
 「毎回異なる迷路でも破綻しないレベルデザイン」「敵が何体いても軽い経路探索」「ゲーム中に動的確保をしないメモリ設計」を、アルゴリズムの選択によって実現しました。
 
-![Demo movie](docs/demo.gif)
+[![プレイ動画（YouTube）](https://img.youtube.com/vi/aWsSDtPHsfg/maxresdefault.jpg)](https://www.youtube.com/watch?v=aWsSDtPHsfg)
+
+▶ 画像をクリックすると YouTube でプレイ動画を再生します
 
 ## 📅 開発期間 (Development period)
 - **v1.x:** 2026年5月~2026年6月
