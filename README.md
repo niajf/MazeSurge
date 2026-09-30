@@ -360,3 +360,41 @@ git clone https://github.com/niajf/MazeSurge.git
 - **サウンド:** XAudio2 + dr_mp3 による BGM ループ再生・SE 再利用
 - **シーン管理:** Title / HowToPlay / Prepare / Playing / GameClear / GameOver の状態遷移
 - **スコア/ランク:** 残り時間比率とチェックポイント取得率の平均で S/A/B/C/D を算出し、段階演出で表示
+
+## 🤖 AI の使用について (AI Usage)
+
+本プロジェクトでは、DirectX 11 の描画基盤や MP3 デコードなど一部の処理で AI を使用しています。
+使用箇所はソースコード上のコメント（`// AI生成` / `// AIのアドバイスを元に作成`）でも明記しています。以下に記載のない関数・処理は自身で実装したものです。
+
+| 分類 | 意味 |
+|---|---|
+| **AI生成** | AI が生成したコードを使用 |
+| **AIのアドバイスを元に作成** | AI からの助言（API の使い方・設計方針など）を参考に実装 |
+
+### AI生成
+
+| ファイル | 関数 | 内容 |
+|---|---|---|
+| [Renderer.cpp](MazeSurge/src/Graphics/Renderer.cpp) | `Renderer::CompileShader` | HLSL ファイルのコンパイルとエラー出力 |
+| [SoundManager.cpp](MazeSurge/src/Audio/SoundManager.cpp) | `SoundManager::LoadMp3` | dr_mp3 による MP3 デコード・PCM データの読み込み |
+
+### AIのアドバイスを元に作成
+
+| ファイル | 関数 / 対象 | 内容 |
+|---|---|---|
+| [Common.h](MazeSurge/include/MazeSurge/Core/Common.h) | ファイル全体 | 共通インクルード・`UNICODE` / `NOMINMAX` 等のマクロ定義・ライブラリリンク・using 宣言 |
+| [Types.h](MazeSurge/include/MazeSurge/Core/Types.h) | `Vertex` / `ConstantBuffer` / `LightBuffer` 構造体 | 頂点レイアウトと定数バッファ（16 バイトアライメント）の定義 |
+| [Renderer.cpp](MazeSurge/src/Graphics/Renderer.cpp) | `Renderer::Init` | 描画パイプライン全体の初期化 |
+| | `Renderer::CreateDeviceAndSwapChain` | D3D11 デバイス・スワップチェインの作成 |
+| | `Renderer::CreateRenderTargetAndDepthBuffer` | レンダーターゲットビュー・深度ステンシルバッファの作成 |
+| | `Renderer::CompileAndCreateShaders` | 頂点/ピクセルシェーダーのコンパイルと生成 |
+| | `Renderer::CreateInputLayout` | 入力レイアウトの作成 |
+| | `Renderer::CreateConstantBuffers` | WVP・ライト用定数バッファの作成 |
+| | `Renderer::CreateMeshBuffers` | キューブ・床の頂点/インデックスバッファの作成 |
+| | `Renderer::Render` | 床の 3D 描画・ビュー/プロジェクション行列の設定 |
+| | `Renderer::InitSpriteBatch` | SpriteBatch / SpriteFont・テクスチャの初期化 |
+| | `Renderer::Clear` | バックバッファ・深度バッファのクリア |
+| | `Renderer::GetButtonStateColor` | ボタンのホバー/押下状態に応じた色の算出 |
+| | `Renderer::DrawTitle` | タイトル画面の描画 |
+| [Camera.cpp](MazeSurge/src/Graphics/Camera.cpp) | `Camera::GetViewMatrix` | ビュー行列の計算 |
+| | `Camera::GetProjectionMatrix` | プロジェクション行列の計算 |
