@@ -37,6 +37,9 @@ C++ と DirectX 11 を用いて、開発した3Dトップダウン迷路シュ�
 - **HP & TIME:** HP の初期値は5。制限時間は5分。HP が0になるか制限時間を超過するとゲームオーバー
 - **ランク:** クリア時の残り時間とチェックポイント取得率の平均で S/A/B/C/D を算出
 
+![How To Play](MazeSurge/figures/how_to_play.png)
+
+
 ## 🧠 アルゴリズム概要 (Algorithm Overview)
 
 | 機能 | アルゴリズム / データ構造 | 計算量（迷路 N×N、敵 E 体） | 狙い |
